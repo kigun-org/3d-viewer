@@ -7,22 +7,22 @@
     import vtkGenericRenderWindow from '@kitware/vtk.js/Rendering/Misc/GenericRenderWindow';
 
     import vtkImageReslice from '@kitware/vtk.js/Imaging/Core/ImageReslice';
-    import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage.js";
+    import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage";
 
-    import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper.js";
-    import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice.js";
+    import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper";
+    import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice";
 
-    import vtkOrientationMarkerWidget from "@kitware/vtk.js/Interaction/Widgets/OrientationMarkerWidget.js";
-    import vtkAnnotatedCubeActor from "@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor.js";
-    import {SlabMode} from '@kitware/vtk.js/Imaging/Core/ImageReslice/Constants';
-    import {SlicingMode} from "@kitware/vtk.js/Rendering/Core/ImageMapper/Constants.js";
+    import vtkOrientationMarkerWidget from "@kitware/vtk.js/Interaction/Widgets/OrientationMarkerWidget";
+    import vtkAnnotatedCubeActor from "@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor";
+    import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants";
+    import {SlicingMode} from "@kitware/vtk.js/Rendering/Core/ImageMapper/Constants";
 
     import LocalToolbar from "./LocalToolbar.svelte";
     import vtkCutter from "@kitware/vtk.js/Filters/Core/Cutter";
     import vtkMapper from "@kitware/vtk.js/Rendering/Core/Mapper";
     import vtkActor from "@kitware/vtk.js/Rendering/Core/Actor";
-    import vtkPlane from "@kitware/vtk.js/Common/DataModel/Plane.js";
-    import {createImageNoHotkeysStyle} from "./InteractorStyle.js";
+    import vtkPlane from "@kitware/vtk.js/Common/DataModel/Plane";
+    import {createImageNoHotkeysStyle} from "./interactorStyles.js";
 
     export let id
 

@@ -73,9 +73,9 @@
 <style>
     .overlay-local {
         position: absolute;
-        top: 0em;
-        left: 0em;
-        right: 0em;
+        top: 0;
+        left: 0;
+        right: 0;
         background-color: rgba(255, 255, 255, 0.9);
         text-align: left;
         padding: 0.1em 0.5em;

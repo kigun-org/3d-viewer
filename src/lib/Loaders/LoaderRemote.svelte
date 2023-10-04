@@ -1,7 +1,7 @@
 <script>
-    import HttpDataAccessHelper from "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper.js";
-    import vtkXMLImageDataReader from "@kitware/vtk.js/IO/XML/XMLImageDataReader.js";
-    import vtkXMLPolyDataReader from "@kitware/vtk.js/IO/XML/XMLPolyDataReader.js";
+    import HttpDataAccessHelper from "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
+    import vtkXMLImageDataReader from "@kitware/vtk.js/IO/XML/XMLImageDataReader";
+    import vtkXMLPolyDataReader from "@kitware/vtk.js/IO/XML/XMLPolyDataReader";
 
     import {createEventDispatcher} from 'svelte';
 

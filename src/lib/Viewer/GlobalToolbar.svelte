@@ -45,8 +45,8 @@
 <style>
     .overlay-global {
         position: absolute;
-        top: 0em;
-        right: 0em;
+        top: 0;
+        right: 0;
         padding: 0.1em 0.5em;
 
         display: flex;

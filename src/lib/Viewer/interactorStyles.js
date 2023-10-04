@@ -1,6 +1,6 @@
-import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera.js";
-import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage.js";
-import * as macro from "@kitware/vtk.js/macros.js";
+import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera";
+import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage";
+import * as macro from "@kitware/vtk.js/macros";
 
 function InteractorStyleTrackballNoHotkeys(publicAPI, model) {
     model.classHierarchy.push('InteractorStyleTrackballNoHotkeys');

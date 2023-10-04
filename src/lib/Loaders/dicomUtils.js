@@ -1,11 +1,11 @@
 import {writeImageArrayBuffer} from "itk-wasm";
+
 import {
     readDicomTags,
     readImageDicomFileSeries,
     setPipelinesBaseUrl,
     setPipelineWorkerUrl
 } from "@itk-wasm/dicom";
-
 setPipelinesBaseUrl("/itk/dicom/pipelines")
 setPipelineWorkerUrl("/itk/dicom/web-workers/pipeline.worker.js")
 
@@ -76,7 +76,7 @@ const parseDICOMFiles = async function (fileList, progressCallback) {
     for (let i = 0; i < fileList.length; i += chunkSize) {
         const chunk = [...fileList].slice(i, i + chunkSize);
 
-        let {webWorker: worker, tags: tags} = await readDicomTags(null, chunk[0], {
+        let {webWorker: worker, tags: _} = await readDicomTags(null, chunk[0], {
             tagsToRead: {
                 tags: [
                     "0010|0020", "0010|0010", "0010|0030", "0010|0040", // patient ID, name, DoB, sex

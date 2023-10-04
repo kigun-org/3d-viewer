@@ -15,7 +15,7 @@
 
     import LocalToolbar from "./LocalToolbar.svelte";
     import {ViewMode} from "./ViewMode.js";
-    import {createTrackballNoHotkeysStyle} from "./InteractorStyle.js";
+    import {createTrackballNoHotkeysStyle} from "./interactorStyles.js";
 
     export let id
 

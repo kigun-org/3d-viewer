@@ -95,8 +95,6 @@
         },
     ]
 
-    let volumes = []
-
     const addScreenshot = (image) => {
         const images = document.getElementById('images')
 

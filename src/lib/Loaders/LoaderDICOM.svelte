@@ -2,7 +2,7 @@
     import {onMount} from "svelte";
     import {createVolume, parseDICOMFiles, convertToNRRD, uploadVolume} from "./dicomUtils.js";
     import {Status} from "./Status.js";
-    import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper.js";
+    import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper";
 
     import {createEventDispatcher} from 'svelte';
 
@@ -11,9 +11,10 @@
     let loaded = 0
     let total = 100
     let progressBarIndeterminate = false
-    export let imageLoadedCallback = null
 
     let state = []
+
+    let image = null
 
     $: progress = loaded / total
 
@@ -36,6 +37,21 @@
         state.push({status: status, message: message})
 
         return state
+    }
+
+    export function uploadImage() {
+        state = updateState("Converting to NRRD format")
+
+        convertToNRRD(image, progressCallback)
+            .then((arrayBuffer) => {
+                state = updateState("Uploading volume")
+                loaded = 0
+                progressBarIndeterminate = false
+
+                return uploadVolume(arrayBuffer, progressCallback, () => {
+                    state = updateState("Done.", Status.INFO)
+                })
+            })
     }
 
     onMount(() => {
@@ -102,39 +118,21 @@
 
                     return createVolume(fileInfoList.map((result) => result.file), progressCallback)
                 }).then((outputImage) => {
-                const vtkImage = convertItkToVtkImage(outputImage)
-                dispatch('loadComplete', {
-                    volumes: [{
-                        id: 42,
-                        caption: "CBCT",
-                        resource__id: 0,
-                        resource__type: "VOLUME",
-                        source: vtkImage,
-                        visible: true
-                    }]
-                })
-                state = updateState("Done", Status.INFO)
-            })
-        })
-
-        function uploadImage(outputImage) {
-            state = updateState("Converting to NRRD format")
-
-            let timeAfterDICOMTags = performance.now()
-            const timeAfterLoadingImageSeries = performance.now()
-            console.log(`loading image: ${(timeAfterLoadingImageSeries - timeAfterDICOMTags).toFixed(1)} ms`)
-
-            convertToNRRD(outputImage, progressCallback)
-                .then((arrayBuffer) => {
-                    state = updateState("Uploading volume")
-                    loaded = 0
-                    progressBarIndeterminate = false
-
-                    return uploadVolume(arrayBuffer, progressCallback, () => {
-                        state = updateState("Done.", Status.INFO)
+                    image = outputImage
+                    const vtkImage = convertItkToVtkImage(outputImage)
+                    dispatch('loadComplete', {
+                        volumes: [{
+                            id: 42,
+                            caption: "CBCT",
+                            resource__id: 0,
+                            resource__type: "VOLUME",
+                            source: vtkImage,
+                            visible: true
+                        }]
                     })
+                    state = updateState("Done", Status.INFO)
                 })
-        }
+        })
     })
 </script>
 

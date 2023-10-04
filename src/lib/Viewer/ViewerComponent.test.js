@@ -1,8 +1,6 @@
 // import "@testing-library/jest-dom";
 // import { render, screen, fireEvent } from "@testing-library/svelte";
-import { expect, test } from 'vitest'
-import {fireEvent, render, screen} from "@testing-library/svelte";
-import Counter from "./Counter.svelte";
+import { expect, describe, test } from 'vitest'
 
 describe('ViewerComponent.svelte', () => {
     test('adds 1 + 2 to equal 3', () => {

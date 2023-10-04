@@ -1,4 +1,4 @@
-import {SlicingMode} from "@kitware/vtk.js/Rendering/Core/ImageMapper/Constants.js";
+import {SlicingMode} from "@kitware/vtk.js/Rendering/Core/ImageMapper/Constants";
 
 export const ViewMode= {
     AXIAL: {
