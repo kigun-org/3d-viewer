@@ -1,0 +1,16 @@
+.viewer_panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    aspect-ratio: 3 / 2;
+}
+
+.viewer_panel.loading {
+    background-color: #cde;
+}
+.viewer_panel.error {
+    background-color: #edd;
+}
