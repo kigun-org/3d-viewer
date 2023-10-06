@@ -241,7 +241,7 @@
                style="display: none"/>
         <label for="upload">
             <i class="bi-upload"></i>
-            <span>Select folder to upload</span>
+            <span>Click to select folder</span>
         </label>
     {/if}
 </div>

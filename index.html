@@ -1,13 +1,30 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>eos</title>
-  </head>
-  <body>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="container flex-shrink-0 my-4">
+    <h1>eos</h1>
+
+    <p>
+        This viewer allows you to quickly view DICOM images from your computer.<br>
+        All processing is performed in the browser, and nothing is uploaded to the server.
+    </p>
+
+    <p>
+        To begin, please click inside the box below and select the folder containing DICOM files.
+    </p>
+
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
-  </body>
+</main>
+
+<footer class="mt-auto p-4 text-center bg-light text-secondary w-100">
+    &copy; Mihai Tarce
+</footer>
+</body>
 </html>

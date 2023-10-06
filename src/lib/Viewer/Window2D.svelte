@@ -118,60 +118,6 @@
         camera.setPosition(...viewMode.cameraPosition)
         camera.setViewUp(...viewMode.cameraUp)
 
-        // // create axes
-        // const axes = vtkAnnotatedCubeActor.newInstance();
-        // axes.setDefaultStyle({
-        //     text: '+X',
-        //     fontStyle: 'bold',
-        //     fontFamily: 'Arial',
-        //     fontColor: 'black',
-        //     fontSizeScale: (res) => res / 2,
-        //     faceColor: 'rgb(255, 0, 0)',
-        //     faceRotation: 0,
-        //     edgeThickness: 0.1,
-        //     edgeColor: 'black',
-        //     resolution: 400,
-        // });
-        // // axes.setXPlusFaceProperty({ text: '+X' });
-        // axes.setXMinusFaceProperty({
-        //     text: '-X',
-        //     faceColor: 'rgb(255, 0, 0)',
-        //     faceRotation: 90,
-        //     fontStyle: 'italic',
-        // });
-        // axes.setYPlusFaceProperty({
-        //     text: '+Y',
-        //     faceColor: 'rgb(0, 255, 0)',
-        //     fontSizeScale: (res) => res / 4,
-        // });
-        // axes.setYMinusFaceProperty({
-        //     text: '-Y',
-        //     faceColor: 'rgb(0, 255, 0)',
-        //     fontColor: 'white',
-        // });
-        // axes.setZPlusFaceProperty({
-        //     text: '+Z',
-        //     faceColor: 'rgb(0, 0, 255)',
-        // });
-        // axes.setZMinusFaceProperty({
-        //     text: '-Z',
-        //     faceColor: 'rgb(0, 0, 255)',
-        //     faceRotation: 45,
-        // });
-        //
-        // // create orientation widget
-        // const orientationWidget = vtkOrientationMarkerWidget.newInstance({
-        //     actor: axes,
-        //     interactor: renderWindow.getInteractor(),
-        // });
-        // orientationWidget.setEnabled(true);
-        // orientationWidget.setViewportCorner(
-        //     vtkOrientationMarkerWidget.Corners.BOTTOM_RIGHT
-        // );
-        // orientationWidget.setViewportSize(0.15);
-        // orientationWidget.setMinPixelSize(100);
-        // orientationWidget.setMaxPixelSize(300);
-
         const resizeObserver = new ResizeObserver((_) => {
             openGLRenderWindow.resize()
         });

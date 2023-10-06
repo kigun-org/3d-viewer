@@ -42,8 +42,8 @@
             <ViewerComponent {id} {models} {volumes} startMaximized={false} {screenshotCallback} />
         </div>
 
-        <div>
-            <button on:click={uploadImage}>Upload image</button>
-        </div>
+<!--        <div>-->
+<!--            <button on:click={uploadImage}>Upload image</button>-->
+<!--        </div>-->
     {/if}
 {/if}
