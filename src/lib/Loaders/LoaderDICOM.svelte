@@ -76,16 +76,16 @@
     export const uploadImage = function () {
         state = updateState("Converting to NRRD format")
 
-        convertToNRRD(image, progressCallback)
-            .then((arrayBuffer) => {
-                state = updateState("Uploading volume")
-                loaded = 0
-                progressBarIndeterminate = false
-
-                return uploadVolume(arrayBuffer, progressCallback, () => {
-                    state = updateState("Done.", Status.INFO)
-                })
-            })
+        // convertToNRRD(image, progressCallback)
+        //     .then((arrayBuffer) => {
+        //         state = updateState("Uploading volume")
+        //         loaded = 0
+        //         progressBarIndeterminate = false
+        //
+        //         return uploadVolume(arrayBuffer, progressCallback, () => {
+        //             state = updateState("Done.", Status.INFO)
+        //         })
+        //     })
     }
 
     const getFirstImage = (map) => {
@@ -167,7 +167,7 @@
                         selectImageSeries(fileInfoList, true)
                     }
                 })
-                .catch((error) => {
+                .catch((_) => {
                     state = updateState('No DICOM files found.', Status.ERROR, false)
                 })
         })
