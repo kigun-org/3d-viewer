@@ -10,8 +10,6 @@ setPipelinesBaseUrl("/itk/dicom/pipelines")
 setPipelineWorkerUrl("/itk/dicom/web-workers/pipeline.worker.js")
 
 const parseDICOMFiles = async function (fileList, progressCallback) {
-    const timeStart = performance.now()
-
     let loaded = 0
 
     progressCallback(new ProgressEvent('progress', {
@@ -27,7 +25,8 @@ const parseDICOMFiles = async function (fileList, progressCallback) {
                 tagsToRead: {
                     tags: [
                         "0010|0020", "0010|0010", "0010|0030", "0010|0040", // patient ID, name, DoB, sex
-                        "0008|0021", "0008|0031", // series date and time
+                        "0008|0021", "0008|0031", // study date and time
+                        "0008|103e", // series description
                         "0020|000d", "0020|000e", // study instance ID, series instance ID
                     ]
                 }
@@ -47,8 +46,9 @@ const parseDICOMFiles = async function (fileList, progressCallback) {
                     patientName: tagMap.get("0010|0010"),
                     patientDateOfBirth: tagMap.get("0010|0030"),
                     patientSex: tagMap.get("0010|0040"),
-                    seriesDate: tagMap.get("0008|0021"),
-                    seriesTime: tagMap.get("0008|0031"),
+                    studyDate: tagMap.get("0008|0021"),
+                    studyTime: tagMap.get("0008|0031"),
+                    seriesDescription: tagMap.get("0008|103e"),
                     studyInstanceID: tagMap.get("0020|000d"),
                     seriesInstanceID: tagMap.get("0020|000e"),
                 }
@@ -90,9 +90,6 @@ const parseDICOMFiles = async function (fileList, progressCallback) {
         results = [...results, ...await Promise.all(fetchFileInfoChunk)]
         worker.terminate()
     }
-
-    const timeAfterDICOMTags = performance.now()
-    console.log(`reading DICOM tags: ${(timeAfterDICOMTags - timeStart).toFixed(1)} ms`)
 
     return results
 }
@@ -148,8 +145,6 @@ const uploadVolume = function (arrayBuffer, progressCallback, uploadFinishedCall
     // a.download = "download.nrrd"
     // a.click()
 
-    const timeAfterSavingImageToNRRD = performance.now()
-
     const formData = new FormData()
     // formData.append('csrftoken', '7y5oxybOKclGGBBdwHUR4KfooSYaNsT2')
     formData.append('cbct', new Blob([arrayBuffer]), '20230924test.nrrd')
@@ -158,10 +153,6 @@ const uploadVolume = function (arrayBuffer, progressCallback, uploadFinishedCall
     const req = new XMLHttpRequest()
     req.addEventListener("load", (event) => {
         console.log("loaded", event)
-
-        const timeAfterUploaded = performance.now()
-        console.log(`Image upload: ${(timeAfterUploaded - timeAfterSavingImageToNRRD).toFixed(1)} ms`)
-
         uploadFinishedCallback()
     })
     req.upload.addEventListener("progress", progressCallback)
