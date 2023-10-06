@@ -26,10 +26,9 @@
   },
   "dependencies": {
     "@itk-wasm/dicom": "^3.3.0",
-    "@kitware/vtk.js": "^28.10.2",
+    "@kitware/vtk.js": "^28.12.4",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.10.5",
-    "curry": "^1.2.0",
     "itk-image-io": "^1.0.0-b.146",
     "itk-mesh-io": "^1.0.0-b.18",
     "itk-wasm": "^1.0.0-b.146"
