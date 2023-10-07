@@ -6,10 +6,7 @@
 
     import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
     import vtkAnnotatedCubeActor from '@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor';
-    import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
-    import vtkHttpDataSetReader from '@kitware/vtk.js/IO/Core/HttpDataSetReader';
     import vtkGenericRenderWindow from '@kitware/vtk.js/Rendering/Misc/GenericRenderWindow';
-    import vtkImageData from '@kitware/vtk.js/Common/DataModel/ImageData';
     import vtkImageMapper from '@kitware/vtk.js/Rendering/Core/ImageMapper';
     import vtkImageReslice from '@kitware/vtk.js/Imaging/Core/ImageReslice';
     import vtkImageSlice from '@kitware/vtk.js/Rendering/Core/ImageSlice';
@@ -20,26 +17,26 @@
     import vtkOrientationMarkerWidget from '@kitware/vtk.js/Interaction/Widgets/OrientationMarkerWidget';
     import vtkResliceCursorWidget from '@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget';
     import vtkWidgetManager from '@kitware/vtk.js/Widgets/Core/WidgetManager';
+    import {InterpolationMode} from '@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants';
 
-    import vtkSphereSource from '@kitware/vtk.js/Filters/Sources/SphereSource';
-    import { CaptureOn } from '@kitware/vtk.js/Widgets/Core/WidgetManager/Constants';
+    import {CaptureOn} from '@kitware/vtk.js/Widgets/Core/WidgetManager/Constants';
 
-    import { vec3 } from 'gl-matrix';
-    import { SlabMode } from '@kitware/vtk.js/Imaging/Core/ImageReslice/Constants';
+    import {vec3} from 'gl-matrix';
+    import {SlabMode} from '@kitware/vtk.js/Imaging/Core/ImageReslice/Constants';
 
-    import { xyzToViewType } from '@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants';
+    import {xyzToViewType} from '@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants';
 
     // Force the loading of HttpDataAccessHelper to support gzip decompression
     import HttpDataAccessHelper from "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
-
-    import {onMount} from "svelte";
     import vtkXMLImageDataReader from "@kitware/vtk.js/IO/XML/XMLImageDataReader.js";
 
-    // ----------------------------------------------------------------------------
-    // Define main attributes
-    // ----------------------------------------------------------------------------
+    import {onMount} from "svelte";
 
     onMount(() => {
+        // ----------------------------------------------------------------------------
+        // Define main attributes
+        // ----------------------------------------------------------------------------
+
         const viewColors = [
             [1, 0, 0], // sagittal
             [0, 1, 0], // coronal
@@ -53,8 +50,17 @@
         // Set size in CSS pixel space because scaleInPixels defaults to true
         widgetState
             .getStatesWithLabel('sphere')
-            .forEach((handle) => handle.setScale1(20));
-        const showDebugActors = true;
+            .forEach((handle) => {
+                handle.setScale1(15)
+                handle.setVisible(false)
+            });
+        widgetState
+            .getStatesWithLabel('line')
+            .forEach((handle) => {
+                handle.setScale3(3, 3, 3)
+                handle.setVisible(false)
+            });
+        widgetState.getCenterHandle().setOpacity(1)
 
         const appCursorStyles = {
             translateCenter: 'move',
@@ -64,50 +70,8 @@
         };
 
         // ----------------------------------------------------------------------------
-        // Define html structure
-        // ----------------------------------------------------------------------------
-
-        const container = document.querySelector('#reslice');
-        const checkboxTranslation = document.getElementById('checkboxTranslation');
-        const checkboxShowRotation = document.getElementById('checkboxShowRotation');
-        const checkboxRotation = document.getElementById('checkboxRotation');
-        const checkboxOrthogonality = document.getElementById('checkboxOrthogonality');
-
-        // ----------------------------------------------------------------------------
         // Setup rendering code
         // ----------------------------------------------------------------------------
-
-        /**
-         * Function to create synthetic image data with correct dimensions
-         * Can be use for debug
-         * @param {Array[Int]} dims
-         */
-// eslint-disable-next-line no-unused-vars
-        function createSyntheticImageData(dims) {
-            const imageData = vtkImageData.newInstance();
-            const newArray = new Uint8Array(dims[0] * dims[1] * dims[2]);
-            const s = 0.1;
-            imageData.setSpacing(s, s, s);
-            imageData.setExtent(0, 127, 0, 127, 0, 127);
-            let i = 0;
-            for (let z = 0; z < dims[2]; z++) {
-                for (let y = 0; y < dims[1]; y++) {
-                    for (let x = 0; x < dims[0]; x++) {
-                        newArray[i++] = (256 * (i % (dims[0] * dims[1]))) / (dims[0] * dims[1]);
-                    }
-                }
-            }
-
-            const da = vtkDataArray.newInstance({
-                numberOfComponents: 1,
-                values: newArray,
-            });
-            da.setName('scalars');
-
-            imageData.getPointData().setScalars(da);
-
-            return imageData;
-        }
 
         function createRGBStringFromRGBValues(rgb) {
             if (rgb.length !== 3) {
@@ -118,17 +82,12 @@
             ).toString()})`;
         }
 
-        const initialPlanesState = { ...widgetState.getPlanes() };
+        const initialPlanesState = {...widgetState.getPlanes()};
 
         let view3D = null;
 
         for (let i = 0; i < 4; i++) {
-            const element = document.createElement('div');
-            element.setAttribute('class', 'view');
-            element.style.width = '100%';
-            element.style.height = '300px';
-            element.style.display = 'inline-block';
-            container.appendChild(element);
+            const element = document.querySelector(`#div${i}`);
 
             const grw = vtkGenericRenderWindow.newInstance();
             grw.setContainer(element);
@@ -142,8 +101,102 @@
                 orientationWidget: null,
             };
 
+            obj.interactor.onPointerEnter((event) => {
+                // console.log("pointer enter event", event)
+                if (i === 0) {
+                    widget.getWidgetState().getRotationHandleYinX0().setVisible(true)
+                    widget.getWidgetState().getRotationHandleYinX1().setVisible(true)
+                    widget.getWidgetState().getRotationHandleZinX0().setVisible(true)
+                    widget.getWidgetState().getRotationHandleZinX1().setVisible(true)
+                    widget.getWidgetState().getCenterHandle().setVisible(true)
+                    widget.getWidgetState().getAxisYinX().setScale3(3, 3, 3)
+                    widget.getWidgetState().getAxisZinX().setScale3(3, 3, 3)
+                } else {
+                    widget.getWidgetState().getAxisYinX().setScale3(0.5, 0.5, 0.5)
+                    widget.getWidgetState().getAxisZinX().setScale3(0.5, 0.5, 0.5)
+                }
+                widget.getWidgetState().getAxisYinX().setVisible(true)
+                widget.getWidgetState().getAxisZinX().setVisible(true)
+
+
+                if (i === 1) {
+                    widget.getWidgetState().getRotationHandleXinY0().setVisible(true)
+                    widget.getWidgetState().getRotationHandleXinY1().setVisible(true)
+                    widget.getWidgetState().getRotationHandleZinY0().setVisible(true)
+                    widget.getWidgetState().getRotationHandleZinY1().setVisible(true)
+                    widget.getWidgetState().getCenterHandle().setVisible(true)
+                    widget.getWidgetState().getAxisXinY().setScale3(3, 3, 3)
+                    widget.getWidgetState().getAxisZinY().setScale3(3, 3, 3)
+                } else {
+                    widget.getWidgetState().getAxisXinY().setScale3(0.5, 0.5, 0.5)
+                    widget.getWidgetState().getAxisZinY().setScale3(0.5, 0.5, 0.5)
+
+                }
+                widget.getWidgetState().getAxisXinY().setVisible(true)
+                widget.getWidgetState().getAxisZinY().setVisible(true)
+
+
+                if (i === 2) {
+                    widget.getWidgetState().getRotationHandleXinZ0().setVisible(true)
+                    widget.getWidgetState().getRotationHandleXinZ1().setVisible(true)
+                    widget.getWidgetState().getRotationHandleYinZ0().setVisible(true)
+                    widget.getWidgetState().getRotationHandleYinZ1().setVisible(true)
+                    widget.getWidgetState().getCenterHandle().setVisible(true)
+                    widget.getWidgetState().getAxisXinZ().setScale3(3, 3, 3)
+                    widget.getWidgetState().getAxisYinZ().setScale3(3, 3, 3)
+                } else {
+                    widget.getWidgetState().getAxisXinZ().setScale3(0.5, 0.5, 0.5)
+                    widget.getWidgetState().getAxisYinZ().setScale3(0.5, 0.5, 0.5)
+                }
+                widget.getWidgetState().getAxisXinZ().setVisible(true)
+                widget.getWidgetState().getAxisYinZ().setVisible(true)
+
+
+                if (i < 3) {
+                    viewAttributes.forEach((obj) => {
+                        obj.reslice.setInterpolationMode(InterpolationMode.NEAREST);
+                        obj.interactor.render()
+                    })
+                }
+            })
+            obj.interactor.onPointerLeave((event) => {
+                // console.log("pointer leave event", event)
+                // i === 0
+                widget.getWidgetState().getAxisYinX().setVisible(false)
+                widget.getWidgetState().getAxisZinX().setVisible(false)
+                widget.getWidgetState().getRotationHandleYinX0().setVisible(false)
+                widget.getWidgetState().getRotationHandleYinX1().setVisible(false)
+                widget.getWidgetState().getRotationHandleZinX0().setVisible(false)
+                widget.getWidgetState().getRotationHandleZinX1().setVisible(false)
+                widget.getWidgetState().getCenterHandle().setVisible(false)
+
+                // i === 1
+                widget.getWidgetState().getAxisXinY().setVisible(false)
+                widget.getWidgetState().getAxisZinY().setVisible(false)
+                widget.getWidgetState().getRotationHandleXinY0().setVisible(false)
+                widget.getWidgetState().getRotationHandleXinY1().setVisible(false)
+                widget.getWidgetState().getRotationHandleZinY0().setVisible(false)
+                widget.getWidgetState().getRotationHandleZinY1().setVisible(false)
+                widget.getWidgetState().getCenterHandle().setVisible(false)
+
+                // i === 2
+                widget.getWidgetState().getAxisXinZ().setVisible(false)
+                widget.getWidgetState().getAxisYinZ().setVisible(false)
+                widget.getWidgetState().getRotationHandleXinZ0().setVisible(false)
+                widget.getWidgetState().getRotationHandleXinZ1().setVisible(false)
+                widget.getWidgetState().getRotationHandleYinZ0().setVisible(false)
+                widget.getWidgetState().getRotationHandleYinZ1().setVisible(false)
+                widget.getWidgetState().getCenterHandle().setVisible(false)
+
+                if (i < 3) {
+                    viewAttributes.forEach((obj) => {
+                        obj.reslice.setInterpolationMode(InterpolationMode.LINEAR);
+                        obj.interactor.render()
+                    })
+                }
+            })
+
             obj.renderer.getActiveCamera().setParallelProjection(true);
-            obj.renderer.setBackground(...viewColors[i]);
             obj.renderWindow.addRenderer(obj.renderer);
             obj.renderWindow.addView(obj.GLWindow);
             obj.renderWindow.setInteractor(obj.interactor);
@@ -155,7 +208,7 @@
                 obj.interactor.setInteractorStyle(vtkInteractorStyleImage.newInstance());
                 obj.widgetInstance = obj.widgetManager.addWidget(widget, xyzToViewType[i]);
                 obj.widgetInstance.setScaleInPixels(true);
-                obj.widgetInstance.setKeepOrthogonality(checkboxOrthogonality.checked);
+                obj.widgetInstance.setKeepOrthogonality(true);
                 obj.widgetInstance.setCursorStyles(appCursorStyles);
                 obj.widgetManager.enablePicking();
                 // Use to update all renderers buffer when actors are moved
@@ -172,27 +225,13 @@
             obj.reslice.setTransformInputSampling(false);
             obj.reslice.setAutoCropOutput(true);
             obj.reslice.setOutputDimensionality(2);
+            obj.reslice.setInterpolationMode(InterpolationMode.NEAREST);
             obj.resliceMapper = vtkImageMapper.newInstance();
             obj.resliceMapper.setInputConnection(obj.reslice.getOutputPort());
             obj.resliceActor = vtkImageSlice.newInstance();
+            obj.resliceActor.getProperty().setColorWindow(4000);
+            obj.resliceActor.getProperty().setColorLevel(2000);
             obj.resliceActor.setMapper(obj.resliceMapper);
-            obj.sphereActors = [];
-            obj.sphereSources = [];
-
-            // Create sphere for each 2D views which will be displayed in 3D
-            // Define origin, point1 and point2 of the plane used to reslice the volume
-            for (let j = 0; j < 3; j++) {
-                const sphere = vtkSphereSource.newInstance();
-                sphere.setRadius(10);
-                const mapper = vtkMapper.newInstance();
-                mapper.setInputConnection(sphere.getOutputPort());
-                const actor = vtkActor.newInstance();
-                actor.setMapper(mapper);
-                actor.getProperty().setColor(...viewColors[i]);
-                actor.setVisibility(showDebugActors);
-                obj.sphereActors.push(actor);
-                obj.sphereSources.push(sphere);
-            }
 
             if (i < 3) {
                 viewAttributes.push(obj);
@@ -203,42 +242,41 @@
             // create axes
             const axes = vtkAnnotatedCubeActor.newInstance();
             axes.setDefaultStyle({
-                text: '+X',
+                text: 'L',
                 fontStyle: 'bold',
                 fontFamily: 'Arial',
                 fontColor: 'black',
                 fontSizeScale: (res) => res / 2,
                 faceColor: createRGBStringFromRGBValues(viewColors[0]),
-                faceRotation: 0,
+                faceRotation: 90,
                 edgeThickness: 0.1,
                 edgeColor: 'black',
                 resolution: 400,
             });
-            // axes.setXPlusFaceProperty({ text: '+X' });
             axes.setXMinusFaceProperty({
-                text: '-X',
+                text: 'R',
                 faceColor: createRGBStringFromRGBValues(viewColors[0]),
-                faceRotation: 90,
-                fontStyle: 'italic',
+                faceRotation: -90,
             });
             axes.setYPlusFaceProperty({
-                text: '+Y',
+                text: 'P',
                 faceColor: createRGBStringFromRGBValues(viewColors[1]),
-                fontSizeScale: (res) => res / 4,
+                faceRotation: 180
             });
             axes.setYMinusFaceProperty({
-                text: '-Y',
+                text: 'A',
                 faceColor: createRGBStringFromRGBValues(viewColors[1]),
-                fontColor: 'white',
+                faceRotation: 0
             });
             axes.setZPlusFaceProperty({
-                text: '+Z',
+                text: 'S',
                 faceColor: createRGBStringFromRGBValues(viewColors[2]),
+                faceRotation: 0
             });
             axes.setZMinusFaceProperty({
-                text: '-Z',
+                text: 'I',
                 faceColor: createRGBStringFromRGBValues(viewColors[2]),
-                faceRotation: 45,
+                faceRotation: 180,
             });
 
             // create orientation widget
@@ -269,7 +307,6 @@
                 keepFocalPointPosition: false, // Defines if the focal point position is kepts (same display distance from reslice cursor center)
                 computeFocalPointOffset: false, // Defines if the display offset between reslice center and focal point has to be
                 // computed. If so, then this offset will be used to keep the focal point position during rotation.
-                spheres: null,
             }
         ) {
             const modified = widget.updateReslicePlane(
@@ -280,10 +317,6 @@
                 const resliceAxes = interactionContext.reslice.getResliceAxes();
                 // Get returned modified from setter to know if we have to render
                 interactionContext.actor.setUserMatrix(resliceAxes);
-                const planeSource = widget.getPlaneSource(interactionContext.viewType);
-                interactionContext.sphereSources[0].setCenter(planeSource.getOrigin());
-                interactionContext.sphereSources[1].setCenter(planeSource.getPoint1());
-                interactionContext.sphereSources[2].setCenter(planeSource.getPoint2());
             }
             widget.updateCameraPoints(
                 interactionContext.renderer,
@@ -297,6 +330,7 @@
         }
 
         HttpDataAccessHelper
+            // .fetchBinary("testdata/cbct.vti")
             .fetchBinary("testdata/head-binary.vti")
             .then((binary) => {
                 const reader = vtkXMLImageDataReader.newInstance()
@@ -319,10 +353,6 @@
                     obj.reslice.setInputData(image);
                     obj.renderer.addActor(obj.resliceActor);
                     view3D.renderer.addActor(obj.resliceActor);
-                    obj.sphereActors.forEach((actor) => {
-                        obj.renderer.addActor(actor);
-                        view3D.renderer.addActor(actor);
-                    });
                     const reslice = obj.reslice;
                     const viewType = xyzToViewType[i];
 
@@ -339,7 +369,7 @@
                                 // reslice cursor display center has to be recomputed (while translation is applied)
                                 // canUpdateFocalPoint: Boolean which defines if the focal point can be updated because
                                 // the current interaction is a rotation
-                                ({ computeFocalPointOffset, canUpdateFocalPoint }) => {
+                                ({computeFocalPointOffset, canUpdateFocalPoint}) => {
                                     const activeViewType = widget
                                         .getWidgetState()
                                         .getActiveViewType();
@@ -353,7 +383,6 @@
                                         resetFocalPoint: false,
                                         keepFocalPointPosition,
                                         computeFocalPointOffset,
-                                        sphereSources: obj.sphereSources,
                                     });
                                 }
                             );
@@ -367,8 +396,8 @@
                         resetFocalPoint: true, // At first initilization, center the focal point to the image center
                         keepFocalPointPosition: false, // Don't update the focal point as we already set it to the center of the image
                         computeFocalPointOffset: true, // Allow to compute the current offset between display reslice center and display focal point
-                        sphereSources: obj.sphereSources,
                     });
+                    obj.renderer.getActiveCamera().zoom(2);
                     obj.interactor.render();
                 });
 
@@ -393,7 +422,6 @@
                     resetFocalPoint: true,
                     keepFocalPointPosition: false,
                     computeFocalPointOffset: true,
-                    sphereSources: obj.sphereSources,
                     resetViewUp: true,
                 });
                 obj.renderWindow.render();
@@ -402,155 +430,93 @@
             view3D.renderer.resetCameraClippingRange();
         }
 
-        checkboxTranslation.addEventListener('change', (ev) => {
-            viewAttributes.forEach((obj) =>
-                obj.widgetInstance.setEnableTranslation(checkboxTranslation.checked)
-            );
-        });
+        // checkboxTranslation:
+        //     viewAttributes.forEach((obj) =>
+        //         obj.widgetInstance.setEnableTranslation(checkboxTranslation.checked)
+        //     );
 
-        checkboxShowRotation.addEventListener('change', (ev) => {
-            widgetState
-                .getStatesWithLabel('rotation')
-                .forEach((handle) => handle.setVisible(checkboxShowRotation.checked));
-            viewAttributes.forEach((obj) => {
-                obj.interactor.render();
-            });
-            checkboxRotation.checked = checkboxShowRotation.checked;
-            checkboxRotation.disabled = !checkboxShowRotation.checked;
-            checkboxRotation.dispatchEvent(new Event('change'));
-        });
+        // checkboxShowRotation:
+        //     widgetState
+        //         .getStatesWithLabel('rotation')
+        //         .forEach((handle) => handle.setVisible(checkboxShowRotation.checked));
+        //     viewAttributes.forEach((obj) => {
+        //         obj.interactor.render();
+        //     });
+        // });
 
-        checkboxRotation.addEventListener('change', (ev) => {
-            viewAttributes.forEach((obj) =>
-                obj.widgetInstance.setEnableRotation(checkboxRotation.checked)
-            );
-            checkboxOrthogonality.disabled = !checkboxRotation.checked;
-            checkboxOrthogonality.dispatchEvent(new Event('change'));
-        });
+        // checkboxRotation:
+        //     viewAttributes.forEach((obj) =>
+        //         obj.widgetInstance.setEnableRotation(checkboxRotation.checked)
+        //     );
+        // });
 
-        checkboxOrthogonality.addEventListener('change', (ev) => {
-            viewAttributes.forEach((obj) =>
-                obj.widgetInstance.setKeepOrthogonality(checkboxOrthogonality.checked)
-            );
-        });
+        // checkboxOrthogonality:
+        //     viewAttributes.forEach((obj) =>
+        //         obj.widgetInstance.setKeepOrthogonality(checkboxOrthogonality.checked)
+        //     );
+        // });
 
-        const checkboxScaleInPixels = document.getElementById('checkboxScaleInPixels');
-        checkboxScaleInPixels.addEventListener('change', (ev) => {
-            widget.setScaleInPixels(checkboxScaleInPixels.checked);
-            viewAttributes.forEach((obj) => {
-                obj.interactor.render();
-            });
-        });
+        // checkboxScaleInPixels:
+        //     widget.setScaleInPixels(checkboxScaleInPixels.checked);
+        //     viewAttributes.forEach((obj) => {
+        //         obj.interactor.render();
+        //     });
+        // });
 
-        const opacity = document.getElementById('opacity');
-        opacity.addEventListener('input', (ev) => {
-            const opacityValue = document.getElementById('opacityValue');
-            opacityValue.innerHTML = ev.target.value;
-            widget
-                .getWidgetState()
-                .getStatesWithLabel('handles')
-                .forEach((handle) => handle.setOpacity(ev.target.value));
-            viewAttributes.forEach((obj) => {
-                obj.interactor.render();
-            });
-        });
+        // opacity:
+        //     widget
+        //         .getWidgetState()
+        //         .getStatesWithLabel('handles')
+        //         .forEach((handle) => handle.setOpacity(ev.target.value));
+        //     viewAttributes.forEach((obj) => {
+        //         obj.interactor.render();
+        //     });
 
-        const optionSlabModeMin = document.getElementById('slabModeMin');
-        optionSlabModeMin.value = SlabMode.MIN;
-        const optionSlabModeMax = document.getElementById('slabModeMax');
-        optionSlabModeMax.value = SlabMode.MAX;
-        const optionSlabModeMean = document.getElementById('slabModeMean');
-        optionSlabModeMean.value = SlabMode.MEAN;
-        const optionSlabModeSum = document.getElementById('slabModeSum');
-        optionSlabModeSum.value = SlabMode.SUM;
-        const selectSlabMode = document.getElementById('slabMode');
-        selectSlabMode.addEventListener('change', (ev) => {
-            viewAttributes.forEach((obj) => {
-                obj.reslice.setSlabMode(Number(ev.target.value));
-            });
-            updateViews();
-        });
+        // SlabMode.MIN / MAX / MEAN / SUM;
+        // selectSlabMode:
+        //     viewAttributes.forEach((obj) => {
+        //         obj.reslice.setSlabMode(Number(ev.target.value));
+        //     });
+        //     updateViews();
 
-        const sliderSlabNumberofSlices = document.getElementById('slabNumber');
-        sliderSlabNumberofSlices.addEventListener('change', (ev) => {
-            const trSlabNumberValue = document.getElementById('slabNumberValue');
-            trSlabNumberValue.innerHTML = ev.target.value;
-            viewAttributes.forEach((obj) => {
-                obj.reslice.setSlabNumberOfSlices(ev.target.value);
-            });
-            updateViews();
-        });
+        // sliderSlabNumberofSlices:
+        //     viewAttributes.forEach((obj) => {
+        //         obj.reslice.setSlabNumberOfSlices(ev.target.value);
+        //     });
+        //     updateViews();
 
         const buttonReset = document.getElementById('buttonReset');
         buttonReset.addEventListener('click', () => {
-            widgetState.setPlanes({ ...initialPlanesState });
+            widgetState.setPlanes({...initialPlanesState});
             widget.setCenter(widget.getWidgetState().getImage().getCenter());
             updateViews();
         });
 
-        const selectInterpolationMode = document.getElementById('selectInterpolation');
-        selectInterpolationMode.addEventListener('change', (ev) => {
-            viewAttributes.forEach((obj) => {
-                obj.reslice.setInterpolationMode(Number(ev.target.selectedIndex));
-            });
-            updateViews();
-        });
-
-        const checkboxWindowLevel = document.getElementById('checkboxWindowLevel');
-        checkboxWindowLevel.addEventListener('change', (ev) => {
-            viewAttributes.forEach((obj, index) => {
-                if (index < 3) {
-                    obj.interactor.setInteractorStyle(
-                        checkboxWindowLevel.checked
-                            ? vtkInteractorStyleImage.newInstance()
-                            : vtkInteractorStyleTrackballCamera.newInstance()
-                    );
-                }
-            });
-        });
+        // selectInterpolationMode:
+        //     viewAttributes.forEach((obj) => {
+        //         obj.reslice.setInterpolationMode(Number(ev.target.selectedIndex));
+        //     });
+        //     updateViews();
     })
 </script>
 
 <div style="display: grid; grid-template-columns: 3fr 1fr">
-    <div id="reslice" style="display: grid; grid-template-columns: 1fr 1fr">
+    <div id="reslice" style="display: grid; grid-template-columns: 1fr 1fr;">
+        <div style="border: 3px solid red;">
+            <div id="div0" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+        </div>
+        <div style="border: 3px solid lime;">
+            <div id="div1" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+        </div>
+        <div style="border: 3px solid blue;">
+            <div id="div2" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+        </div>
+        <div>
+            <div id="div3" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+        </div>
     </div>
 
     <table>
-        <tr>
-            <td>Allow translation:</td>
-            <td>
-                <input type="checkbox" id="checkboxTranslation" checked>
-            </td>
-        </tr>
-        <tr>
-            <td>Show rotation:</td>
-            <td>
-                <input type="checkbox" id="checkboxShowRotation" checked>
-            </td>
-        </tr>
-        <tr>
-            <td>Allow rotation:</td>
-            <td>
-                <input type="checkbox" id="checkboxRotation" checked>
-            </td>
-        </tr>
-        <tr>
-            <td>Keep orthogonality:</td>
-            <td>
-                <input type="checkbox" id="checkboxOrthogonality" checked>
-            </td>
-        </tr>
-        <tr>
-            <td>Scale in pixels:</td>
-            <td>
-                <input type="checkbox" id="checkboxScaleInPixels" checked>
-            </td>
-        </tr>
-        <tr>
-            <td>Opacity :</td>
-            <td><input id='opacity' type="range" min="0" max="255" step="1" value="255" style="width: 100px;"/></td>
-            <td id='opacityValue'>255</td>
-        </tr>
         <tr>
             <td>Slab Mode :</td>
             <td>
@@ -566,15 +532,6 @@
             <td>Slab Number of Slices :</td>
             <td><input id='slabNumber' type="range" min="1" max="100" step="1" value="1" style="width: 100px;"/></td>
             <td id='slabNumberValue'>1</td>
-        </tr>
-        <tr>
-            <td>Interpolation mode :</td>
-            <td>
-                <select id="selectInterpolation">
-                    <option id="nearest" selected="selected">Nearest</option>
-                    <option id="linear">Linear</option>
-                </select>
-            </td>
         </tr>
         <tr>
             <td>Window Level:</td>
