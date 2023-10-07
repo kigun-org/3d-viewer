@@ -218,7 +218,8 @@
                                                 {#each seriesMap as [series, images]}
                                                     <li class="series"
                                                         class:suggested={images[0].seriesDescription.toLowerCase().includes('axial')}>
-                                                        <a on:click={() => { selectImageSeries(images) }}>
+                                                        <a class="link-primary" role="treeitem" tabindex="0"
+                                                           on:click={() => { selectImageSeries(images) }}>
                                                             Series
                                                             [{images[0].seriesDescription};
                                                             {series}]
