@@ -38,9 +38,9 @@
         // ----------------------------------------------------------------------------
 
         const viewColors = [
-            [1, 0, 0], // sagittal
-            [0, 1, 0], // coronal
-            [0, 0, 1], // axial
+            [1, 0.3, 0], // sagittal
+            [0.3, 0.7, 0.3], // coronal
+            [0, 0.5, 1], // axial
             [0.5, 0.5, 0.5], // 3D
         ];
 
@@ -289,8 +289,8 @@
                 vtkOrientationMarkerWidget.Corners.BOTTOM_RIGHT
             );
             obj.orientationWidget.setViewportSize(0.15);
-            obj.orientationWidget.setMinPixelSize(100);
-            obj.orientationWidget.setMaxPixelSize(300);
+            obj.orientationWidget.setMinPixelSize(50);
+            obj.orientationWidget.setMaxPixelSize(200);
         }
 
         // ----------------------------------------------------------------------------
@@ -331,7 +331,7 @@
 
         HttpDataAccessHelper
             // .fetchBinary("testdata/cbct.vti")
-            .fetchBinary("testdata/head-binary.vti")
+            .fetchBinary("testdata/axial.vti")
             .then((binary) => {
                 const reader = vtkXMLImageDataReader.newInstance()
                 reader.parseAsArrayBuffer(binary)
@@ -500,49 +500,23 @@
     })
 </script>
 
-<div style="display: grid; grid-template-columns: 3fr 1fr">
+<div style="display: grid; grid-template-columns: 5fr 1fr">
     <div id="reslice" style="display: grid; grid-template-columns: 1fr 1fr;">
         <div style="border: 3px solid red;">
-            <div id="div0" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+            <div id="div0" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
         </div>
         <div style="border: 3px solid lime;">
-            <div id="div1" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+            <div id="div1" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
         </div>
         <div style="border: 3px solid blue;">
-            <div id="div2" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+            <div id="div2" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
         </div>
         <div>
-            <div id="div3" class="view" style="width: 100%; height: 300px; display: inline-block"></div>
+            <div id="div3" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
         </div>
     </div>
 
-    <table>
-        <tr>
-            <td>Slab Mode :</td>
-            <td>
-                <select id="slabMode">
-                    <option id="slabModeMin">MIN</option>
-                    <option id="slabModeMax">MAX</option>
-                    <option id="slabModeMean" selected="selected">MEAN</option>
-                    <option id="slabModeSum">SUM</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Slab Number of Slices :</td>
-            <td><input id='slabNumber' type="range" min="1" max="100" step="1" value="1" style="width: 100px;"/></td>
-            <td id='slabNumberValue'>1</td>
-        </tr>
-        <tr>
-            <td>Window Level:</td>
-            <td>
-                <input type="checkbox" id="checkboxWindowLevel" checked>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <button id="buttonReset">Reset views</button>
-            </td>
-        </tr>
-    </table>
+    <div>
+        <button id="buttonReset">Reset views</button>
+    </div>
 </div>
