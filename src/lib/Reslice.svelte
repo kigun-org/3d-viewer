@@ -1,6 +1,4 @@
 <script>
-    import '@kitware/vtk.js/favicon';
-
     // Load the rendering pieces we want to use (for both WebGL and WebGPU)
     import '@kitware/vtk.js/Rendering/Profiles/All';
 
@@ -60,6 +58,34 @@
                 handle.setScale3(3, 3, 3)
                 handle.setVisible(false)
             });
+
+            // [1, 0.3, 0], // sagittal
+            // [0.3, 0.7, 0.3], // coronal
+            // [0, 0.5, 1], // axial
+            // [0.5, 0.5, 0.5], // 3D
+
+        // set handle colors
+        widgetState.getRotationHandleXinY0().setColor3(255, 85, 0)
+        widgetState.getRotationHandleXinY1().setColor3(255, 85, 0)
+        widgetState.getRotationHandleXinZ0().setColor3(255, 85, 0)
+        widgetState.getRotationHandleXinZ1().setColor3(255, 85, 0)
+        widgetState.getAxisXinY().setColor3(255, 85, 0)
+        widgetState.getAxisXinZ().setColor3(255, 85, 0)
+
+        widgetState.getRotationHandleYinX0().setColor3(85, 171, 85)
+        widgetState.getRotationHandleYinX1().setColor3(85, 171, 85)
+        widgetState.getRotationHandleYinZ0().setColor3(85, 171, 85)
+        widgetState.getRotationHandleYinZ1().setColor3(85, 171, 85)
+        widgetState.getAxisYinX().setColor3(85, 171, 85)
+        widgetState.getAxisYinZ().setColor3(85, 171, 85)
+
+        widgetState.getRotationHandleZinX0().setColor3(0, 127, 255)
+        widgetState.getRotationHandleZinX1().setColor3(0, 127, 255)
+        widgetState.getRotationHandleZinY0().setColor3(0, 127, 255)
+        widgetState.getRotationHandleZinY1().setColor3(0, 127, 255)
+        widgetState.getAxisZinX().setColor3(0, 127, 255)
+        widgetState.getAxisZinY().setColor3(0, 127, 255)
+
         widgetState.getCenterHandle().setOpacity(1)
 
         const appCursorStyles = {
@@ -112,8 +138,8 @@
                     widget.getWidgetState().getAxisYinX().setScale3(3, 3, 3)
                     widget.getWidgetState().getAxisZinX().setScale3(3, 3, 3)
                 } else {
-                    widget.getWidgetState().getAxisYinX().setScale3(0.5, 0.5, 0.5)
-                    widget.getWidgetState().getAxisZinX().setScale3(0.5, 0.5, 0.5)
+                    widget.getWidgetState().getAxisYinX().setScale3(0.75, 0.75, 0.75)
+                    widget.getWidgetState().getAxisZinX().setScale3(0.75, 0.75, 0.75)
                 }
                 widget.getWidgetState().getAxisYinX().setVisible(true)
                 widget.getWidgetState().getAxisZinX().setVisible(true)
@@ -128,8 +154,8 @@
                     widget.getWidgetState().getAxisXinY().setScale3(3, 3, 3)
                     widget.getWidgetState().getAxisZinY().setScale3(3, 3, 3)
                 } else {
-                    widget.getWidgetState().getAxisXinY().setScale3(0.5, 0.5, 0.5)
-                    widget.getWidgetState().getAxisZinY().setScale3(0.5, 0.5, 0.5)
+                    widget.getWidgetState().getAxisXinY().setScale3(0.75, 0.75, 0.75)
+                    widget.getWidgetState().getAxisZinY().setScale3(0.75, 0.75, 0.75)
 
                 }
                 widget.getWidgetState().getAxisXinY().setVisible(true)
@@ -145,8 +171,8 @@
                     widget.getWidgetState().getAxisXinZ().setScale3(3, 3, 3)
                     widget.getWidgetState().getAxisYinZ().setScale3(3, 3, 3)
                 } else {
-                    widget.getWidgetState().getAxisXinZ().setScale3(0.5, 0.5, 0.5)
-                    widget.getWidgetState().getAxisYinZ().setScale3(0.5, 0.5, 0.5)
+                    widget.getWidgetState().getAxisXinZ().setScale3(0.75, 0.75, 0.75)
+                    widget.getWidgetState().getAxisYinZ().setScale3(0.75, 0.75, 0.75)
                 }
                 widget.getWidgetState().getAxisXinZ().setVisible(true)
                 widget.getWidgetState().getAxisYinZ().setVisible(true)
@@ -349,8 +375,15 @@
                 outlineActor.setMapper(outlineMapper);
                 view3D.renderer.addActor(outlineActor);
 
+                // calculate image range, to set initial window/level
+                // console.log(image.getPointData().getScalars().getRange())
+
                 viewAttributes.forEach((obj, i) => {
                     obj.reslice.setInputData(image);
+
+                    obj.resliceActor.getProperty().setColorWindow(3000);
+                    obj.resliceActor.getProperty().setColorLevel(1000);
+
                     obj.renderer.addActor(obj.resliceActor);
                     view3D.renderer.addActor(obj.resliceActor);
                     const reslice = obj.reslice;
@@ -397,7 +430,7 @@
                         keepFocalPointPosition: false, // Don't update the focal point as we already set it to the center of the image
                         computeFocalPointOffset: true, // Allow to compute the current offset between display reslice center and display focal point
                     });
-                    obj.renderer.getActiveCamera().zoom(2);
+                    obj.renderer.getActiveCamera().zoom(1.75);
                     obj.interactor.render();
                 });
 
@@ -405,8 +438,7 @@
                 view3D.renderer.resetCameraClippingRange();
 
                 // set max number of slices to slider.
-                const maxNumberOfSlices = vec3.length(image.getDimensions());
-                document.getElementById('slabNumber').max = maxNumberOfSlices;
+                // const maxNumberOfSlices = vec3.length(image.getDimensions());
             })
 
         // ----------------------------------------------------------------------------
@@ -424,6 +456,7 @@
                     computeFocalPointOffset: true,
                     resetViewUp: true,
                 });
+                obj.renderer.getActiveCamera().zoom(1.75);
                 obj.renderWindow.render();
             });
             view3D.renderer.resetCamera();
@@ -502,13 +535,13 @@
 
 <div style="display: grid; grid-template-columns: 5fr 1fr">
     <div id="reslice" style="display: grid; grid-template-columns: 1fr 1fr;">
-        <div style="border: 3px solid red;">
+        <div style="border: 3px solid rgb(255, 85, 0);">
             <div id="div0" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
         </div>
-        <div style="border: 3px solid lime;">
+        <div style="border: 3px solid rgb(85, 171, 85);">
             <div id="div1" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
         </div>
-        <div style="border: 3px solid blue;">
+        <div style="border: 3px solid rgb(0, 127, 255);">
             <div id="div2" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
         </div>
         <div>
