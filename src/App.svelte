@@ -5,7 +5,7 @@
     // import Viewer from "./lib/Viewer.svelte";
     // import ThumbList from "./lib/ThumbList.svelte";
     import ViewerUpload from "./lib/ViewerUpload.svelte";
-    import Reslice from "./lib/Reslice.svelte";
+    import ViewerReslice from "./lib/ViewerReslice.svelte";
 
     // const model = [
     //     {
@@ -40,7 +40,7 @@
     //     }
     // ]
     //
-    // const resources = [
+    const resources = [
     //     {
     //         id: 20,
     //         caption: "Upper arch",
@@ -62,16 +62,17 @@
     //         // resource__processed: "/testdata/LowerJawScan-gz.vtp"
     //         // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
     //     },
-    //     {
-    //         id: 31,
-    //         caption: "CBCT",
-    //         resource__id: 84,
-    //         resource__type: "VOLUME",
-    //         resource__processed: "/testdata/head-binary-gz.vti"
-    //         // resource__processed: "/testdata/cbct-gz.vti"
-    //         // resource__processed: "/testdata/1volume.vti"
-    //     }
-    // ]
+        {
+            id: 31,
+            caption: "CBCT",
+            resource__id: 84,
+            resource__type: "VOLUME",
+            // resource__processed: "/testdata/head-binary-gz.vti"
+            // resource__processed: "/testdata/cbct-gz.vti"
+            // resource__processed: "/testdata/1volume.vti"
+            resource__processed: "/testdata/axial.vti"
+        }
+    ]
     //
     //
     // const errorFileNotFound = [
@@ -110,7 +111,7 @@
     }
 </script>
 
-<Reslice/>
+<ViewerReslice {resources} />
 
 <ViewerUpload id="upload" screenshotCallback={addScreenshot} />
 

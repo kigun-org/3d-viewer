@@ -19,7 +19,6 @@
 
     import {CaptureOn} from '@kitware/vtk.js/Widgets/Core/WidgetManager/Constants';
 
-    import {vec3} from 'gl-matrix';
     import {SlabMode} from '@kitware/vtk.js/Imaging/Core/ImageReslice/Constants';
 
     import {xyzToViewType} from '@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants';
@@ -29,6 +28,8 @@
     import vtkXMLImageDataReader from "@kitware/vtk.js/IO/XML/XMLImageDataReader.js";
 
     import {onMount} from "svelte";
+
+    export let image
 
     onMount(() => {
         // ----------------------------------------------------------------------------
@@ -355,91 +356,82 @@
             return modified;
         }
 
-        HttpDataAccessHelper
-            // .fetchBinary("testdata/cbct.vti")
-            .fetchBinary("testdata/axial.vti")
-            .then((binary) => {
-                const reader = vtkXMLImageDataReader.newInstance()
-                reader.parseAsArrayBuffer(binary)
-                return reader.getOutputData()
-            })
-            .then((image) => {
-                widget.setImage(image);
 
-                // Create image outline in 3D view
-                const outline = vtkOutlineFilter.newInstance();
-                outline.setInputData(image);
-                const outlineMapper = vtkMapper.newInstance();
-                outlineMapper.setInputData(outline.getOutputData());
-                const outlineActor = vtkActor.newInstance();
-                outlineActor.setMapper(outlineMapper);
-                view3D.renderer.addActor(outlineActor);
+        widget.setImage(image);
 
-                // calculate image range, to set initial window/level
-                // console.log(image.getPointData().getScalars().getRange())
+        // Create image outline in 3D view
+        const outline = vtkOutlineFilter.newInstance();
+        outline.setInputData(image);
+        const outlineMapper = vtkMapper.newInstance();
+        outlineMapper.setInputData(outline.getOutputData());
+        const outlineActor = vtkActor.newInstance();
+        outlineActor.setMapper(outlineMapper);
+        view3D.renderer.addActor(outlineActor);
 
-                viewAttributes.forEach((obj, i) => {
-                    obj.reslice.setInputData(image);
+        // calculate image range, to set initial window/level
+        // console.log(image.getPointData().getScalars().getRange())
 
-                    obj.resliceActor.getProperty().setColorWindow(3000);
-                    obj.resliceActor.getProperty().setColorLevel(1000);
+        viewAttributes.forEach((obj, i) => {
+            obj.reslice.setInputData(image);
 
-                    obj.renderer.addActor(obj.resliceActor);
-                    view3D.renderer.addActor(obj.resliceActor);
-                    const reslice = obj.reslice;
-                    const viewType = xyzToViewType[i];
+            obj.resliceActor.getProperty().setColorWindow(3000);
+            obj.resliceActor.getProperty().setColorLevel(1000);
 
-                    viewAttributes
-                        // No need to update plane nor refresh when interaction
-                        // is on current view. Plane can't be changed with interaction on current
-                        // view. Refreshs happen automatically with `animation`.
-                        // Note: Need to refresh also the current view because of adding the mouse wheel
-                        // to change slicer
-                        .forEach((v) => {
-                            // Interactions in other views may change current plane
-                            v.widgetInstance.onInteractionEvent(
-                                // computeFocalPointOffset: Boolean which defines if the offset between focal point and
-                                // reslice cursor display center has to be recomputed (while translation is applied)
-                                // canUpdateFocalPoint: Boolean which defines if the focal point can be updated because
-                                // the current interaction is a rotation
-                                ({computeFocalPointOffset, canUpdateFocalPoint}) => {
-                                    const activeViewType = widget
-                                        .getWidgetState()
-                                        .getActiveViewType();
-                                    const keepFocalPointPosition =
-                                        activeViewType !== viewType && canUpdateFocalPoint;
-                                    updateReslice({
-                                        viewType,
-                                        reslice,
-                                        actor: obj.resliceActor,
-                                        renderer: obj.renderer,
-                                        resetFocalPoint: false,
-                                        keepFocalPointPosition,
-                                        computeFocalPointOffset,
-                                    });
-                                }
-                            );
-                        });
+            obj.renderer.addActor(obj.resliceActor);
+            view3D.renderer.addActor(obj.resliceActor);
+            const reslice = obj.reslice;
+            const viewType = xyzToViewType[i];
 
-                    updateReslice({
-                        viewType,
-                        reslice,
-                        actor: obj.resliceActor,
-                        renderer: obj.renderer,
-                        resetFocalPoint: true, // At first initilization, center the focal point to the image center
-                        keepFocalPointPosition: false, // Don't update the focal point as we already set it to the center of the image
-                        computeFocalPointOffset: true, // Allow to compute the current offset between display reslice center and display focal point
-                    });
-                    obj.renderer.getActiveCamera().zoom(1.75);
-                    obj.interactor.render();
+            viewAttributes
+                // No need to update plane nor refresh when interaction
+                // is on current view. Plane can't be changed with interaction on current
+                // view. Refreshs happen automatically with `animation`.
+                // Note: Need to refresh also the current view because of adding the mouse wheel
+                // to change slicer
+                .forEach((v) => {
+                    // Interactions in other views may change current plane
+                    v.widgetInstance.onInteractionEvent(
+                        // computeFocalPointOffset: Boolean which defines if the offset between focal point and
+                        // reslice cursor display center has to be recomputed (while translation is applied)
+                        // canUpdateFocalPoint: Boolean which defines if the focal point can be updated because
+                        // the current interaction is a rotation
+                        ({computeFocalPointOffset, canUpdateFocalPoint}) => {
+                            const activeViewType = widget
+                                .getWidgetState()
+                                .getActiveViewType();
+                            const keepFocalPointPosition =
+                                activeViewType !== viewType && canUpdateFocalPoint;
+                            updateReslice({
+                                viewType,
+                                reslice,
+                                actor: obj.resliceActor,
+                                renderer: obj.renderer,
+                                resetFocalPoint: false,
+                                keepFocalPointPosition,
+                                computeFocalPointOffset,
+                            });
+                        }
+                    );
                 });
 
-                view3D.renderer.resetCamera();
-                view3D.renderer.resetCameraClippingRange();
+            updateReslice({
+                viewType,
+                reslice,
+                actor: obj.resliceActor,
+                renderer: obj.renderer,
+                resetFocalPoint: true, // At first initilization, center the focal point to the image center
+                keepFocalPointPosition: false, // Don't update the focal point as we already set it to the center of the image
+                computeFocalPointOffset: true, // Allow to compute the current offset between display reslice center and display focal point
+            });
+            obj.renderer.getActiveCamera().zoom(1.75);
+            obj.interactor.render();
+        });
 
-                // set max number of slices to slider.
-                // const maxNumberOfSlices = vec3.length(image.getDimensions());
-            })
+        view3D.renderer.resetCamera();
+        view3D.renderer.resetCameraClippingRange();
+
+        // set max number of slices to slider.
+        // const maxNumberOfSlices = vec3.length(image.getDimensions());
 
         // ----------------------------------------------------------------------------
         // Define panel interactions
@@ -523,7 +515,7 @@
             widgetState.setPlanes({...initialPlanesState});
             widget.setCenter(widget.getWidgetState().getImage().getCenter());
             updateViews();
-        });
+        })
 
         // selectInterpolationMode:
         //     viewAttributes.forEach((obj) => {
@@ -533,23 +525,25 @@
     })
 </script>
 
-<div style="display: grid; grid-template-columns: 5fr 1fr">
-    <div id="reslice" style="display: grid; grid-template-columns: 1fr 1fr;">
-        <div style="border: 3px solid rgb(255, 85, 0);">
-            <div id="div0" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
+<div class="viewer_panel">
+    <div style="display: grid; grid-template-columns: 5fr 1fr">
+        <div id="reslice" style="display: grid; grid-template-columns: 1fr 1fr;">
+            <div style="border: 3px solid rgb(255, 85, 0);">
+                <div id="div0" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
+            </div>
+            <div style="border: 3px solid rgb(85, 171, 85);">
+                <div id="div1" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
+            </div>
+            <div style="border: 3px solid rgb(0, 127, 255);">
+                <div id="div2" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
+            </div>
+            <div>
+                <div id="div3" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
+            </div>
         </div>
-        <div style="border: 3px solid rgb(85, 171, 85);">
-            <div id="div1" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
-        </div>
-        <div style="border: 3px solid rgb(0, 127, 255);">
-            <div id="div2" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
-        </div>
-        <div>
-            <div id="div3" class="view" style="aspect-ratio: 3 / 2; min-height: 300px;"></div>
-        </div>
-    </div>
 
-    <div>
-        <button id="buttonReset">Reset views</button>
+        <div>
+            <button id="buttonReset">Reset views</button>
+        </div>
     </div>
 </div>
