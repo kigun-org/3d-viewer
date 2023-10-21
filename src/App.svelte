@@ -2,10 +2,10 @@
     import 'bootstrap-icons/font/bootstrap-icons.css'
     import 'bootstrap/dist/css/bootstrap.css'
 
-    // import Viewer from "./lib/Viewer.svelte";
-    // import ThumbList from "./lib/ThumbList.svelte";
-    import ViewerUpload from "./lib/ViewerUpload.svelte";
+    import Viewer from "./lib/Viewer.svelte";
     import ViewerReslice from "./lib/ViewerReslice.svelte";
+    import ViewerUpload from "./lib/ViewerUpload.svelte";
+    // import ThumbList from "./lib/ThumbList.svelte";
 
     // const model = [
     //     {
@@ -111,7 +111,7 @@
     }
 </script>
 
-<ViewerReslice {resources} />
+<!--<ViewerReslice {resources} />-->
 
 <ViewerUpload id="upload" screenshotCallback={addScreenshot} />
 

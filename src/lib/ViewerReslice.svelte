@@ -1,6 +1,6 @@
 <script>
     import './Viewer/viewer.css'
-    import LoaderRemote from "./Loaders/LoaderRemote.svelte";
+    import LoaderRemote from "./LoaderURL.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
     import ResliceComponent from "./ResliceComponent.svelte";
 

@@ -25,7 +25,6 @@
 
     // Force the loading of HttpDataAccessHelper to support gzip decompression
     import HttpDataAccessHelper from "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
-    import vtkXMLImageDataReader from "@kitware/vtk.js/IO/XML/XMLImageDataReader.js";
 
     import {onMount} from "svelte";
 
@@ -60,12 +59,8 @@
                 handle.setVisible(false)
             });
 
-            // [1, 0.3, 0], // sagittal
-            // [0.3, 0.7, 0.3], // coronal
-            // [0, 0.5, 1], // axial
-            // [0.5, 0.5, 0.5], // 3D
-
         // set handle colors
+        // [1, 0.3, 0], sagittal
         widgetState.getRotationHandleXinY0().setColor3(255, 85, 0)
         widgetState.getRotationHandleXinY1().setColor3(255, 85, 0)
         widgetState.getRotationHandleXinZ0().setColor3(255, 85, 0)
@@ -73,6 +68,7 @@
         widgetState.getAxisXinY().setColor3(255, 85, 0)
         widgetState.getAxisXinZ().setColor3(255, 85, 0)
 
+        // [0.3, 0.7, 0.3], // coronal
         widgetState.getRotationHandleYinX0().setColor3(85, 171, 85)
         widgetState.getRotationHandleYinX1().setColor3(85, 171, 85)
         widgetState.getRotationHandleYinZ0().setColor3(85, 171, 85)
@@ -80,6 +76,7 @@
         widgetState.getAxisYinX().setColor3(85, 171, 85)
         widgetState.getAxisYinZ().setColor3(85, 171, 85)
 
+        // [0, 0.5, 1], // axial
         widgetState.getRotationHandleZinX0().setColor3(0, 127, 255)
         widgetState.getRotationHandleZinX1().setColor3(0, 127, 255)
         widgetState.getRotationHandleZinY0().setColor3(0, 127, 255)
