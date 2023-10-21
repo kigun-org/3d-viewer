@@ -116,25 +116,4 @@ const loadImages = function (fileList, progressCallback) {
         })
 }
 
-const convertToNRRD = function (itkImage, progressCallback) {
-    progressCallback(new ProgressEvent('progress', {
-        lengthComputable: false,
-        loaded: 0,
-        total: 0
-    }))
-
-    return writeImageArrayBuffer(null, itkImage, "output.nrrd")
-        .then(function ({arrayBuffer, webWorker}) {
-            webWorker.terminate()
-
-            progressCallback(new ProgressEvent('progress', {
-                lengthComputable: true,
-                loaded: 100,
-                total: 100
-            }))
-
-            return arrayBuffer
-        })
-}
-
-export {parseDICOMFiles, loadImages, convertToNRRD}
+export {parseDICOMFiles, loadImages}

@@ -1,6 +1,7 @@
 <script>
     import {onMount, createEventDispatcher} from "svelte";
-    import {convertToNRRD, loadImages, parseDICOMFiles} from "./Loader/dicomUtils.js";
+    import {loadImages, parseDICOMFiles} from "./Loader/dicomUtils.js";
+    import {convertItkToNRRD} from "./Loader/nrrdUtils.js";
     import {Status} from "./Loader/Status.js";
     import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper";
 
@@ -64,7 +65,7 @@
     const convertItkImage = (itkImage) => {
         state = updateState("Converting image")
         if (outputNRRD) {
-            convertToNRRD(itkImage, progressCallback)
+            convertItkToNRRD(itkImage, progressCallback)
                 .then((arrayBuffer) => {
                     loaded = 0
                     progressBarIndeterminate = false
@@ -194,43 +195,41 @@
 
     {#if multipleSeriesMap}
         <div class="dicom_info font-monospace small">
-            <div>
-                <ul>
-                    {#each multipleSeriesMap as [patient, studiesMap]}
-                        <li>
-                            <strong>
-                                Patient
-                                [{getFirstImage(studiesMap).patientName} |
-                                <abbr title="Patient Identifier">ID</abbr> {patient} |
-                                <abbr title="Date of Birth">DOB</abbr> {getFirstImage(studiesMap).patientDateOfBirth}]
-                            </strong>
-                            <ul>
-                                {#each studiesMap as [study, seriesMap]}
-                                    Study
-                                    [{getFirstImage(seriesMap).studyDate};
-                                    {study}]
-                                    <ul>
-                                        {#each seriesMap as [series, images]}
-                                            <li class="series"
-                                                class:suggested={images[0].seriesDescription.toLowerCase().includes('axial')}>
-                                                <!-- svelte-ignore a11y-missing-attribute -->
-                                                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                                <a class="link-primary" role="button" tabindex="0"
-                                                   on:click={() => { processImageSeries(images) }}>
-                                                    Series
-                                                    [{images[0].seriesDescription};
-                                                    {series}]
-                                                </a>
-                                                <small>({images.length})</small>
-                                            </li>
-                                        {/each}
-                                    </ul>
-                                {/each}
-                            </ul>
-                        </li>
-                    {/each}
-                </ul>
-            </div>
+            <ul>
+                {#each multipleSeriesMap as [patient, studiesMap]}
+                    <li>
+                        <strong>
+                            Patient
+                            [{getFirstImage(studiesMap).patientName} |
+                            <abbr title="Patient Identifier">ID</abbr> {patient} |
+                            <abbr title="Date of Birth">DOB</abbr> {getFirstImage(studiesMap).patientDateOfBirth}]
+                        </strong>
+                        <ul>
+                            {#each studiesMap as [study, seriesMap]}
+                                Study
+                                [{getFirstImage(seriesMap).studyDate};
+                                {study}]
+                                <ul>
+                                    {#each seriesMap as [series, images]}
+                                        <li class="series"
+                                            class:suggested={images[0].seriesDescription.toLowerCase().includes('axial')}>
+                                            <!-- svelte-ignore a11y-missing-attribute -->
+                                            <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                            <a class="link-primary" role="button" tabindex="0"
+                                               on:click={() => { processImageSeries(images) }}>
+                                                Series
+                                                [{images[0].seriesDescription};
+                                                {series}]
+                                            </a>
+                                            <small>({images.length})</small>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            {/each}
+                        </ul>
+                    </li>
+                {/each}
+            </ul>
         </div>
     {/if}
 </div>

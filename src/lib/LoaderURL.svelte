@@ -4,6 +4,8 @@
     import vtkXMLPolyDataReader from "@kitware/vtk.js/IO/XML/XMLPolyDataReader";
 
     import {createEventDispatcher} from 'svelte';
+    import {convertNRRDtoItk} from "./Loader/nrrdUtils.js";
+    import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper.js";
 
     const dispatch = createEventDispatcher();
 
@@ -102,20 +104,28 @@
             .fetchBinary(mediaURL + volume_resource.resource__processed, {progressCallback})
             .then((binary) => {
                 try {
-                    reader.parseAsArrayBuffer(binary)
+                    return convertNRRDtoItk(binary, progressCallback)
                 } catch (e) {
                     dispatch('loadError', {message: `could not open resource (${e.name}).`})
-                    return
                 }
+            })
+            .then((itkImage) => {
+                const convert = async (itkImage) => convertItkToVtkImage(itkImage)
+                convert(itkImage)
+                    .then((vtkImage) => {
+                        volume_resource.source = vtkImage
+                        volume_resource.visible = true
 
-                volume_resource.source = reader.getOutputData()
-                volume_resource.visible = true
-
-                volumes = [...volumes, volume_resource]
-                pending--
+                        volumes = [...volumes, volume_resource]
+                        pending--
+                    })
             })
             .catch((e) => {
-                dispatch('loadError', {message: `could not download resource (${e.xhr.statusText}).`})
+                if (e.xhr === undefined) {
+                    dispatch('loadError', {message: `could not open resource (${e}).`})
+                } else {
+                    dispatch('loadError', {message: `could not download resource (${e.xhr.statusText}).`})
+                }
             })
     }
 

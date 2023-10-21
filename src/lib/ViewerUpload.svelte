@@ -33,7 +33,7 @@
     }
 
     onMount(() => {
-        document.getElementById('upload').addEventListener('change', (event) => {
+        document.getElementById(`upload_${id}`).addEventListener('change', (event) => {
             fileList = event.target.files || event.dataTransfer.files
         })
     })
@@ -42,13 +42,12 @@
 {#if errorMessage !== null}
     <div class="viewer_panel error">
         <ErrorMessage {errorMessage}/>
-        error
     </div>
 {:else}
     <div class="upload">
     {#if fileList === null}
-        <input id="upload" type="file" webkitdirectory directory multiple />
-        <label for="upload">
+        <input id={`upload_${id}`} type="file" webkitdirectory directory multiple />
+        <label for={`upload_${id}`}>
             <i class="bi-upload fs-4"></i>
             <span>Click to select folder</span>
         </label>
