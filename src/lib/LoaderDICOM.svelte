@@ -244,19 +244,23 @@
         text-align: start;
     }
 
-    .dicom_info > div {
+    .dicom_info {
         padding: 0.2em 0.5em;
         border: 1px solid black;
     }
 
-    .dicom_info > div > ul {
+    .dicom_info ul {
         margin-bottom: 0;
+        list-style: none;
+        padding-left: 1.25em;
+    }
+
+    .dicom_info > ul {
         padding-left: 0;
     }
 
-    .dicom_info ul {
-        list-style: none;
-        padding-left: 1.5em;
+    .dicom_info > ul > li:not(:last-child) {
+        margin-bottom: 0.5em;
     }
 
     .dicom_info li.series:hover {
