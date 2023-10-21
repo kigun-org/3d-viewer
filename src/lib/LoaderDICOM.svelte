@@ -214,9 +214,9 @@
                                             {#each seriesMap as [series, images]}
                                                 <li class="series"
                                                     class:suggested={images[0].seriesDescription.toLowerCase().includes('axial')}>
+                                                    <!-- svelte-ignore a11y-missing-attribute -->
                                                     <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                                    <a class="link-primary"
-                                                       href={'#'}
+                                                    <a class="link-primary" role="button" tabindex="0"
                                                        on:click={() => { processImageSeries(images) }}>
                                                         Series
                                                         [{images[0].seriesDescription};
