@@ -45,16 +45,17 @@
         error
     </div>
 {:else}
+    <div class="upload">
     {#if fileList === null}
-        <input id="upload" type="file" webkitdirectory directory multiple
-               style="display: none"/>
+        <input id="upload" type="file" webkitdirectory directory multiple />
         <label for="upload">
-            <i class="bi-upload"></i>
+            <i class="bi-upload fs-4"></i>
             <span>Click to select folder</span>
         </label>
     {:else}
-        <LoaderDICOM {fileList} outputNRRD={true} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
+        <LoaderDICOM {fileList} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
     {/if}
+    </div>
 
     {#if ready}
         <div class="viewer_panel">
@@ -62,3 +63,33 @@
         </div>
     {/if}
 {/if}
+
+<style>
+    .upload {
+        min-height: 12em;
+
+        padding: 0.5em 1em;
+        margin-bottom: 1em;
+
+        text-align: left;
+
+        background-color: #fafafa;
+        border: 3px dotted #eee;
+    }
+
+    .upload input {
+        display: none;
+    }
+
+    .upload label {
+        height: 100%;
+        min-height: 12em;
+
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        justify-content: center;
+
+        text-align: center;
+    }
+</style>

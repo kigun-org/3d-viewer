@@ -155,102 +155,88 @@
     })
 </script>
 
-<div class="upload">
-    <div>
-        {#each state as s}
-            {#if s.status === Status.INFO || s.status === Status.RUNNING}
-                <div>
-                    {s.message}
+<div>
+    {#each state as s}
+        {#if s.status === Status.INFO || s.status === Status.RUNNING}
+            <div>
+                {s.message}
+            </div>
+        {:else if s.status === Status.INFO_DICOM}
+            <div class="text-start mb-1">
+                <div>DICOM series information</div>
+                <div class="d-flex gap-4 ms-3 font-monospace small">
+                    <strong>Patient</strong>
+                    <span>Name: {s.message.image.patientName}</span>
+                    <span><abbr title="Patient Identifier">ID</abbr>: {s.message.image.patientID}</span>
+                    <span><abbr title="Date of Birth">DOB</abbr>: {s.message.image.patientDateOfBirth}</span>
                 </div>
-            {:else if s.status === Status.INFO_DICOM}
-                <div class="text-start mb-1">
-                    <div>DICOM series information</div>
-                    <div class="d-flex gap-4 ms-3 font-monospace small">
-                        <strong>Patient</strong>
-                        <span>Name: {s.message.image.patientName}</span>
-                        <span><abbr title="Patient Identifier">ID</abbr>: {s.message.image.patientID}</span>
-                        <span><abbr title="Date of Birth">DOB</abbr>: {s.message.image.patientDateOfBirth}</span>
-                    </div>
-                    <div class="d-flex gap-4 ms-3 font-monospace small">
-                        <strong>Series&nbsp;</strong>
-                        <span>Date: {s.message.image.studyDate}</span>
-                        <span>Description: {s.message.image.seriesDescription}</span>
-                        <span>Images: {s.message.length}</span>
-                    </div>
-                </div>
-            {:else if s.status === Status.WARNING}
-                <div class="text-warning fw-semibold">WARNING: {s.message}</div>
-            {:else if s.status === Status.ERROR}
-                <div class="text-danger fw-semibold">ERROR: {s.message}</div>
-            {/if}
-        {/each}
-
-        {#if state.length > 0 && state[state.length - 1].status === Status.RUNNING}
-            {#if progressBarIndeterminate}
-                <progress></progress>
-            {:else}
-                <progress value={progress}></progress>
-            {/if}
-        {/if}
-
-        {#if multipleSeriesMap}
-            <div class="dicom_info font-monospace small">
-                <div>
-                    <ul>
-                        {#each multipleSeriesMap as [patient, studiesMap]}
-                            <li>
-                                <strong>
-                                    Patient
-                                    [{getFirstImage(studiesMap).patientName} |
-                                    <abbr title="Patient Identifier">ID</abbr> {patient} |
-                                    <abbr title="Date of Birth">DOB</abbr> {getFirstImage(studiesMap).patientDateOfBirth}]
-                                </strong>
-                                <ul>
-                                    {#each studiesMap as [study, seriesMap]}
-                                        Study
-                                        [{getFirstImage(seriesMap).studyDate};
-                                        {study}]
-                                        <ul>
-                                            {#each seriesMap as [series, images]}
-                                                <li class="series"
-                                                    class:suggested={images[0].seriesDescription.toLowerCase().includes('axial')}>
-                                                    <!-- svelte-ignore a11y-missing-attribute -->
-                                                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                                    <a class="link-primary" role="button" tabindex="0"
-                                                       on:click={() => { processImageSeries(images) }}>
-                                                        Series
-                                                        [{images[0].seriesDescription};
-                                                        {series}]
-                                                    </a>
-                                                    <small>({images.length})</small>
-                                                </li>
-                                            {/each}
-                                        </ul>
-                                    {/each}
-                                </ul>
-                            </li>
-                        {/each}
-                    </ul>
+                <div class="d-flex gap-4 ms-3 font-monospace small">
+                    <strong>Series&nbsp;</strong>
+                    <span>Date: {s.message.image.studyDate}</span>
+                    <span>Description: {s.message.image.seriesDescription}</span>
+                    <span>Images: {s.message.length}</span>
                 </div>
             </div>
+        {:else if s.status === Status.WARNING}
+            <div class="text-warning fw-semibold">WARNING: {s.message}</div>
+        {:else if s.status === Status.ERROR}
+            <div class="text-danger fw-semibold">ERROR: {s.message}</div>
         {/if}
-    </div>
+    {/each}
+
+    {#if state.length > 0 && state[state.length - 1].status === Status.RUNNING}
+        {#if progressBarIndeterminate}
+            <progress></progress>
+        {:else}
+            <progress value={progress}></progress>
+        {/if}
+    {/if}
+
+    {#if multipleSeriesMap}
+        <div class="dicom_info font-monospace small">
+            <div>
+                <ul>
+                    {#each multipleSeriesMap as [patient, studiesMap]}
+                        <li>
+                            <strong>
+                                Patient
+                                [{getFirstImage(studiesMap).patientName} |
+                                <abbr title="Patient Identifier">ID</abbr> {patient} |
+                                <abbr title="Date of Birth">DOB</abbr> {getFirstImage(studiesMap).patientDateOfBirth}]
+                            </strong>
+                            <ul>
+                                {#each studiesMap as [study, seriesMap]}
+                                    Study
+                                    [{getFirstImage(seriesMap).studyDate};
+                                    {study}]
+                                    <ul>
+                                        {#each seriesMap as [series, images]}
+                                            <li class="series"
+                                                class:suggested={images[0].seriesDescription.toLowerCase().includes('axial')}>
+                                                <!-- svelte-ignore a11y-missing-attribute -->
+                                                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                                <a class="link-primary" role="button" tabindex="0"
+                                                   on:click={() => { processImageSeries(images) }}>
+                                                    Series
+                                                    [{images[0].seriesDescription};
+                                                    {series}]
+                                                </a>
+                                                <small>({images.length})</small>
+                                            </li>
+                                        {/each}
+                                    </ul>
+                                {/each}
+                            </ul>
+                        </li>
+                    {/each}
+                </ul>
+            </div>
+        </div>
+    {/if}
 </div>
 
 <style>
-    .upload {
-        min-height: 12em;
-
-        padding: 0.5em 1em;
-        margin-bottom: 1em;
-
-        text-align: left;
-
-        background-color: #fafafa;
-        border: 3px dashed #eee;
-    }
-
-    .upload progress {
+    progress {
         max-width: 10em;
     }
 
