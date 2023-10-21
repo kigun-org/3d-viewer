@@ -53,7 +53,7 @@
             <span>Click to select folder</span>
         </label>
     {:else}
-        <LoaderDICOM {fileList} outputNrrd={true} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
+        <LoaderDICOM {fileList} outputNRRD={true} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
     {/if}
 
     {#if ready}

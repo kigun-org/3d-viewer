@@ -125,7 +125,7 @@
                 orientationWidget: null,
             };
 
-            obj.interactor.onPointerEnter((event) => {
+            obj.interactor.onPointerEnter(() => {
                 // console.log("pointer enter event", event)
                 if (i === 0) {
                     widget.getWidgetState().getRotationHandleYinX0().setVisible(true)
@@ -141,7 +141,6 @@
                 }
                 widget.getWidgetState().getAxisYinX().setVisible(true)
                 widget.getWidgetState().getAxisZinX().setVisible(true)
-
 
                 if (i === 1) {
                     widget.getWidgetState().getRotationHandleXinY0().setVisible(true)
@@ -159,7 +158,6 @@
                 widget.getWidgetState().getAxisXinY().setVisible(true)
                 widget.getWidgetState().getAxisZinY().setVisible(true)
 
-
                 if (i === 2) {
                     widget.getWidgetState().getRotationHandleXinZ0().setVisible(true)
                     widget.getWidgetState().getRotationHandleXinZ1().setVisible(true)
@@ -175,7 +173,6 @@
                 widget.getWidgetState().getAxisXinZ().setVisible(true)
                 widget.getWidgetState().getAxisYinZ().setVisible(true)
 
-
                 if (i < 3) {
                     viewAttributes.forEach((obj) => {
                         obj.reslice.setInterpolationMode(InterpolationMode.NEAREST);
@@ -183,7 +180,7 @@
                     })
                 }
             })
-            obj.interactor.onPointerLeave((event) => {
+            obj.interactor.onPointerLeave(() => {
                 // console.log("pointer leave event", event)
                 // i === 0
                 widget.getWidgetState().getAxisYinX().setVisible(false)
