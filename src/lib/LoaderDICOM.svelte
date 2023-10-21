@@ -4,9 +4,6 @@
     import {Status} from "./Loader/Status.js";
     import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper";
 
-    import vtkXMLImageDataWriter from '@kitware/vtk.js/IO/XML/XMLImageDataWriter';
-    import vtkXMLWriter from '@kitware/vtk.js/IO/XML/XMLWriter';
-
 
     const dispatch = createEventDispatcher();
 
@@ -72,9 +69,7 @@
                     loaded = 0
                     progressBarIndeterminate = false
                     dispatch('loadComplete', {image: arrayBuffer})
-                    state = updateState(
-                        `Done (${(arrayBuffer.byteLength / (1024 * 1024)).toFixed(1)} MB).`,
-                        Status.INFO)
+                    state = updateState('Done.', Status.INFO)
                 })
         } else {
             const convert = async (itkImage) => convertItkToVtkImage(itkImage)
