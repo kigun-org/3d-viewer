@@ -11,7 +11,7 @@ function convertItkToNRRD(itkImage, progressCallback) {
         total: 0
     }))
 
-    return writeImageArrayBuffer(null, itkImage, "output.nrrd")
+    return writeImageArrayBuffer(null, itkImage, "output.nrrd", {useCompression: true})
         .then(function ({arrayBuffer, webWorker}) {
             webWorker.terminate()
 
