@@ -11,11 +11,20 @@
     export let fileList
     export let outputNRRD = false
 
+    // Upload variables
+    export let upload = null
+    let uploading = false
+    let uploadComplete = false
+    let uploadError = false
+    let image = null
+    let uploadMessage = ''
+    let uploadProgress = 0
+
     let loaded = 0
     let total = 100
     let progressBarIndeterminate = false
 
-    let state = []
+    let statusMessages = []
 
     let multipleSeriesMap = null
 
@@ -32,51 +41,54 @@
     }
 
     const updateState = function (message, status = Status.RUNNING, append = true) {
-        state.forEach((s) => {
+        statusMessages.forEach((s) => {
             if (s.status === Status.RUNNING) {
                 s.status = Status.INFO
             }
         })
 
         if (append) {
-            state.push({status: status, message: message})
+            statusMessages.push({status: status, message: message})
         } else {
-            state[state.length - 1] = {status: status, message: message}
+            statusMessages[statusMessages.length - 1] = {status: status, message: message}
         }
 
-        return state
+        return statusMessages
     }
 
     const processImageSeries = function (fileInfoList, appendState = false) {
         multipleSeriesMap = null
 
-        state = updateState(
+        statusMessages = updateState(
             {image: fileInfoList[0], length: fileInfoList.length},
             Status.INFO_DICOM,
             appendState)
 
         const totalSize = fileInfoList.reduce((acc, curr) => acc + curr.file.size, 0)
-        state = updateState(`Loading images (${(totalSize / (1024 * 1024)).toFixed(1)} MB)`)
+        statusMessages = updateState(`Loading images (${(totalSize / (1024 * 1024)).toFixed(1)} MB)`)
 
         loadImages(fileInfoList.map((result) => result.file), progressCallback)
             .then(convertItkImage)
     }
 
     const convertItkImage = (itkImage) => {
-        state = updateState("Converting image")
+        statusMessages = updateState("Converting image")
         if (outputNRRD) {
             convertItkToNRRD(itkImage, progressCallback)
                 .then((arrayBuffer) => {
                     loaded = 0
                     progressBarIndeterminate = false
+                    if (upload !== null) {
+                        image = arrayBuffer
+                    }
                     dispatch('loadComplete', {image: arrayBuffer})
-                    state = updateState('Done.', Status.INFO)
+                    statusMessages = updateState('Done.', Status.INFO)
                 })
         } else {
             const convert = async (itkImage) => convertItkToVtkImage(itkImage)
             convert(itkImage).then((vtkImage) => {
                 dispatch('loadComplete', {image: vtkImage})
-                state = updateState('Done.', Status.INFO)
+                statusMessages = updateState('Done.', Status.INFO)
             })
         }
     }
@@ -90,14 +102,80 @@
         }
     }
 
+
+
+    function uploadProgressCallback(event) {
+        if (event.lengthComputable) {
+            const loaded = event.loaded
+            const total = event.total
+
+            uploadMessage = (loaded / (1024 * 1024)).toFixed(1) + '/'
+                + (total / (1024 * 1024)).toFixed(1) + 'MB ('
+                + ((loaded / total) * 100).toFixed(0) + '%) uploaded.'
+            uploadProgress = loaded / total
+        }
+    }
+
+    function uploadFinishedCallback() {
+        uploading = false
+        uploadComplete = true
+        uploadMessage = 'Upload complete.'
+        dispatch('uploadComplete', null)
+    }
+
+    function uploadErrorCallback(event) {
+        console.log("Upload error.", event)
+        uploading = false
+        uploadError = true
+        if (event.target.statusText === '') {
+            uploadMessage = `Error uploading file.`
+        } else {
+            uploadMessage = `ERROR: ${event.target.statusText}`
+        }
+    }
+
+    function uploadAbortedCallback(event) {
+        console.log("Upload aborted.", event)
+        uploading = false
+        uploadError = true
+        uploadMessage = "Upload aborted."
+    }
+
+    function uploadImage(image) {
+        const formData = new FormData()
+
+        if (upload.params !== undefined) {
+            for (const param in upload.params) {
+                formData.append(param, upload.params[param])
+            }
+        }
+
+        const today = new Date().toISOString().slice(0, 10).replaceAll('-', '')
+        formData.append('nrrd', new Blob([image]), `${today}.nrrd`)
+
+        const req = new XMLHttpRequest()
+        req.upload.addEventListener("progress", uploadProgressCallback)
+        req.addEventListener("load", uploadFinishedCallback)
+        req.addEventListener("error", uploadErrorCallback)
+        req.addEventListener("abort", uploadAbortedCallback)
+
+        req.open("POST", upload.url)
+        req.send(formData)
+
+        uploading = true
+        uploadMessage = 'Starting upload...'
+        uploadProgress = 0 / image.byteLength
+    }
+
+
     onMount(() => {
-        state = [{status: Status.RUNNING, message: "Loading DICOM files"}]
+        statusMessages = [{status: Status.RUNNING, message: "Loading DICOM files"}]
 
         parseDICOMFiles(fileList, progressCallback)
             .then((fileList) => {
                 const fileInfoList = fileList.filter((result) => result.isDICOM)
 
-                state = updateState(
+                statusMessages = updateState(
                     `Found ${fileInfoList.length} DICOM files.`,
                     Status.INFO, false)
 
@@ -125,17 +203,17 @@
 
                 let multipleSeries = false
                 if (groupedFileInfoMap.size > 1) {
-                    state = updateState("Multiple patients found.", Status.WARNING)
+                    statusMessages = updateState("Multiple patients found.", Status.WARNING)
                     multipleSeries = true
                 } else {
                     const studies = groupedFileInfoMap.values().next().value
                     if (studies.size > 1) {
-                        state = updateState("Multiple studies found.", Status.WARNING)
+                        statusMessages = updateState("Multiple studies found.", Status.WARNING)
                         multipleSeries = true
                     } else {
                         const series = studies.values().next().value
                         if (series.size > 1) {
-                            state = updateState("Multiple image series found.", Status.WARNING)
+                            statusMessages = updateState("Multiple image series found.", Status.WARNING)
                             multipleSeries = true
                         }
                     }
@@ -145,19 +223,19 @@
                     multipleSeriesMap = new Map([...groupedFileInfoMap.entries()].sort((a, b) => {
                         return getFirstImage(a[1]).patientName.localeCompare(getFirstImage(b[1]).patientName)
                     }))
-                    state = updateState('Select image series to load:', Status.INFO)
+                    statusMessages = updateState('Select image series to load:', Status.INFO)
                 } else {
                     processImageSeries(fileInfoList, true)
                 }
             })
             .catch((_) => {
-                state = updateState('No DICOM files found.', Status.ERROR, false)
+                statusMessages = updateState('No DICOM files found.', Status.ERROR, false)
             })
     })
 </script>
 
-<div>
-    {#each state as s}
+<div class="loader_status">
+    {#each statusMessages as s}
         {#if s.status === Status.INFO || s.status === Status.RUNNING}
             <div>
                 {s.message}
@@ -185,7 +263,7 @@
         {/if}
     {/each}
 
-    {#if state.length > 0 && state[state.length - 1].status === Status.RUNNING}
+    {#if statusMessages.length > 0 && statusMessages[statusMessages.length - 1].status === Status.RUNNING}
         {#if progressBarIndeterminate}
             <progress></progress>
         {:else}
@@ -234,8 +312,24 @@
     {/if}
 </div>
 
+{#if image !== null}
+    <div class="d-flex align-items-center gap-3 mt-2">
+        <button class="btn" class:btn-primary={!uploadError} class:btn-danger={uploadError}
+                disabled={uploading || uploadComplete || uploadError}
+                on:click={() => uploadImage(image)}>
+            Upload image
+        </button>
+        {#if uploading || uploadComplete || uploadError}
+            <div class="d-flex flex-column flex-grow-1 justify-content-center">
+                <span>{uploadMessage}</span>
+                <progress value={uploadProgress}></progress>
+            </div>
+        {/if}
+    </div>
+{/if}
+
 <style>
-    progress {
+    .loader_status progress {
         max-width: 10em;
     }
 
