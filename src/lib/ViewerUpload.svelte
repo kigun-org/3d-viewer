@@ -58,7 +58,7 @@
 
     {#if ready}
         <div class="viewer_panel">
-            <ViewerComponent {id} {models} {volumes} {screenshotCallback} />
+            <ViewerComponent {id} {models} {volumes} startMaximized={false} {screenshotCallback} />
         </div>
     {/if}
 {/if}

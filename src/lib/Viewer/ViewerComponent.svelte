@@ -22,7 +22,7 @@
     export let volumes = []
     export let screenshotCallback = null
 
-    /** Should four panels (3D + orthogonal views) be shown on start up? default is true */
+    /** Should four panels (3D + orthogonal views) be shown on start up? default is true if showing a volume */
     export let startMaximized = (volumes.length > 0)
     let maximized = startMaximized ? ViewMode.THREE_D : null
 
