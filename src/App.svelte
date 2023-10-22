@@ -5,42 +5,44 @@
     import ViewerUpload from "./lib/ViewerUpload.svelte";
     import Viewer from "./lib/Viewer.svelte";
     import ViewerReslice from "./lib/ViewerReslice.svelte";
+    import LoaderDICOM from "./lib/LoaderDICOM.svelte";
+    import LoaderURL from "./lib/LoaderURL.svelte";
     // import ThumbList from "./lib/ThumbList.svelte";
-
-    const model = [
-        {
-            id: 20,
-            caption: "Upper arch",
-            params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-            resource__id: 55,
-            resource__type: "MODEL",
-            resource__processed: "/testdata/UpperJawScan-gz.vtp"
-            // resource__processed: "resources/2023/09/UpperJawScan.vtp"
-        },
-    ]
-
-    const models = [
-        {
-            id: 20,
-            caption: "Upper arch",
-            params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-            resource__id: 55,
-            resource__type: "MODEL",
-            resource__processed: "/testdata/UpperJawScan-gz.vtp"
-            // resource__processed: "resources/2023/09/UpperJawScan.vtp"
-        },
-        {
-            id: 22,
-            caption: "Lower arch",
-            params: '{ "color": [ 1.0, 1.0, 0.8 ], "opacity": 1.0 }',
-            resource__id: 43,
-            resource__type: "MODEL",
-            resource__processed: "/testdata/LowerJawScan-gz.vtp"
-            // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
-        }
-    ]
-
-    const resources = [
+    //
+    // const model = [
+    //     {
+    //         id: 20,
+    //         caption: "Upper arch",
+    //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
+    //         resource__id: 55,
+    //         resource__type: "MODEL",
+    //         resource__processed: "/testdata/UpperJawScan-gz.vtp"
+    //         // resource__processed: "resources/2023/09/UpperJawScan.vtp"
+    //     },
+    // ]
+    //
+    // const models = [
+    //     {
+    //         id: 20,
+    //         caption: "Upper arch",
+    //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
+    //         resource__id: 55,
+    //         resource__type: "MODEL",
+    //         resource__processed: "/testdata/UpperJawScan-gz.vtp"
+    //         // resource__processed: "resources/2023/09/UpperJawScan.vtp"
+    //     },
+    //     {
+    //         id: 22,
+    //         caption: "Lower arch",
+    //         params: '{ "color": [ 1.0, 1.0, 0.8 ], "opacity": 1.0 }',
+    //         resource__id: 43,
+    //         resource__type: "MODEL",
+    //         resource__processed: "/testdata/LowerJawScan-gz.vtp"
+    //         // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
+    //     }
+    // ]
+    //
+    // const resources = [
     //     {
     //         id: 20,
     //         caption: "Upper arch",
@@ -62,42 +64,42 @@
     //         // resource__processed: "/testdata/LowerJawScan-gz.vtp"
     //         // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
     //     },
-        {
-            id: 31,
-            caption: "CBCT",
-            resource__id: 84,
-            resource__type: "VOLUME",
-            // resource__processed: "/testdata/head-binary-gz.vti"
-            // resource__processed: "/testdata/cbct-gz.vti"
-            // resource__processed: "/testdata/1volume.vti"
-            // resource__processed: "/testdata/axial.vti"
-            // resource__processed: "/testdata/20231021.nrrd"
-            resource__processed: "/testdata/20231022.nrrd"
-        }
-    ]
-
-
-    const errorFileNotFound = [
-        {
-            id: 20,
-            caption: "Upper arch",
-            params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-            resource__id: 55,
-            resource__type: "MODEL",
-            resource__processed: "/testdata/non_existant.vtp"
-        },
-    ]
-
-    const errorUnsupportedModelFormat = [
-        {
-            id: 20,
-            caption: "Upper arch",
-            params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-            resource__id: 55,
-            resource__type: "MODEL",
-            resource__processed: "/testdata/LowerJawScan.stl"
-        },
-    ]
+    //     {
+    //         id: 31,
+    //         caption: "CBCT",
+    //         resource__id: 84,
+    //         resource__type: "VOLUME",
+    //         // resource__processed: "/testdata/head-binary-gz.vti"
+    //         // resource__processed: "/testdata/cbct-gz.vti"
+    //         // resource__processed: "/testdata/1volume.vti"
+    //         // resource__processed: "/testdata/axial.vti"
+    //         // resource__processed: "/testdata/20231021.nrrd"
+    //         resource__processed: "/testdata/20231022.nrrd"
+    //     }
+    // ]
+    //
+    //
+    // const errorFileNotFound = [
+    //     {
+    //         id: 20,
+    //         caption: "Upper arch",
+    //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
+    //         resource__id: 55,
+    //         resource__type: "MODEL",
+    //         resource__processed: "/testdata/non_existant.vtp"
+    //     },
+    // ]
+    //
+    // const errorUnsupportedModelFormat = [
+    //     {
+    //         id: 20,
+    //         caption: "Upper arch",
+    //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
+    //         resource__id: 55,
+    //         resource__type: "MODEL",
+    //         resource__processed: "/testdata/LowerJawScan.stl"
+    //     },
+    // ]
 
     let showScreenshots = false
 

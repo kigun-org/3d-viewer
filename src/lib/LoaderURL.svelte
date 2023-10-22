@@ -55,9 +55,9 @@
         }
 
         HttpDataAccessHelper.fetchBinary(mediaURL + model_resource.resource__processed, {progressCallback})
-            .then((binary) => {
+            .then((arrayBuffer) => {
                 try {
-                    reader.parseAsArrayBuffer(binary)
+                    reader.parseAsArrayBuffer(arrayBuffer)
                 } catch (e) {
                     dispatch('loadError', {message: `could not open resource (${e.name}).`})
                     return
@@ -102,9 +102,9 @@
 
         HttpDataAccessHelper
             .fetchBinary(mediaURL + volume_resource.resource__processed, {progressCallback})
-            .then((binary) => {
+            .then((arrayBuffer) => {
                 try {
-                    return convertNRRDtoItk(binary, progressCallback)
+                    return convertNRRDtoItk(arrayBuffer, progressCallback)
                 } catch (e) {
                     dispatch('loadError', {message: `could not open resource (${e.name}).`})
                 }
@@ -122,7 +122,7 @@
             })
             .catch((e) => {
                 if (e.xhr === undefined) {
-                    dispatch('loadError', {message: `could not open resource (${e}).`})
+                    dispatch('loadError', {message: `could not open resource (${e.message}).`})
                 } else {
                     dispatch('loadError', {message: `could not download resource (${e.xhr.statusText}).`})
                 }

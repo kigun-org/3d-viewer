@@ -1,11 +1,4 @@
-import {writeImageArrayBuffer} from "itk-wasm";
-
-import {
-    readDicomTags,
-    readImageDicomFileSeries,
-    setPipelinesBaseUrl,
-    setPipelineWorkerUrl
-} from "@itk-wasm/dicom";
+import {setPipelinesBaseUrl, setPipelineWorkerUrl, readDicomTags, readImageDicomFileSeries} from "@itk-wasm/dicom";
 
 setPipelinesBaseUrl(import.meta.env.BASE_URL + "itk/dicom/pipelines")
 setPipelineWorkerUrl(import.meta.env.BASE_URL + "itk/dicom/web-workers/pipeline.worker.js")

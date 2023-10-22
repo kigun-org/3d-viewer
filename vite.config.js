@@ -20,15 +20,12 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {src: 'node_modules/itk-wasm/dist/web-workers/min-bundles/*', dest: 'itk/web-workers'},
-                {src: 'node_modules/itk-image-io/Nrrd*', dest: 'itk/image-io'},
-                // {
-                //     src: 'node_modules/itk-mesh-io/*',
-                //     dest: 'itk/mesh-io',
-                //     rename: 'mesh-io'
-                // }
+
                 {src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-dicom-tags*', dest: 'itk/dicom/pipelines'},
                 {src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-image-dicom*', dest: 'itk/dicom/pipelines'},
                 {src: 'node_modules/@itk-wasm/dicom/dist/web-workers/*', dest: 'itk/dicom/web-workers'},
+
+                {src: 'node_modules/@itk-wasm/image-io/dist/pipelines/nrrd*', dest: 'itk/image-io/pipelines'},
             ],
         })
     ],

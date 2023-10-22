@@ -1,8 +1,6 @@
-import {readArrayBuffer, writeImageArrayBuffer} from "itk-wasm";
-import {setPipelinesBaseUrl, setPipelineWorkerUrl} from "@itk-wasm/dicom";
+import {setPipelinesBaseUrl, readImage, writeImage} from "@itk-wasm/image-io";
 
-setPipelinesBaseUrl(import.meta.env.BASE_URL + "itk/dicom/pipelines")
-setPipelineWorkerUrl(import.meta.env.BASE_URL + "itk/dicom/web-workers/pipeline.worker.js")
+setPipelinesBaseUrl(import.meta.env.BASE_URL + "itk/image-io/pipelines")
 
 function convertItkToNRRD(itkImage, progressCallback) {
     progressCallback(new ProgressEvent('progress', {
@@ -11,8 +9,8 @@ function convertItkToNRRD(itkImage, progressCallback) {
         total: 0
     }))
 
-    return writeImageArrayBuffer(null, itkImage, "output.nrrd", {useCompression: true})
-        .then(function ({arrayBuffer, webWorker}) {
+    return writeImage(null, itkImage, "out.nrrd", {useCompression: true})
+        .then(function ({webWorker, serializedImage}) {
             webWorker.terminate()
 
             progressCallback(new ProgressEvent('progress', {
@@ -21,18 +19,19 @@ function convertItkToNRRD(itkImage, progressCallback) {
                 total: 100
             }))
 
-            return arrayBuffer
+            return serializedImage.data.buffer
         })
 }
 
-function convertNRRDtoItk(nrrdArrayBuffer, progressCallback) {
+function convertNRRDtoItk(arrayBuffer, progressCallback) {
     progressCallback(new ProgressEvent('progress', {
         lengthComputable: false,
         loaded: 0,
         total: 0
     }))
 
-    return readArrayBuffer(null, nrrdArrayBuffer, "input.nrrd")
+    const inputFile = new File([arrayBuffer], "input.nrrd")
+    return readImage(null, inputFile)
         .then(function ({webWorker: webWorker, image: itkImage}) {
             webWorker.terminate()
 
