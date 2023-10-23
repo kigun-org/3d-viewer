@@ -123,10 +123,10 @@
         });
         resizeObserver.observe(container)
 
-        for (const model of models) {
-            const actor = createModelSlice(model)
-            renderer.addActor(actor)
-        }
+        // for (const model of models) {
+        //     const actor = createModelSlice(model)
+        //     renderer.addActor(actor)
+        // }
 
         for (const volume of volumes) {
             const actor = createVolumeSlice(volume)

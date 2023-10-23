@@ -1,13 +1,7 @@
-import {writeImageArrayBuffer} from "itk-wasm";
+import {setPipelinesBaseUrl, setPipelineWorkerUrl, readDicomTags, readImageDicomFileSeries} from "@itk-wasm/dicom";
 
-import {
-    readDicomTags,
-    readImageDicomFileSeries,
-    setPipelinesBaseUrl,
-    setPipelineWorkerUrl
-} from "@itk-wasm/dicom";
-setPipelinesBaseUrl("/itk/dicom/pipelines")
-setPipelineWorkerUrl("/itk/dicom/web-workers/pipeline.worker.js")
+setPipelinesBaseUrl(import.meta.env.BASE_URL + "itk/dicom/pipelines")
+setPipelineWorkerUrl(import.meta.env.BASE_URL + "itk/dicom/web-workers/pipeline.worker.js")
 
 const parseDICOMFiles = async function (fileList, progressCallback) {
     let loaded = 0
@@ -70,13 +64,13 @@ const parseDICOMFiles = async function (fileList, progressCallback) {
         }
     }
 
-    // split up the DICOM images and assign different workers per chunk
+    // split up the DICOM images and assign different workers per chunk; 200 seems to be a safe value
     let results = []
     const chunkSize = 200;
     for (let i = 0; i < fileList.length; i += chunkSize) {
         const chunk = [...fileList].slice(i, i + chunkSize);
 
-        let {webWorker: worker, tags: _} = await readDicomTags(null, chunk[0], {
+        let {webWorker: worker} = await readDicomTags(null, chunk[0], {
             tagsToRead: {
                 tags: [
                     "0010|0020", "0010|0010", "0010|0030", "0010|0040", // patient ID, name, DoB, sex
@@ -94,7 +88,7 @@ const parseDICOMFiles = async function (fileList, progressCallback) {
     return results
 }
 
-const createVolume = function (fileList, progressCallback) {
+const loadImages = function (fileList, progressCallback) {
     progressCallback(new ProgressEvent('progress', {
         lengthComputable: false,
         loaded: 0,
@@ -115,58 +109,4 @@ const createVolume = function (fileList, progressCallback) {
         })
 }
 
-const convertToNRRD = function (image, progressCallback) {
-    progressCallback(new ProgressEvent('progress', {
-        lengthComputable: false,
-        loaded: 0,
-        total: 0
-    }))
-
-    return writeImageArrayBuffer(null, image, "test.nrrd")
-        .then(function ({arrayBuffer, webWorker}) {
-            webWorker.terminate()
-
-            progressCallback(new ProgressEvent('progress', {
-                lengthComputable: true,
-                loaded: 100,
-                total: 100
-            }))
-
-            return arrayBuffer
-        })
-}
-
-const uploadVolume = function (arrayBuffer, progressCallback, uploadFinishedCallback) {
-    // const a = document.createElement('a')
-    // a.href = URL.createObjectURL(new Blob(
-    //     [ arrayBuffer ],
-    //     { type: 'application/octet-stream' }
-    // ))
-    // a.download = "download.nrrd"
-    // a.click()
-
-    const formData = new FormData()
-    // formData.append('csrftoken', '7y5oxybOKclGGBBdwHUR4KfooSYaNsT2')
-    formData.append('cbct', new Blob([arrayBuffer]), '20230924test.nrrd')
-
-    console.log(`Sending ${arrayBuffer.byteLength} bytes by POST request...`)
-    const req = new XMLHttpRequest()
-    req.addEventListener("load", (event) => {
-        console.log("loaded", event)
-        uploadFinishedCallback()
-    })
-    req.upload.addEventListener("progress", progressCallback)
-    req.addEventListener("error", (event) => {
-        console.log("error", event)
-    });
-    req.addEventListener("abort", (event) => {
-        console.log("aborted", event)
-    })
-
-    req.open("POST", "http://localhost:8000/upload_cbct")
-    req.send(formData)
-
-    return true
-}
-
-export {parseDICOMFiles, createVolume, convertToNRRD, uploadVolume}
+export {parseDICOMFiles, loadImages}

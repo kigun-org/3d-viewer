@@ -2,11 +2,13 @@
     import 'bootstrap-icons/font/bootstrap-icons.css'
     import 'bootstrap/dist/css/bootstrap.css'
 
-    // import Viewer from "./lib/Viewer.svelte";
-    // import ThumbList from "./lib/ThumbList.svelte";
     import ViewerUpload from "./lib/ViewerUpload.svelte";
-    import Reslice from "./lib/Reslice.svelte";
-
+    import Viewer from "./lib/Viewer.svelte";
+    import ViewerReslice from "./lib/ViewerReslice.svelte";
+    import LoaderDICOM from "./lib/LoaderDICOM.svelte";
+    import LoaderURL from "./lib/LoaderURL.svelte";
+    // import ThumbList from "./lib/ThumbList.svelte";
+    //
     // const model = [
     //     {
     //         id: 20,
@@ -67,9 +69,12 @@
     //         caption: "CBCT",
     //         resource__id: 84,
     //         resource__type: "VOLUME",
-    //         resource__processed: "/testdata/head-binary-gz.vti"
+    //         // resource__processed: "/testdata/head-binary-gz.vti"
     //         // resource__processed: "/testdata/cbct-gz.vti"
     //         // resource__processed: "/testdata/1volume.vti"
+    //         // resource__processed: "/testdata/axial.vti"
+    //         // resource__processed: "/testdata/20231021.nrrd"
+    //         resource__processed: "/testdata/20231022.nrrd"
     //     }
     // ]
     //
@@ -110,16 +115,16 @@
     }
 </script>
 
-<Reslice/>
+<!--<ViewerReslice {resources} />-->
 
 <ViewerUpload id="upload" screenshotCallback={addScreenshot} />
 
 <!--    <div>-->
-<!--        <Viewer id="model" resources={model}/>-->
+<!--        <Viewer id="model" resources={model} />-->
 <!--    </div>-->
 
 <!--    <div>-->
-<!--        <Viewer id="model" resources={model} screenshotCallback={addScreenshot}/>-->
+<!--        <Viewer id="modelWithScreenshot" resources={model} screenshotCallback={addScreenshot}/>-->
 <!--    </div>-->
 
 <!--    <div>-->
@@ -127,7 +132,11 @@
 <!--    </div>-->
 
 <!--    <div>-->
-<!--        <Viewer id="all" {resources} startMaximized={false} screenshotCallback={addScreenshot}/>-->
+<!--        <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <Viewer id="all" {resources} startMaximized={true} screenshotCallback={addScreenshot}/>-->
 <!--    </div>-->
 
 <!--    <div>-->

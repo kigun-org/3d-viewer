@@ -19,6 +19,7 @@
     "@vitest/coverage-v8": "^0.34.4",
     "@vitest/ui": "^0.34.4",
     "jsdom": "^22.1.0",
+    "rollup-plugin-visualizer": "^5.9.2",
     "svelte": "^4.0.5",
     "vite": "^4.4.5",
     "vite-plugin-static-copy": "^0.17.0",
@@ -26,11 +27,10 @@
   },
   "dependencies": {
     "@itk-wasm/dicom": "^3.3.0",
+    "@itk-wasm/image-io": "^0.3.0",
     "@kitware/vtk.js": "^28.12.4",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.10.5",
-    "itk-image-io": "^1.0.0-b.146",
-    "itk-mesh-io": "^1.0.0-b.18",
-    "itk-wasm": "^1.0.0-b.146"
+    "itk-wasm": "^1.0.0-b.149"
   }
 }

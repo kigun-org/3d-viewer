@@ -22,14 +22,15 @@
     export let volumes = []
     export let screenshotCallback = null
 
-    /** Should four panels (3D + orthogonal views) be shown on start up? default is true */
-    export let startMaximized = true
+    /** Should four panels (3D + orthogonal views) be shown on start up? default is true if showing a volume */
+    export let startMaximized = (volumes.length > 0)
     let maximized = startMaximized ? ViewMode.THREE_D : null
 
-    let objectListVisible = models.length + volumes.length > 1
-
     /* If no volumes are loaded, only show 3D view */
-    $: showViewMode = (volumes.length > 0)
+    let showViewMode = (volumes.length > 0)
+
+    /* Show object list if more than one model/volume is loaded */
+    let objectListVisible = (models.length + volumes.length) > 1
 
     /* If model values change (most likely visibility), update actor properties */
     $: for (const model of models) {
