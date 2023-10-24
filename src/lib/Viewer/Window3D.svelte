@@ -123,9 +123,6 @@
         const camera = renderer.getActiveCamera()
         camera.setParallelProjection(true)
 
-        // camera.setPosition(0,-1,0)
-        // camera.setViewUp([0,0,1])
-
         const resizeObserver = new ResizeObserver((_) => {
             openGLRenderWindow.resize()
         });
@@ -140,6 +137,11 @@
             volume.actor = createVolume(volume)
             renderer.addVolume(volume.actor)
         }
+
+        // if (volumes.length > 0) {
+        //     camera.setPosition(0,-1,0)
+        //     camera.setViewUp([0,0,1])
+        // }
 
         resetCamera()
     })
