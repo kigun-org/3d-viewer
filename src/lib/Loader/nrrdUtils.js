@@ -1,6 +1,6 @@
 import {setPipelinesBaseUrl, readImage, writeImage} from "@itk-wasm/image-io";
 
-setPipelinesBaseUrl(import.meta.env.BASE_URL + "itk/image-io/pipelines")
+setPipelinesBaseUrl(import.meta.env.BASE_URL + "pipelines")
 
 function convertItkToNRRD(itkImage, progressCallback) {
     progressCallback(new ProgressEvent('progress', {

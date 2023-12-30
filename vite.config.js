@@ -1,13 +1,12 @@
 /// <reference types="vitest" />
 import {defineConfig} from 'vite'
-import {resolve} from 'path'
 import {svelte} from '@sveltejs/vite-plugin-svelte'
 import {viteStaticCopy} from 'vite-plugin-static-copy'
 
-const itkConfig = resolve(__dirname, 'src', 'itkConfig.js')
-
-// https://vitejs.dev/config/
 export default defineConfig({
+    optimizeDeps: {
+        exclude: ['itk-wasm', '@itk-wasm/image-io', '@itk-wasm/dicom']
+    },
     test: {
         globals: true,
         environment: 'jsdom',
@@ -19,21 +18,11 @@ export default defineConfig({
         // put lazy loaded JavaScript and Wasm bundles in dist directory
         viteStaticCopy({
             targets: [
-                {src: 'node_modules/itk-wasm/dist/web-workers/min-bundles/*', dest: 'itk/web-workers'},
+                { src: 'node_modules/@itk-wasm/image-io/dist/pipelines/nrrd-read-*.{js,wasm,wasm.zst}', dest: 'pipelines' },
 
-                {src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-dicom-tags*', dest: 'itk/dicom/pipelines'},
-                {src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-image-dicom*', dest: 'itk/dicom/pipelines'},
-                {src: 'node_modules/@itk-wasm/dicom/dist/web-workers/*', dest: 'itk/dicom/web-workers'},
-
-                {src: 'node_modules/@itk-wasm/image-io/dist/pipelines/nrrd*', dest: 'itk/image-io/pipelines'},
+                { src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-dicom-tags.{js,wasm,wasm.zst}', dest: 'pipelines' },
+                { src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-image-dicom-*.{js,wasm,wasm.zst}', dest: 'pipelines' },
             ],
         })
-    ],
-    resolve: {
-        // where itk-wasm code has 'import ../itkConfig.js` point to the path of itkConfig
-        alias: {
-            '../itkConfig.js': itkConfig,
-            '../../itkConfig.js': itkConfig
-        }
-    }
+    ]
 })

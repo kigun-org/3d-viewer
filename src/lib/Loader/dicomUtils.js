@@ -1,7 +1,6 @@
-import {setPipelinesBaseUrl, setPipelineWorkerUrl, readDicomTags, readImageDicomFileSeries} from "@itk-wasm/dicom";
+import {setPipelinesBaseUrl, readDicomTags, readImageDicomFileSeries} from "@itk-wasm/dicom";
 
-setPipelinesBaseUrl(import.meta.env.BASE_URL + "itk/dicom/pipelines")
-setPipelineWorkerUrl(import.meta.env.BASE_URL + "itk/dicom/web-workers/pipeline.worker.js")
+setPipelinesBaseUrl(import.meta.env.BASE_URL + "pipelines")
 
 const parseDICOMFiles = async function (fileList, progressCallback) {
     let loaded = 0
