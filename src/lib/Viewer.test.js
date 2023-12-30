@@ -1,14 +1,13 @@
-// import "@testing-library/jest-dom";
-// import { render, screen, fireEvent } from "@testing-library/svelte";
-import { expect, describe, test } from 'vitest'
+import { describe, it, expect } from 'vitest'
+// import Viewer from "./Viewer.svelte"
 
-describe('ViewerComponent.svelte', () => {
-    test('adds 1 + 2 to equal 3', () => {
-        expect(3).toBe(3)
+describe("Sample test block", () => {
+    it("sample test which should be true", () => {
+        expect(true).toBe(true)
     })
 })
 
-// describe('Test Counter.svelte', async () => {
+// describe('Test Counter.svelte', async () =>
 //     it('Initial counter should be 0', async () => {
 //         render(Counter);
 //         expect(screen.getByText('0')).toBeInTheDocument();

@@ -1,8 +1,4 @@
-<!--<svelte:options tag="viewer" />-->
 <script>
-    // import 'bootstrap/dist/css/bootstrap.css'
-    // import 'bootstrap-icons/font/bootstrap-icons.css'
-
     import Window2D from "./Window2D.svelte";
     import Window3D from "./Window3D.svelte";
     import {ViewMode} from "./ViewMode.js";

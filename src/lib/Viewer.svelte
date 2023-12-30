@@ -1,3 +1,4 @@
+<!--<svelte:options customElement={{tag: "eos-viewer", shadow: 'none'}}/>-->
 <script>
     import './Viewer/viewer.css'
     import ViewerComponent from "./Viewer/ViewerComponent.svelte";

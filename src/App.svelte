@@ -2,13 +2,12 @@
     import 'bootstrap-icons/font/bootstrap-icons.css'
     import 'bootstrap/dist/css/bootstrap.css'
 
-    import ViewerUpload from "./lib/ViewerUpload.svelte";
+    import ViewerUpload from "./lib/ViewerUpload.svelte"
     import Viewer from "./lib/Viewer.svelte";
     import ViewerReslice from "./lib/ViewerReslice.svelte";
     import LoaderDICOM from "./lib/LoaderDICOM.svelte";
     import LoaderURL from "./lib/LoaderURL.svelte";
-    // import ThumbList from "./lib/ThumbList.svelte";
-    //
+
     // const model = [
     //     {
     //         id: 20,
@@ -115,43 +114,39 @@
     }
 </script>
 
+<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>
+
 <!--<ViewerReslice {resources} />-->
 
-<ViewerUpload id="upload" screenshotCallback={addScreenshot} />
+<!--<div>-->
+<!--    <Viewer id="model" resources={model}/>-->
+<!--</div>-->
 
-<!--    <div>-->
-<!--        <Viewer id="model" resources={model} />-->
-<!--    </div>-->
+<!--<div>-->
+<!--    <Viewer id="modelWithScreenshot" resources={model} screenshotCallback={addScreenshot}/>-->
+<!--</div>-->
 
-<!--    <div>-->
-<!--        <Viewer id="modelWithScreenshot" resources={model} screenshotCallback={addScreenshot}/>-->
-<!--    </div>-->
+<!--<div>-->
+<!--    <Viewer id="models" resources={models}/>-->
+<!--</div>-->
 
-<!--    <div>-->
-<!--        <Viewer id="models" resources={models}/>-->
-<!--    </div>-->
+<!--<div>-->
+<!--    <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>-->
+<!--</div>-->
 
-<!--    <div>-->
-<!--        <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>-->
-<!--    </div>-->
+<!--<div>-->
+<!--    <Viewer id="all" {resources} startMaximized={true} screenshotCallback={addScreenshot}/>-->
+<!--</div>-->
 
-<!--    <div>-->
-<!--        <Viewer id="all" {resources} startMaximized={true} screenshotCallback={addScreenshot}/>-->
-<!--    </div>-->
+<!--<div>-->
+<!--    <Viewer id="error1" resources={errorFileNotFound}/>-->
+<!--</div>-->
 
-<!--    <div>-->
-<!--        <Viewer id="error1" resources={errorFileNotFound}/>-->
-<!--    </div>-->
-
-<!--    <div>-->
-<!--        <Viewer id="error2" resources={errorUnsupportedModelFormat}/>-->
-<!--    </div>-->
+<!--<div>-->
+<!--    <Viewer id="error2" resources={errorUnsupportedModelFormat}/>-->
+<!--</div>-->
 
 <div class:d-none={!showScreenshots}>
     <div class="my-3">Screenshots</div>
     <div id="images" class="d-flex flex-wrap gap-2"></div>
 </div>
-
-<!--    <div>-->
-<!--        <ThumbList/>-->
-<!--    </div>-->
