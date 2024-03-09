@@ -26,7 +26,7 @@
     "vitest": "^0.34.4"
   },
   "dependencies": {
-    "@itk-wasm/dicom": "^5.0.2",
+    "@itk-wasm/dicom": "^6.0.0",
     "@itk-wasm/image-io": "^0.5.2",
     "@kitware/vtk.js": "^29.3.1",
     "bootstrap": "^5.3.2",
