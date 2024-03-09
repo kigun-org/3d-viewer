@@ -27,10 +27,10 @@
   },
   "dependencies": {
     "@itk-wasm/dicom": "^6.0.0",
-    "@itk-wasm/image-io": "^0.5.2",
+    "@itk-wasm/image-io": "^1.1.0",
     "@kitware/vtk.js": "^29.3.1",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.10.5",
-    "itk-wasm": "^1.0.0-b.160"
+    "itk-wasm": "^1.0.0-b.169"
   }
 }

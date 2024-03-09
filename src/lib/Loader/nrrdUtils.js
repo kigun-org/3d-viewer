@@ -9,7 +9,7 @@ function convertItkToNRRD(itkImage, progressCallback) {
         total: 0
     }))
 
-    return writeImage(null, itkImage, "out.nrrd", {useCompression: true})
+    return writeImage(itkImage, "out.nrrd", {useCompression: true})
         .then(function ({webWorker, serializedImage}) {
             webWorker.terminate()
 
@@ -31,7 +31,7 @@ function convertNRRDtoItk(arrayBuffer, progressCallback) {
     }))
 
     const inputFile = new File([arrayBuffer], "input.nrrd")
-    return readImage(null, inputFile)
+    return readImage(inputFile)
         .then(function ({webWorker: webWorker, image: itkImage}) {
             webWorker.terminate()
 
