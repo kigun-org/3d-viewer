@@ -1,8 +1,9 @@
 <script>
-    import './Viewer/viewer.css'
-    import LoaderRemote from "./LoaderURL.svelte";
-    import ErrorMessage from "./Viewer/ErrorMessage.svelte";
+    import '../Viewer/viewer.css'
+    import LoaderURL from "../LoaderURL.svelte";
+    import ErrorMessage from "../Viewer/ErrorMessage.svelte";
     import ResliceComponent from "./ResliceComponent.svelte";
+    import ResliceComponent2 from "./ResliceComponent2.svelte";
 
     export let resources = []
 
@@ -27,10 +28,11 @@
     </div>
 {:else if !ready}
     <div class="viewer_panel loading">
-        <LoaderRemote {resources} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
+        <LoaderURL {resources} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
     </div>
 {:else}
     <div class="viewer_panel">
-        <ResliceComponent {image} />
+<!--        <ResliceComponent {image} />-->
+        <ResliceComponent2 {image} />
     </div>
 {/if}

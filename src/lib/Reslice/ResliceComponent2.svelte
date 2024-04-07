@@ -19,7 +19,7 @@
     import {onMount} from "svelte";
     import ViewSlice from "./ViewSlice.svelte";
 
-    export let source
+    export let image
 
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     const rotationVisible = true
@@ -121,7 +121,6 @@
     }
 
     onMount(() => {
-        const image = source
         widget.setImage(image)
         widget.setScaleInPixels(scaleInPixels) // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
 

@@ -2,12 +2,9 @@
     import 'bootstrap-icons/font/bootstrap-icons.css'
     import 'bootstrap/dist/css/bootstrap.css'
 
-    import ViewerUpload from "./lib/ViewerUpload.svelte"
     import Viewer from "./lib/Viewer.svelte";
-    import ViewerReslice from "./lib/ViewerReslice.svelte";
-    import LoaderDICOM from "./lib/LoaderDICOM.svelte";
-    import LoaderURL from "./lib/LoaderURL.svelte";
-    import ViewerReslice2 from "./lib/Reslice2/ViewerReslice2.svelte";
+    import ViewerUpload from "./lib/ViewerUpload.svelte"
+    import ViewerReslice from "./lib/Reslice/ViewerReslice.svelte";
 
     // const model = [
     //     {
@@ -113,22 +110,11 @@
 
         showScreenshots = true
     }
-
-    let resliceSource
-
-    function handleLoadComplete(e) {
-        resliceSource = e.detail.volumes[0].source
-    }
 </script>
 
 <!--<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>-->
 
-{#if resliceSource}
-    <ViewerReslice2 source={resliceSource} />
-{:else}
-    <LoaderURL {resources} on:loadComplete={handleLoadComplete} />
-{/if}
-<!--<ViewerReslice {resources} />-->
+<ViewerReslice {resources} />
 
 <!--<div>-->
 <!--    <Viewer id="model" resources={model}/>-->
