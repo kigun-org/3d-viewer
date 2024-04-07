@@ -4,22 +4,10 @@
     // Load the rendering pieces we want to use (for both WebGL and WebGPU)
     import '@kitware/vtk.js/Rendering/Profiles/All';
 
-    import vtkAnnotatedCubeActor from '@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor';
-    import vtkGenericRenderWindow from '@kitware/vtk.js/Rendering/Misc/GenericRenderWindow';
-    import vtkImageMapper from '@kitware/vtk.js/Rendering/Core/ImageMapper';
-    import vtkImageReslice from '@kitware/vtk.js/Imaging/Core/ImageReslice';
-    import vtkImageSlice from '@kitware/vtk.js/Rendering/Core/ImageSlice';
-    import vtkInteractorStyleImage from '@kitware/vtk.js/Interaction/Style/InteractorStyleImage';
-    import vtkInteractorStyleTrackballCamera from '@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera';
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';
-    import vtkOrientationMarkerWidget from '@kitware/vtk.js/Interaction/Widgets/OrientationMarkerWidget';
     import vtkResliceCursorWidget from '@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget';
-    import vtkWidgetManager from '@kitware/vtk.js/Widgets/Core/WidgetManager';
-
-    import {CaptureOn} from '@kitware/vtk.js/Widgets/Core/WidgetManager/Constants';
 
     import {vec3} from 'gl-matrix';
-    import {SlabMode} from '@kitware/vtk.js/Imaging/Core/ImageReslice/Constants';
 
     import {
         xyzToViewType,
@@ -29,47 +17,17 @@
     // Force the loading of HttpDataAccessHelper to support gzip decompression
     import '@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper';
     import {onMount} from "svelte";
-    import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants";
+    import ViewSlice from "./ViewSlice.svelte";
 
     export let source
 
-    let viewAxial
-    let sliderAxial
-
-    let viewSagittal
-    let sliderSagittal
-
-    let viewCoronal
-    let sliderCoronal
-
-    const translationEnabled = true
-
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     const rotationVisible = true
-
-    const rotationEnabled = true
-    const keepOrthogonality = true
 
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     const scaleInPixels = true
     const handleScale = 15
     const handleOpacity = 255
-    // [SlabMode.MIN, SlabMode.MAX, SlabMode.MEAN, SlabMode.SUM]
-    const slabMode = SlabMode.MEAN
-    const slabNumberOfSlices = 1
-    // [InterpolationMode.NEAREST, InterpolationMode.LINEAR, InterpolationMode.CUBIC]
-    const interpolationMode = InterpolationMode.NEAREST
-    const windowLevelEnabled = true
-
-    const initialWindow = 4000
-    const initialLevel = 1000
-
-    const viewColors = [
-        [0.5, 0.25, 0.25], // sagittal
-        [0.25, 0.5, 0.25], // coronal
-        [0.25, 0.25, 0.5], // axial
-        [0.25, 0.25, 0.25], // 3D
-    ]
 
     const viewAttributes = [];
     const widget = vtkResliceCursorWidget.newInstance();
@@ -89,89 +47,6 @@
     widgetState
         .getStatesWithLabel('rotation')
         .forEach((handle) => handle.setVisible(rotationVisible))
-
-    const appCursorStyles = {
-        translateCenter: 'move',
-        rotateLine: 'alias',
-        translateAxis: 'pointer',
-        default: 'default',
-    }
-
-    function createRGBStringFromRGBValues(rgb) {
-        if (rgb.length !== 3) {
-            return 'rgb(0, 0, 0)';
-        }
-        return `rgb(${(rgb[0] * 192).toString()}, ${(rgb[1] * 192).toString()}, ${(
-            rgb[2] * 192
-        ).toString()})`;
-    }
-
-    function createAxes() {
-        const result = vtkAnnotatedCubeActor.newInstance();
-        result.setDefaultStyle({
-            text: '+X',
-            fontStyle: 'bold',
-            fontFamily: 'Arial',
-            fontColor: 'black',
-            fontSizeScale: (res) => res / 2,
-            faceColor: createRGBStringFromRGBValues(viewColors[0]),
-            faceRotation: 0,
-            edgeThickness: 0.1,
-            edgeColor: 'black',
-            resolution: 400,
-        });
-        // result.setXPlusFaceProperty({ text: '+X' });
-        result.setXMinusFaceProperty({
-            text: '-X',
-            faceColor: createRGBStringFromRGBValues(viewColors[0]),
-            faceRotation: 90,
-            fontStyle: 'italic',
-        });
-        result.setYPlusFaceProperty({
-            text: '+Y',
-            faceColor: createRGBStringFromRGBValues(viewColors[1]),
-            fontSizeScale: (res) => res / 4,
-        });
-        result.setYMinusFaceProperty({
-            text: '-Y',
-            faceColor: createRGBStringFromRGBValues(viewColors[1]),
-            fontColor: 'white',
-        });
-        result.setZPlusFaceProperty({
-            text: '+Z',
-            faceColor: createRGBStringFromRGBValues(viewColors[2]),
-        });
-        result.setZMinusFaceProperty({
-            text: '-Z',
-            faceColor: createRGBStringFromRGBValues(viewColors[2]),
-            faceRotation: 45,
-        });
-
-        return result
-    }
-
-    function handleSliderChange(obj, i, widget, viewAttributes) {
-        return (ev) => {
-            const newDistanceToP1 = ev.target.value;
-            const dirProj = widget.getWidgetState().getPlanes()[
-                xyzToViewType[i]
-                ].normal;
-            const planeExtremities = widget.getPlaneExtremities(xyzToViewType[i]);
-            const newCenter = vtkMath.multiplyAccumulate(
-                planeExtremities[0],
-                dirProj,
-                Number(newDistanceToP1),
-                []
-            );
-            widget.setCenter(newCenter);
-            obj.widgetInstance.invokeInteractionEvent(
-                obj.widgetInstance.getActiveInteraction()
-            );
-            viewAttributes.forEach((obj2) => {
-                obj2.interactor.render();
-            });
-        }
-    }
 
 
     function updateReslice(
@@ -246,102 +121,7 @@
         updateViews();
     }
 
-
     onMount(() => {
-
-// ----------------------------------------------------------------------------
-// Setup rendering code
-// ----------------------------------------------------------------------------
-
-        for (let i = 0; i < 3; i++) {
-            let element
-            let slider
-
-            switch (i) {
-                case 0:
-                    element = viewSagittal
-                    slider = sliderSagittal
-                    break
-                case 1:
-                    element = viewCoronal
-                    slider = sliderCoronal
-                    break
-                case 2:
-                    element = viewAxial
-                    slider = sliderAxial
-                    break
-            }
-
-            const grw = vtkGenericRenderWindow.newInstance();
-            grw.setContainer(element);
-            grw.resize();
-            const obj = {
-                renderWindow: grw.getRenderWindow(),
-                renderer: grw.getRenderer(),
-                GLWindow: grw.getApiSpecificRenderWindow(),
-                interactor: grw.getInteractor(),
-                widgetManager: vtkWidgetManager.newInstance(),
-                reslice: vtkImageReslice.newInstance(),
-                orientationWidget: vtkOrientationMarkerWidget.newInstance({
-                    actor: createAxes(),
-                    interactor: grw.getInteractor(),
-                }),
-                slider: slider
-            };
-
-            obj.renderer.getActiveCamera().setParallelProjection(true);
-            obj.renderer.setBackground(...viewColors[i]);
-            obj.renderWindow.addRenderer(obj.renderer);
-            obj.renderWindow.addView(obj.GLWindow);
-            obj.renderWindow.setInteractor(obj.interactor);
-            obj.interactor.setView(obj.GLWindow);
-            obj.interactor.initialize();
-            obj.interactor.bindEvents(element);
-            obj.widgetManager.setRenderer(obj.renderer);
-
-            obj.interactor.setInteractorStyle(windowLevelEnabled ?
-                vtkInteractorStyleImage.newInstance()
-                : vtkInteractorStyleTrackballCamera.newInstance()
-            );
-            obj.widgetInstance = obj.widgetManager.addWidget(widget, xyzToViewType[i]);
-            obj.widgetInstance.setEnableTranslation(translationEnabled)
-            obj.widgetInstance.setEnableRotation(rotationEnabled)
-            obj.widgetInstance.setScaleInPixels(scaleInPixels)
-            obj.widgetInstance.setKeepOrthogonality(keepOrthogonality)
-            obj.widgetInstance.setCursorStyles(appCursorStyles)
-            obj.widgetManager.enablePicking();
-            // Use to update all renderers buffer when actors are moved
-            obj.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE);
-
-            obj.reslice.setSlabMode(slabMode); // On change: updateViews()
-            obj.reslice.setSlabNumberOfSlices(slabNumberOfSlices); // On change: updateViews()
-            obj.reslice.setInterpolationMode(interpolationMode);
-            obj.reslice.setTransformInputSampling(false);
-            obj.reslice.setAutoCropOutput(true);
-            obj.reslice.setOutputDimensionality(2);
-            obj.resliceMapper = vtkImageMapper.newInstance();
-            obj.resliceMapper.setInputConnection(obj.reslice.getOutputPort());
-            obj.resliceActor = vtkImageSlice.newInstance();
-            obj.resliceActor.setMapper(obj.resliceMapper);
-            obj.resliceActor.getProperty().setColorWindow(initialWindow);
-            obj.resliceActor.getProperty().setColorLevel(initialLevel);
-
-            obj.orientationWidget.setEnabled(true);
-            obj.orientationWidget.setViewportCorner(
-                vtkOrientationMarkerWidget.Corners.BOTTOM_RIGHT
-            );
-            obj.orientationWidget.setViewportSize(0.15);
-            obj.orientationWidget.setMinPixelSize(100);
-            obj.orientationWidget.setMaxPixelSize(300);
-
-            slider.addEventListener('change', handleSliderChange(obj, i, widget, viewAttributes));
-
-            viewAttributes.push(obj);
-        }
-
-        //
-        // Load data
-        //
         const image = source
         widget.setImage(image)
         widget.setScaleInPixels(scaleInPixels) // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
@@ -360,45 +140,45 @@
             // Note: Need to refresh also the current view because of adding the mouse wheel
             // to change slicer
             viewAttributes.forEach((v) => {
-                    // Store the FocalPoint offset before "interacting".
-                    // The offset may have been changed externally when manipulating the camera
-                    // or interactorStyle.
-                    v.widgetInstance.onStartInteractionEvent(() => {
+                // Store the FocalPoint offset before "interacting".
+                // The offset may have been changed externally when manipulating the camera
+                // or interactorStyle.
+                v.widgetInstance.onStartInteractionEvent(() => {
+                    updateReslice({
+                        viewType,
+                        reslice,
+                        actor: obj.resliceActor,
+                        renderer: obj.renderer,
+                        resetFocalPoint: false,
+                        computeFocalPointOffset: true,
+                        slider: obj.slider,
+                    });
+                });
+
+                // Interactions in other views may change current plane
+                v.widgetInstance.onInteractionEvent(
+                    // canUpdateFocalPoint: Boolean which defines if the focal point can be updated because
+                    // the current interaction is a rotation
+                    (interactionMethodName) => {
+                        const canUpdateFocalPoint =
+                            interactionMethodName === InteractionMethodsName.RotateLine;
+                        const activeViewType = widget
+                            .getWidgetState()
+                            .getActiveViewType();
+                        const computeFocalPointOffset =
+                            activeViewType === viewType || !canUpdateFocalPoint;
                         updateReslice({
                             viewType,
                             reslice,
                             actor: obj.resliceActor,
                             renderer: obj.renderer,
                             resetFocalPoint: false,
-                            computeFocalPointOffset: true,
+                            computeFocalPointOffset,
                             slider: obj.slider,
                         });
-                    });
-
-                    // Interactions in other views may change current plane
-                    v.widgetInstance.onInteractionEvent(
-                        // canUpdateFocalPoint: Boolean which defines if the focal point can be updated because
-                        // the current interaction is a rotation
-                        (interactionMethodName) => {
-                            const canUpdateFocalPoint =
-                                interactionMethodName === InteractionMethodsName.RotateLine;
-                            const activeViewType = widget
-                                .getWidgetState()
-                                .getActiveViewType();
-                            const computeFocalPointOffset =
-                                activeViewType === viewType || !canUpdateFocalPoint;
-                            updateReslice({
-                                viewType,
-                                reslice,
-                                actor: obj.resliceActor,
-                                renderer: obj.renderer,
-                                resetFocalPoint: false,
-                                computeFocalPointOffset,
-                                slider: obj.slider,
-                            });
-                        }
-                    );
-                });
+                    }
+                );
+            });
 
             updateReslice({
                 viewType,
@@ -418,17 +198,8 @@
 
 <div style="display: flex">
     <main id="reslice" style="display: grid; grid-template-columns: repeat(3, 1fr)">
-        <div>
-            <div bind:this={viewAxial}></div>
-            <input bind:this={sliderAxial} max="200" min="0" style="width: 100%" type="range">
-        </div>
-        <div>
-            <div bind:this={viewSagittal}></div>
-            <input bind:this={sliderSagittal} max="200" min="0" style="width: 100%" type="range">
-        </div>
-        <div>
-            <div bind:this={viewCoronal}></div>
-            <input bind:this={sliderCoronal} max="200" min="0" style="width: 100%" type="range">
-        </div>
+        <ViewSlice index={0} {viewAttributes} {widget} {scaleInPixels} />
+        <ViewSlice index={1} {viewAttributes} {widget} {scaleInPixels} />
+        <ViewSlice index={2} {viewAttributes} {widget} {scaleInPixels} />
     </main>
 </div>
