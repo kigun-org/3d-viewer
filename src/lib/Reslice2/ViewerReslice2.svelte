@@ -46,8 +46,6 @@
     let viewCoronal
     let sliderCoronal
 
-    let viewThreeD
-
     const translationEnabled = true
 
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
@@ -164,9 +162,7 @@
 
         const initialPlanesState = {...widgetState.getPlanes()}
 
-        let view3D = null
-
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 3; i++) {
             let element
             let slider
 
@@ -182,9 +178,6 @@
                 case 2:
                     element = viewAxial
                     slider = sliderAxial
-                    break
-                case 3:
-                    element = viewThreeD
                     break
             }
 
@@ -209,25 +202,20 @@
             obj.interactor.initialize();
             obj.interactor.bindEvents(element);
             obj.widgetManager.setRenderer(obj.renderer);
-            if (i < 3) {
-                obj.interactor.setInteractorStyle(windowLevelEnabled ?
-                    vtkInteractorStyleImage.newInstance()
-                    : vtkInteractorStyleTrackballCamera.newInstance()
-                );
-                obj.widgetInstance = obj.widgetManager.addWidget(widget, xyzToViewType[i]);
-                obj.widgetInstance.setEnableTranslation(translationEnabled)
-                obj.widgetInstance.setEnableRotation(rotationEnabled)
-                obj.widgetInstance.setScaleInPixels(scaleInPixels)
-                obj.widgetInstance.setKeepOrthogonality(keepOrthogonality)
-                obj.widgetInstance.setCursorStyles(appCursorStyles)
-                obj.widgetManager.enablePicking();
-                // Use to update all renderers buffer when actors are moved
-                obj.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE);
-            } else {
-                obj.interactor.setInteractorStyle(
-                    vtkInteractorStyleTrackballCamera.newInstance()
-                );
-            }
+
+            obj.interactor.setInteractorStyle(windowLevelEnabled ?
+                vtkInteractorStyleImage.newInstance()
+                : vtkInteractorStyleTrackballCamera.newInstance()
+            );
+            obj.widgetInstance = obj.widgetManager.addWidget(widget, xyzToViewType[i]);
+            obj.widgetInstance.setEnableTranslation(translationEnabled)
+            obj.widgetInstance.setEnableRotation(rotationEnabled)
+            obj.widgetInstance.setScaleInPixels(scaleInPixels)
+            obj.widgetInstance.setKeepOrthogonality(keepOrthogonality)
+            obj.widgetInstance.setCursorStyles(appCursorStyles)
+            obj.widgetManager.enablePicking();
+            // Use to update all renderers buffer when actors are moved
+            obj.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE);
 
             obj.reslice = vtkImageReslice.newInstance();
 
@@ -263,12 +251,7 @@
                 obj.sphereSources.push(sphere);
             }
 
-            if (i < 3) {
-                viewAttributes.push(obj);
-            } else {
-                view3D = obj;
-            }
-
+            viewAttributes.push(obj);
 
             // create orientation widget
             obj.orientationWidget = vtkOrientationMarkerWidget.newInstance({
@@ -284,30 +267,28 @@
             obj.orientationWidget.setMaxPixelSize(300);
 
             // create sliders
-            if (i < 3) {
-                obj.slider = slider
+            obj.slider = slider
 
-                slider.addEventListener('change', (ev) => {
-                    const newDistanceToP1 = ev.target.value;
-                    const dirProj = widget.getWidgetState().getPlanes()[
-                        xyzToViewType[i]
-                        ].normal;
-                    const planeExtremities = widget.getPlaneExtremities(xyzToViewType[i]);
-                    const newCenter = vtkMath.multiplyAccumulate(
-                        planeExtremities[0],
-                        dirProj,
-                        Number(newDistanceToP1),
-                        []
-                    );
-                    widget.setCenter(newCenter);
-                    obj.widgetInstance.invokeInteractionEvent(
-                        obj.widgetInstance.getActiveInteraction()
-                    );
-                    viewAttributes.forEach((obj2) => {
-                        obj2.interactor.render();
-                    });
+            slider.addEventListener('change', (ev) => {
+                const newDistanceToP1 = ev.target.value;
+                const dirProj = widget.getWidgetState().getPlanes()[
+                    xyzToViewType[i]
+                    ].normal;
+                const planeExtremities = widget.getPlaneExtremities(xyzToViewType[i]);
+                const newCenter = vtkMath.multiplyAccumulate(
+                    planeExtremities[0],
+                    dirProj,
+                    Number(newDistanceToP1),
+                    []
+                );
+                widget.setCenter(newCenter);
+                obj.widgetInstance.invokeInteractionEvent(
+                    obj.widgetInstance.getActiveInteraction()
+                );
+                viewAttributes.forEach((obj2) => {
+                    obj2.interactor.render();
                 });
-            }
+            });
         }
 
         function resetViews() {
@@ -367,7 +348,6 @@
                 interactionContext.resetFocalPoint,
                 interactionContext.computeFocalPointOffset
             );
-            view3D.renderWindow.render();
             return modified;
         }
 
@@ -390,15 +370,12 @@
         outlineMapper.setInputData(outline.getOutputData());
         const outlineActor = vtkActor.newInstance();
         outlineActor.setMapper(outlineMapper);
-        view3D.renderer.addActor(outlineActor);
 
         viewAttributes.forEach((obj, i) => {
             obj.reslice.setInputData(image);
             obj.renderer.addActor(obj.resliceActor);
-            view3D.renderer.addActor(obj.resliceActor);
             obj.sphereActors.forEach((actor) => {
                 obj.renderer.addActor(actor);
-                view3D.renderer.addActor(actor);
             });
             const reslice = obj.reslice;
             const viewType = xyzToViewType[i];
@@ -465,9 +442,6 @@
             obj.interactor.render();
         });
 
-        view3D.renderer.resetCamera();
-        view3D.renderer.resetCameraClippingRange();
-
         function updateViews() {
             viewAttributes.forEach((obj, i) => {
                 updateReslice({
@@ -482,14 +456,12 @@
                 });
                 obj.renderWindow.render()
             });
-            view3D.renderer.resetCamera()
-            view3D.renderer.resetCameraClippingRange()
         }
     })
 </script>
 
 <div style="display: flex">
-    <main id="reslice" style="display: grid; grid-template-columns: 1fr 1fr">
+    <main id="reslice" style="display: grid; grid-template-columns: repeat(3, 1fr)">
         <div>
             <div bind:this={viewAxial}></div>
             <input bind:this={sliderAxial} max="200" min="0" style="width: 100%" type="range">
@@ -501,9 +473,6 @@
         <div>
             <div bind:this={viewCoronal}></div>
             <input bind:this={sliderCoronal} max="200" min="0" style="width: 100%" type="range">
-        </div>
-        <div>
-            <div bind:this={viewThreeD}></div>
         </div>
     </main>
 </div>
