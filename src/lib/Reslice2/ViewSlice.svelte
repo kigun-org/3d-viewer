@@ -24,6 +24,8 @@
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     export let scaleInPixels
 
+    let state
+
     let element
     let slider
 
@@ -102,28 +104,25 @@
         return result
     }
 
-
-    function handleSliderChange(obj, i, widget, viewAttributes) {
-        return (ev) => {
-            const newDistanceToP1 = ev.target.value;
-            const dirProj = widget.getWidgetState().getPlanes()[
-                xyzToViewType[i]
-                ].normal;
-            const planeExtremities = widget.getPlaneExtremities(xyzToViewType[i]);
-            const newCenter = vtkMath.multiplyAccumulate(
-                planeExtremities[0],
-                dirProj,
-                Number(newDistanceToP1),
-                []
-            );
-            widget.setCenter(newCenter);
-            obj.widgetInstance.invokeInteractionEvent(
-                obj.widgetInstance.getActiveInteraction()
-            );
-            viewAttributes.forEach((obj2) => {
-                obj2.interactor.render();
-            });
-        }
+    function slicerChanged(ev) {
+        const newDistanceToP1 = ev.target.value;
+        const dirProj = widget.getWidgetState().getPlanes()[
+            xyzToViewType[index]
+            ].normal;
+        const planeExtremities = widget.getPlaneExtremities(xyzToViewType[index]);
+        const newCenter = vtkMath.multiplyAccumulate(
+            planeExtremities[0],
+            dirProj,
+            Number(newDistanceToP1),
+            []
+        );
+        widget.setCenter(newCenter);
+        state.widgetInstance.invokeInteractionEvent(
+            state.widgetInstance.getActiveInteraction()
+        );
+        viewAttributes.forEach((obj2) => {
+            obj2.interactor.render();
+        });
     }
 
 
@@ -140,13 +139,15 @@
         const grw = vtkGenericRenderWindow.newInstance();
         grw.setContainer(element);
         grw.resize();
-        const obj = {
+        state = {
             renderWindow: grw.getRenderWindow(),
             renderer: grw.getRenderer(),
             GLWindow: grw.getApiSpecificRenderWindow(),
             interactor: grw.getInteractor(),
             widgetManager: vtkWidgetManager.newInstance(),
             reslice: vtkImageReslice.newInstance(),
+            resliceMapper: vtkImageMapper.newInstance(),
+            resliceActor: vtkImageSlice.newInstance(),
             orientationWidget: vtkOrientationMarkerWidget.newInstance({
                 actor: createAxes(),
                 interactor: grw.getInteractor(),
@@ -154,58 +155,62 @@
             slider: slider
         };
 
-        obj.renderer.getActiveCamera().setParallelProjection(true);
-        obj.renderer.setBackground(...viewColors[index]);
-        obj.renderWindow.addRenderer(obj.renderer);
-        obj.renderWindow.addView(obj.GLWindow);
-        obj.renderWindow.setInteractor(obj.interactor);
-        obj.interactor.setView(obj.GLWindow);
-        obj.interactor.initialize();
-        obj.interactor.bindEvents(element);
-        obj.widgetManager.setRenderer(obj.renderer);
-
-        obj.interactor.setInteractorStyle(windowLevelEnabled ?
+        state.renderer.getActiveCamera().setParallelProjection(true);
+        state.renderer.setBackground(...viewColors[index]);
+        state.renderWindow.addRenderer(state.renderer);
+        state.renderWindow.addView(state.GLWindow);
+        state.renderWindow.setInteractor(state.interactor);
+        state.interactor.setView(state.GLWindow);
+        state.interactor.initialize();
+        state.interactor.bindEvents(element);
+        state.widgetManager.setRenderer(state.renderer);
+        state.interactor.setInteractorStyle(windowLevelEnabled ?
             vtkInteractorStyleImage.newInstance()
             : vtkInteractorStyleTrackballCamera.newInstance()
         );
-        obj.widgetInstance = obj.widgetManager.addWidget(widget, xyzToViewType[index]);
-        obj.widgetInstance.setEnableTranslation(translationEnabled)
-        obj.widgetInstance.setEnableRotation(rotationEnabled)
-        obj.widgetInstance.setScaleInPixels(scaleInPixels)
-        obj.widgetInstance.setKeepOrthogonality(keepOrthogonality)
-        obj.widgetInstance.setCursorStyles(appCursorStyles)
-        obj.widgetManager.enablePicking();
+
+        state.widgetInstance = state.widgetManager.addWidget(widget, xyzToViewType[index]);
+        state.widgetInstance.setEnableTranslation(translationEnabled)
+        state.widgetInstance.setEnableRotation(rotationEnabled)
+        state.widgetInstance.setScaleInPixels(scaleInPixels)
+        state.widgetInstance.setKeepOrthogonality(keepOrthogonality)
+        state.widgetInstance.setCursorStyles(appCursorStyles)
+        state.widgetManager.enablePicking();
         // Use to update all renderers buffer when actors are moved
-        obj.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE);
+        state.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE);
 
-        obj.reslice.setSlabMode(slabMode); // On change: updateViews()
-        obj.reslice.setSlabNumberOfSlices(slabNumberOfSlices); // On change: updateViews()
-        obj.reslice.setInterpolationMode(interpolationMode);
-        obj.reslice.setTransformInputSampling(false);
-        obj.reslice.setAutoCropOutput(true);
-        obj.reslice.setOutputDimensionality(2);
-        obj.resliceMapper = vtkImageMapper.newInstance();
-        obj.resliceMapper.setInputConnection(obj.reslice.getOutputPort());
-        obj.resliceActor = vtkImageSlice.newInstance();
-        obj.resliceActor.setMapper(obj.resliceMapper);
-        obj.resliceActor.getProperty().setColorWindow(initialWindow);
-        obj.resliceActor.getProperty().setColorLevel(initialLevel);
+        state.reslice.setSlabMode(slabMode); // On change: updateViews()
+        state.reslice.setSlabNumberOfSlices(slabNumberOfSlices); // On change: updateViews()
+        state.reslice.setInterpolationMode(interpolationMode);
+        state.reslice.setTransformInputSampling(false);
+        state.reslice.setAutoCropOutput(true);
+        state.reslice.setOutputDimensionality(2);
 
-        obj.orientationWidget.setEnabled(true);
-        obj.orientationWidget.setViewportCorner(
+        state.resliceMapper.setInputConnection(state.reslice.getOutputPort());
+
+        state.resliceActor.setMapper(state.resliceMapper);
+        state.resliceActor.getProperty().setColorWindow(initialWindow);
+        state.resliceActor.getProperty().setColorLevel(initialLevel);
+
+        state.orientationWidget.setEnabled(true);
+        state.orientationWidget.setViewportCorner(
             vtkOrientationMarkerWidget.Corners.BOTTOM_RIGHT
         );
-        obj.orientationWidget.setViewportSize(0.15);
-        obj.orientationWidget.setMinPixelSize(100);
-        obj.orientationWidget.setMaxPixelSize(300);
+        state.orientationWidget.setViewportSize(0.15);
+        state.orientationWidget.setMinPixelSize(100);
+        state.orientationWidget.setMaxPixelSize(300);
 
-        slider.addEventListener('change', handleSliderChange(obj, index, widget, viewAttributes))
-
-        viewAttributes.push(obj);
+        viewAttributes.push(state);
     })
 </script>
 
 <div>
     <div bind:this={element}></div>
-    <input bind:this={slider} max="200" min="0" style="width: 100%" type="range">
+    <input bind:this={slider} on:change={slicerChanged} type="range" min="0" max="200">
 </div>
+
+<style>
+    input {
+        width: 100%
+    }
+</style>

@@ -32,6 +32,7 @@
     const viewAttributes = [];
     const widget = vtkResliceCursorWidget.newInstance();
     const widgetState = widget.getWidgetState();
+    const initialPlanesState = {...widgetState.getPlanes()}
 
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     widgetState
@@ -112,8 +113,6 @@
             obj.renderWindow.render()
         });
     }
-
-    const initialPlanesState = {...widgetState.getPlanes()}
 
     function resetViews() {
         widgetState.setPlanes({...initialPlanesState});
