@@ -119,7 +119,7 @@
             const obj = {
                 renderWindow: grw.getRenderWindow(),
                 renderer: grw.getRenderer(),
-                GLWindow: grw.getOpenGLRenderWindow(),
+                GLWindow: grw.getApiSpecificRenderWindow(),
                 interactor: grw.getInteractor(),
                 widgetManager: vtkWidgetManager.newInstance(),
                 orientationWidget: null,

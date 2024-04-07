@@ -7,6 +7,7 @@
     import ViewerReslice from "./lib/ViewerReslice.svelte";
     import LoaderDICOM from "./lib/LoaderDICOM.svelte";
     import LoaderURL from "./lib/LoaderURL.svelte";
+    import ViewerReslice2 from "./lib/Reslice2/ViewerReslice2.svelte";
 
     // const model = [
     //     {
@@ -41,7 +42,7 @@
     //     }
     // ]
     //
-    // const resources = [
+    const resources = [
     //     {
     //         id: 20,
     //         caption: "Upper arch",
@@ -63,19 +64,19 @@
     //         // resource__processed: "/testdata/LowerJawScan-gz.vtp"
     //         // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
     //     },
-    //     {
-    //         id: 31,
-    //         caption: "CBCT",
-    //         resource__id: 84,
-    //         resource__type: "VOLUME",
-    //         // resource__processed: "/testdata/head-binary-gz.vti"
-    //         // resource__processed: "/testdata/cbct-gz.vti"
-    //         // resource__processed: "/testdata/1volume.vti"
-    //         // resource__processed: "/testdata/axial.vti"
-    //         // resource__processed: "/testdata/20231021.nrrd"
-    //         resource__processed: "/testdata/20231022.nrrd"
-    //     }
-    // ]
+        {
+            id: 31,
+            caption: "CBCT",
+            resource__id: 84,
+            resource__type: "VOLUME",
+            // resource__processed: "/testdata/head-binary-gz.vti"
+            // resource__processed: "/testdata/cbct-gz.vti"
+            // resource__processed: "/testdata/1volume.vti"
+            // resource__processed: "/testdata/axial.vti"
+            resource__processed: "/testdata/20240405.nrrd",
+            // resource__processed: "/testdata/20231125.nrrd"
+        }
+    ]
     //
     //
     // const errorFileNotFound = [
@@ -112,10 +113,21 @@
 
         showScreenshots = true
     }
+
+    let resliceSource
+
+    function handleLoadComplete(e) {
+        resliceSource = e.detail.volumes[0].source
+    }
 </script>
 
-<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>
+<!--<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>-->
 
+{#if resliceSource}
+    <ViewerReslice2 source={resliceSource} />
+{:else}
+    <LoaderURL {resources} on:loadComplete={handleLoadComplete} />
+{/if}
 <!--<ViewerReslice {resources} />-->
 
 <!--<div>-->
