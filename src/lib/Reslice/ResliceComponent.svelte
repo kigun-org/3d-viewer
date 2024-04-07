@@ -227,6 +227,10 @@
                 computeFocalPointOffset: true, // Allow to compute the current offset between display reslice center and display focal point
                 slider: obj.slider,
             });
+
+            obj.renderer.resetCamera();
+            obj.renderer.getActiveCamera().zoom(1.25);
+
             obj.interactor.render();
         });
     })
