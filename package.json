@@ -26,12 +26,12 @@
     "vitest": "^0.34.4"
   },
   "dependencies": {
-    "@itk-wasm/dicom": "^6.0.0",
-    "@itk-wasm/image-io": "^1.1.0",
-    "@itk-wasm/mesh-io": "^1.1.0",
-    "@kitware/vtk.js": "^29.8.0",
+    "@itk-wasm/dicom": "^6.0.1",
+    "@itk-wasm/image-io": "^1.1.1",
+    "@itk-wasm/mesh-io": "^1.1.1",
+    "@kitware/vtk.js": "^30.3.1",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.10.5",
-    "itk-wasm": "^1.0.0-b.169"
+    "itk-wasm": "^1.0.0-b.172"
   }
 }
