@@ -14,6 +14,7 @@
     import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants.js";
     import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants.js";
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';
+    import {getColors1, createRGBStringFromRGBValues} from './colors';
 
     export let viewAttributes
 
@@ -52,53 +53,41 @@
         default: 'default',
     }
 
-    const viewColors = [
-        [0.5, 0.25, 0.25], // sagittal
-        [0.25, 0.5, 0.25], // coronal
-        [0.25, 0.25, 0.5], // axial
-        [0.25, 0.25, 0.25], // 3D
-    ]
-
-
     function createAxes() {
         const result = vtkAnnotatedCubeActor.newInstance();
         result.setDefaultStyle({
-            text: '+X',
             fontStyle: 'bold',
             fontFamily: 'Arial',
             fontColor: 'black',
             fontSizeScale: (res) => res / 2,
-            faceColor: createRGBStringFromRGBValues(viewColors[0]),
             faceRotation: 0,
             edgeThickness: 0.1,
             edgeColor: 'black',
             resolution: 400,
         });
-        // result.setXPlusFaceProperty({ text: '+X' });
+        result.setXPlusFaceProperty({
+            text: '+X',
+            faceColor: createRGBStringFromRGBValues(0),
+        });
         result.setXMinusFaceProperty({
             text: '-X',
-            faceColor: createRGBStringFromRGBValues(viewColors[0]),
-            faceRotation: 90,
-            fontStyle: 'italic',
+            faceColor: createRGBStringFromRGBValues(0),
         });
         result.setYPlusFaceProperty({
             text: '+Y',
-            faceColor: createRGBStringFromRGBValues(viewColors[1]),
-            fontSizeScale: (res) => res / 4,
+            faceColor: createRGBStringFromRGBValues(1),
         });
         result.setYMinusFaceProperty({
             text: '-Y',
-            faceColor: createRGBStringFromRGBValues(viewColors[1]),
-            fontColor: 'white',
+            faceColor: createRGBStringFromRGBValues(1),
         });
         result.setZPlusFaceProperty({
             text: '+Z',
-            faceColor: createRGBStringFromRGBValues(viewColors[2]),
+            faceColor: createRGBStringFromRGBValues(2),
         });
         result.setZMinusFaceProperty({
             text: '-Z',
-            faceColor: createRGBStringFromRGBValues(viewColors[2]),
-            faceRotation: 45,
+            faceColor: createRGBStringFromRGBValues(2),
         });
 
         return result
@@ -125,14 +114,93 @@
         });
     }
 
-
-    function createRGBStringFromRGBValues(rgb) {
-        if (rgb.length !== 3) {
-            return 'rgb(0, 0, 0)';
+    function handlePointerEnter() {
+        if (index === 0) {
+            widget.getWidgetState().getRotationHandleYinX0().setVisible(true)
+            widget.getWidgetState().getRotationHandleYinX1().setVisible(true)
+            widget.getWidgetState().getRotationHandleZinX0().setVisible(true)
+            widget.getWidgetState().getRotationHandleZinX1().setVisible(true)
+            widget.getWidgetState().getCenterHandle().setVisible(true)
+            widget.getWidgetState().getAxisYinX().setScale3(3, 3, 3)
+            widget.getWidgetState().getAxisZinX().setScale3(3, 3, 3)
+        } else {
+            widget.getWidgetState().getAxisYinX().setScale3(0.75, 0.75, 0.75)
+            widget.getWidgetState().getAxisZinX().setScale3(0.75, 0.75, 0.75)
         }
-        return `rgb(${(rgb[0] * 192).toString()}, ${(rgb[1] * 192).toString()}, ${(
-            rgb[2] * 192
-        ).toString()})`;
+        widget.getWidgetState().getAxisYinX().setVisible(true)
+        widget.getWidgetState().getAxisZinX().setVisible(true)
+
+        if (index === 1) {
+            widget.getWidgetState().getRotationHandleXinY0().setVisible(true)
+            widget.getWidgetState().getRotationHandleXinY1().setVisible(true)
+            widget.getWidgetState().getRotationHandleZinY0().setVisible(true)
+            widget.getWidgetState().getRotationHandleZinY1().setVisible(true)
+            widget.getWidgetState().getCenterHandle().setVisible(true)
+            widget.getWidgetState().getAxisXinY().setScale3(3, 3, 3)
+            widget.getWidgetState().getAxisZinY().setScale3(3, 3, 3)
+        } else {
+            widget.getWidgetState().getAxisXinY().setScale3(0.75, 0.75, 0.75)
+            widget.getWidgetState().getAxisZinY().setScale3(0.75, 0.75, 0.75)
+
+        }
+        widget.getWidgetState().getAxisXinY().setVisible(true)
+        widget.getWidgetState().getAxisZinY().setVisible(true)
+
+        if (index === 2) {
+            widget.getWidgetState().getRotationHandleXinZ0().setVisible(true)
+            widget.getWidgetState().getRotationHandleXinZ1().setVisible(true)
+            widget.getWidgetState().getRotationHandleYinZ0().setVisible(true)
+            widget.getWidgetState().getRotationHandleYinZ1().setVisible(true)
+            widget.getWidgetState().getCenterHandle().setVisible(true)
+            widget.getWidgetState().getAxisXinZ().setScale3(3, 3, 3)
+            widget.getWidgetState().getAxisYinZ().setScale3(3, 3, 3)
+        } else {
+            widget.getWidgetState().getAxisXinZ().setScale3(0.75, 0.75, 0.75)
+            widget.getWidgetState().getAxisYinZ().setScale3(0.75, 0.75, 0.75)
+        }
+        widget.getWidgetState().getAxisXinZ().setVisible(true)
+        widget.getWidgetState().getAxisYinZ().setVisible(true)
+
+        // low quality while scrolling
+        viewAttributes.forEach((obj) => {
+            obj.reslice.setInterpolationMode(InterpolationMode.NEAREST)
+            obj.interactor.render()
+        })
+    }
+
+    function handlePointerLeave() {
+        // i === 0
+        widget.getWidgetState().getAxisYinX().setVisible(false)
+        widget.getWidgetState().getAxisZinX().setVisible(false)
+        widget.getWidgetState().getRotationHandleYinX0().setVisible(false)
+        widget.getWidgetState().getRotationHandleYinX1().setVisible(false)
+        widget.getWidgetState().getRotationHandleZinX0().setVisible(false)
+        widget.getWidgetState().getRotationHandleZinX1().setVisible(false)
+        widget.getWidgetState().getCenterHandle().setVisible(false)
+
+        // i === 1
+        widget.getWidgetState().getAxisXinY().setVisible(false)
+        widget.getWidgetState().getAxisZinY().setVisible(false)
+        widget.getWidgetState().getRotationHandleXinY0().setVisible(false)
+        widget.getWidgetState().getRotationHandleXinY1().setVisible(false)
+        widget.getWidgetState().getRotationHandleZinY0().setVisible(false)
+        widget.getWidgetState().getRotationHandleZinY1().setVisible(false)
+        widget.getWidgetState().getCenterHandle().setVisible(false)
+
+        // i === 2
+        widget.getWidgetState().getAxisXinZ().setVisible(false)
+        widget.getWidgetState().getAxisYinZ().setVisible(false)
+        widget.getWidgetState().getRotationHandleXinZ0().setVisible(false)
+        widget.getWidgetState().getRotationHandleXinZ1().setVisible(false)
+        widget.getWidgetState().getRotationHandleYinZ0().setVisible(false)
+        widget.getWidgetState().getRotationHandleYinZ1().setVisible(false)
+        widget.getWidgetState().getCenterHandle().setVisible(false)
+
+        // re-enable high quality interpolation when finished scrolling
+        viewAttributes.forEach((obj) => {
+            obj.reslice.setInterpolationMode(InterpolationMode.LINEAR)
+            obj.interactor.render()
+        })
     }
 
     onMount(() => {
@@ -156,7 +224,7 @@
         };
 
         state.renderer.getActiveCamera().setParallelProjection(true);
-        state.renderer.setBackground(...viewColors[index]);
+        state.renderer.setBackground(...getColors1(index));
         state.renderWindow.addRenderer(state.renderer);
         state.renderWindow.addView(state.GLWindow);
         state.renderWindow.setInteractor(state.interactor);
@@ -168,6 +236,8 @@
             vtkInteractorStyleImage.newInstance()
             : vtkInteractorStyleTrackballCamera.newInstance()
         );
+        state.interactor.onPointerEnter(handlePointerEnter)
+        state.interactor.onPointerLeave(handlePointerLeave)
 
         state.widgetInstance = state.widgetManager.addWidget(widget, xyzToViewType[index]);
         state.widgetInstance.setEnableTranslation(translationEnabled)
@@ -197,8 +267,8 @@
             vtkOrientationMarkerWidget.Corners.BOTTOM_RIGHT
         );
         state.orientationWidget.setViewportSize(0.15);
-        state.orientationWidget.setMinPixelSize(100);
-        state.orientationWidget.setMaxPixelSize(300);
+        state.orientationWidget.setMinPixelSize(100); // 50
+        state.orientationWidget.setMaxPixelSize(300); // 200
 
         viewAttributes.push(state);
     })

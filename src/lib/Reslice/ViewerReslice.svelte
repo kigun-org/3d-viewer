@@ -3,7 +3,6 @@
     import LoaderURL from "../LoaderURL.svelte";
     import ErrorMessage from "../Viewer/ErrorMessage.svelte";
     import ResliceComponent from "./ResliceComponent.svelte";
-    import ResliceComponent2 from "./ResliceComponent2.svelte";
 
     export let resources = []
 
@@ -32,7 +31,6 @@
     </div>
 {:else}
     <div class="viewer_panel">
-<!--        <ResliceComponent {image} />-->
-        <ResliceComponent2 {image} />
+        <ResliceComponent {image} />
     </div>
 {/if}
