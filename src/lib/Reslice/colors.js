@@ -4,11 +4,11 @@ const viewColors = [
     [0.33, 0.33, 0.67], // axial
 ]
 
-function getColors1(i) {
+function getColor(i) {
     return viewColors[i]
 }
 
-function getColors256(i) {
+function getColor256(i) {
     return [
         Math.round(viewColors[i][0] * 255),
         Math.round(viewColors[i][1] * 255),
@@ -16,13 +16,13 @@ function getColors256(i) {
     ]
 }
 
-function createRGBStringFromRGBValues(i) {
+function getColorRGBString(i) {
     if (i < 0 || i >= 3) {
         return 'rgb(0, 0, 0)';
     }
 
-    const colors = getColors256(i)
+    const colors = getColor256(i)
     return `rgb(${colors[0].toString()}, ${colors[1].toString()}, ${colors[2].toString()})`;
 }
 
-export {getColors1, getColors256, createRGBStringFromRGBValues}
+export {getColor, getColor256, getColorRGBString}

@@ -14,7 +14,7 @@
     import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants.js";
     import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants.js";
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';
-    import {getColors1, createRGBStringFromRGBValues} from './colors';
+    import {getColorRGBString, getColor} from './colors';
 
     export let viewAttributes
 
@@ -28,7 +28,7 @@
     let state
 
     let element
-    let slider
+    let sliderElement
 
     const translationEnabled = true
 
@@ -67,33 +67,33 @@
         });
         result.setXPlusFaceProperty({
             text: '+X',
-            faceColor: createRGBStringFromRGBValues(0),
+            faceColor: getColorRGBString(0),
         });
         result.setXMinusFaceProperty({
             text: '-X',
-            faceColor: createRGBStringFromRGBValues(0),
+            faceColor: getColorRGBString(0),
         });
         result.setYPlusFaceProperty({
             text: '+Y',
-            faceColor: createRGBStringFromRGBValues(1),
+            faceColor: getColorRGBString(1),
         });
         result.setYMinusFaceProperty({
             text: '-Y',
-            faceColor: createRGBStringFromRGBValues(1),
+            faceColor: getColorRGBString(1),
         });
         result.setZPlusFaceProperty({
             text: '+Z',
-            faceColor: createRGBStringFromRGBValues(2),
+            faceColor: getColorRGBString(2),
         });
         result.setZMinusFaceProperty({
             text: '-Z',
-            faceColor: createRGBStringFromRGBValues(2),
+            faceColor: getColorRGBString(2),
         });
 
         return result
     }
 
-    function slicerChanged(ev) {
+    function sliderChanged(ev) {
         const newDistanceToP1 = ev.target.value;
         const dirProj = widget.getWidgetState().getPlanes()[
             xyzToViewType[index]
@@ -115,51 +115,53 @@
     }
 
     function handlePointerEnter() {
+        const widgetState = widget.getWidgetState()
+
         if (index === 0) {
-            widget.getWidgetState().getRotationHandleYinX0().setVisible(true)
-            widget.getWidgetState().getRotationHandleYinX1().setVisible(true)
-            widget.getWidgetState().getRotationHandleZinX0().setVisible(true)
-            widget.getWidgetState().getRotationHandleZinX1().setVisible(true)
-            widget.getWidgetState().getCenterHandle().setVisible(true)
-            widget.getWidgetState().getAxisYinX().setScale3(3, 3, 3)
-            widget.getWidgetState().getAxisZinX().setScale3(3, 3, 3)
+            widgetState.getRotationHandleYinX0().setVisible(true)
+            widgetState.getRotationHandleYinX1().setVisible(true)
+            widgetState.getRotationHandleZinX0().setVisible(true)
+            widgetState.getRotationHandleZinX1().setVisible(true)
+            widgetState.getCenterHandle().setVisible(true)
+            widgetState.getAxisYinX().setScale3(3, 3, 3)
+            widgetState.getAxisZinX().setScale3(3, 3, 3)
         } else {
-            widget.getWidgetState().getAxisYinX().setScale3(0.75, 0.75, 0.75)
-            widget.getWidgetState().getAxisZinX().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisYinX().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisZinX().setScale3(0.75, 0.75, 0.75)
         }
-        widget.getWidgetState().getAxisYinX().setVisible(true)
-        widget.getWidgetState().getAxisZinX().setVisible(true)
+        widgetState.getAxisYinX().setVisible(true)
+        widgetState.getAxisZinX().setVisible(true)
 
         if (index === 1) {
-            widget.getWidgetState().getRotationHandleXinY0().setVisible(true)
-            widget.getWidgetState().getRotationHandleXinY1().setVisible(true)
-            widget.getWidgetState().getRotationHandleZinY0().setVisible(true)
-            widget.getWidgetState().getRotationHandleZinY1().setVisible(true)
-            widget.getWidgetState().getCenterHandle().setVisible(true)
-            widget.getWidgetState().getAxisXinY().setScale3(3, 3, 3)
-            widget.getWidgetState().getAxisZinY().setScale3(3, 3, 3)
+            widgetState.getRotationHandleXinY0().setVisible(true)
+            widgetState.getRotationHandleXinY1().setVisible(true)
+            widgetState.getRotationHandleZinY0().setVisible(true)
+            widgetState.getRotationHandleZinY1().setVisible(true)
+            widgetState.getCenterHandle().setVisible(true)
+            widgetState.getAxisXinY().setScale3(3, 3, 3)
+            widgetState.getAxisZinY().setScale3(3, 3, 3)
         } else {
-            widget.getWidgetState().getAxisXinY().setScale3(0.75, 0.75, 0.75)
-            widget.getWidgetState().getAxisZinY().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisXinY().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisZinY().setScale3(0.75, 0.75, 0.75)
 
         }
-        widget.getWidgetState().getAxisXinY().setVisible(true)
-        widget.getWidgetState().getAxisZinY().setVisible(true)
+        widgetState.getAxisXinY().setVisible(true)
+        widgetState.getAxisZinY().setVisible(true)
 
         if (index === 2) {
-            widget.getWidgetState().getRotationHandleXinZ0().setVisible(true)
-            widget.getWidgetState().getRotationHandleXinZ1().setVisible(true)
-            widget.getWidgetState().getRotationHandleYinZ0().setVisible(true)
-            widget.getWidgetState().getRotationHandleYinZ1().setVisible(true)
-            widget.getWidgetState().getCenterHandle().setVisible(true)
-            widget.getWidgetState().getAxisXinZ().setScale3(3, 3, 3)
-            widget.getWidgetState().getAxisYinZ().setScale3(3, 3, 3)
+            widgetState.getRotationHandleXinZ0().setVisible(true)
+            widgetState.getRotationHandleXinZ1().setVisible(true)
+            widgetState.getRotationHandleYinZ0().setVisible(true)
+            widgetState.getRotationHandleYinZ1().setVisible(true)
+            widgetState.getCenterHandle().setVisible(true)
+            widgetState.getAxisXinZ().setScale3(3, 3, 3)
+            widgetState.getAxisYinZ().setScale3(3, 3, 3)
         } else {
-            widget.getWidgetState().getAxisXinZ().setScale3(0.75, 0.75, 0.75)
-            widget.getWidgetState().getAxisYinZ().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisXinZ().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisYinZ().setScale3(0.75, 0.75, 0.75)
         }
-        widget.getWidgetState().getAxisXinZ().setVisible(true)
-        widget.getWidgetState().getAxisYinZ().setVisible(true)
+        widgetState.getAxisXinZ().setVisible(true)
+        widgetState.getAxisYinZ().setVisible(true)
 
         // low quality while scrolling
         viewAttributes.forEach((obj) => {
@@ -169,32 +171,34 @@
     }
 
     function handlePointerLeave() {
+        const widgetState = widget.getWidgetState()
+
         // i === 0
-        widget.getWidgetState().getAxisYinX().setVisible(false)
-        widget.getWidgetState().getAxisZinX().setVisible(false)
-        widget.getWidgetState().getRotationHandleYinX0().setVisible(false)
-        widget.getWidgetState().getRotationHandleYinX1().setVisible(false)
-        widget.getWidgetState().getRotationHandleZinX0().setVisible(false)
-        widget.getWidgetState().getRotationHandleZinX1().setVisible(false)
-        widget.getWidgetState().getCenterHandle().setVisible(false)
+        widgetState.getAxisYinX().setVisible(false)
+        widgetState.getAxisZinX().setVisible(false)
+        widgetState.getRotationHandleYinX0().setVisible(false)
+        widgetState.getRotationHandleYinX1().setVisible(false)
+        widgetState.getRotationHandleZinX0().setVisible(false)
+        widgetState.getRotationHandleZinX1().setVisible(false)
+        widgetState.getCenterHandle().setVisible(false)
 
         // i === 1
-        widget.getWidgetState().getAxisXinY().setVisible(false)
-        widget.getWidgetState().getAxisZinY().setVisible(false)
-        widget.getWidgetState().getRotationHandleXinY0().setVisible(false)
-        widget.getWidgetState().getRotationHandleXinY1().setVisible(false)
-        widget.getWidgetState().getRotationHandleZinY0().setVisible(false)
-        widget.getWidgetState().getRotationHandleZinY1().setVisible(false)
-        widget.getWidgetState().getCenterHandle().setVisible(false)
+        widgetState.getAxisXinY().setVisible(false)
+        widgetState.getAxisZinY().setVisible(false)
+        widgetState.getRotationHandleXinY0().setVisible(false)
+        widgetState.getRotationHandleXinY1().setVisible(false)
+        widgetState.getRotationHandleZinY0().setVisible(false)
+        widgetState.getRotationHandleZinY1().setVisible(false)
+        widgetState.getCenterHandle().setVisible(false)
 
         // i === 2
-        widget.getWidgetState().getAxisXinZ().setVisible(false)
-        widget.getWidgetState().getAxisYinZ().setVisible(false)
-        widget.getWidgetState().getRotationHandleXinZ0().setVisible(false)
-        widget.getWidgetState().getRotationHandleXinZ1().setVisible(false)
-        widget.getWidgetState().getRotationHandleYinZ0().setVisible(false)
-        widget.getWidgetState().getRotationHandleYinZ1().setVisible(false)
-        widget.getWidgetState().getCenterHandle().setVisible(false)
+        widgetState.getAxisXinZ().setVisible(false)
+        widgetState.getAxisYinZ().setVisible(false)
+        widgetState.getRotationHandleXinZ0().setVisible(false)
+        widgetState.getRotationHandleXinZ1().setVisible(false)
+        widgetState.getRotationHandleYinZ0().setVisible(false)
+        widgetState.getRotationHandleYinZ1().setVisible(false)
+        widgetState.getCenterHandle().setVisible(false)
 
         // re-enable high quality interpolation when finished scrolling
         viewAttributes.forEach((obj) => {
@@ -220,63 +224,62 @@
                 actor: createAxes(),
                 interactor: grw.getInteractor(),
             }),
-            slider: slider
+            slider: sliderElement
         };
 
-        state.renderer.getActiveCamera().setParallelProjection(true);
-        state.renderer.setBackground(...getColors1(index));
-        state.renderWindow.addRenderer(state.renderer);
-        state.renderWindow.addView(state.GLWindow);
-        state.renderWindow.setInteractor(state.interactor);
-        state.interactor.setView(state.GLWindow);
-        state.interactor.initialize();
-        state.interactor.bindEvents(element);
-        state.widgetManager.setRenderer(state.renderer);
+        state.renderer.getActiveCamera().setParallelProjection(true)
+        state.renderer.setBackground(...getColor(index))
+        state.renderWindow.addRenderer(state.renderer)
+        state.renderWindow.addView(state.GLWindow)
+        state.renderWindow.setInteractor(state.interactor)
+        state.interactor.setView(state.GLWindow)
+        state.interactor.initialize()
+        state.widgetManager.setRenderer(state.renderer)
         state.interactor.setInteractorStyle(windowLevelEnabled ?
             vtkInteractorStyleImage.newInstance()
             : vtkInteractorStyleTrackballCamera.newInstance()
-        );
+        )
         state.interactor.onPointerEnter(handlePointerEnter)
         state.interactor.onPointerLeave(handlePointerLeave)
 
-        state.widgetInstance = state.widgetManager.addWidget(widget, xyzToViewType[index]);
+        state.widgetInstance = state.widgetManager.addWidget(widget, xyzToViewType[index])
         state.widgetInstance.setEnableTranslation(translationEnabled)
         state.widgetInstance.setEnableRotation(rotationEnabled)
         state.widgetInstance.setScaleInPixels(scaleInPixels)
         state.widgetInstance.setKeepOrthogonality(keepOrthogonality)
         state.widgetInstance.setCursorStyles(appCursorStyles)
-        state.widgetManager.enablePicking();
+        state.widgetManager.enablePicking()
         // Use to update all renderers buffer when actors are moved
-        state.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE);
+        state.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE)
 
-        state.reslice.setSlabMode(slabMode); // On change: updateViews()
-        state.reslice.setSlabNumberOfSlices(slabNumberOfSlices); // On change: updateViews()
-        state.reslice.setInterpolationMode(interpolationMode);
-        state.reslice.setTransformInputSampling(false);
-        state.reslice.setAutoCropOutput(true);
-        state.reslice.setOutputDimensionality(2);
+        state.reslice.setSlabMode(slabMode) // On change: updateViews()
+        state.reslice.setSlabNumberOfSlices(slabNumberOfSlices) // On change: updateViews()
+        state.reslice.setInterpolationMode(interpolationMode)
+        state.reslice.setTransformInputSampling(false)
+        state.reslice.setAutoCropOutput(true)
+        state.reslice.setOutputDimensionality(2)
 
-        state.resliceMapper.setInputConnection(state.reslice.getOutputPort());
+        state.resliceMapper.setInputConnection(state.reslice.getOutputPort())
 
-        state.resliceActor.setMapper(state.resliceMapper);
-        state.resliceActor.getProperty().setColorWindow(initialWindow);
-        state.resliceActor.getProperty().setColorLevel(initialLevel);
+        state.resliceActor.setMapper(state.resliceMapper)
+        state.resliceActor.getProperty().setColorWindow(initialWindow)
+        state.resliceActor.getProperty().setColorLevel(initialLevel)
 
-        state.orientationWidget.setEnabled(true);
+        state.orientationWidget.setEnabled(true)
         state.orientationWidget.setViewportCorner(
             vtkOrientationMarkerWidget.Corners.BOTTOM_RIGHT
-        );
-        state.orientationWidget.setViewportSize(0.15);
-        state.orientationWidget.setMinPixelSize(100); // 50
-        state.orientationWidget.setMaxPixelSize(300); // 200
+        )
+        state.orientationWidget.setViewportSize(0.15)
+        state.orientationWidget.setMinPixelSize(100) // 50
+        state.orientationWidget.setMaxPixelSize(300) // 200
 
-        viewAttributes.push(state);
+        viewAttributes.push(state)
     })
 </script>
 
 <div>
     <div bind:this={element}></div>
-    <input bind:this={slider} on:change={slicerChanged} type="range" min="0" max="200">
+    <input bind:this={sliderElement} max="200" min="0" on:change={sliderChanged} type="range">
 </div>
 
 <style>

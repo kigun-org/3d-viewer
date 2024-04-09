@@ -11,14 +11,16 @@
 
     import {
         xyzToViewType,
-        InteractionMethodsName,
+        InteractionMethodsName
     } from '@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants';
 
     // Force the loading of HttpDataAccessHelper to support gzip decompression
     import '@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper';
+
     import {onMount} from "svelte";
+
     import ViewSlice from "./ViewSlice.svelte";
-    import {getColors256} from "./colors.js";
+    import {getColor256} from "./colors.js";
 
     export let image
 
@@ -31,63 +33,65 @@
     const handleScale = 15
     const handleOpacity = 255
 
-    const viewAttributes = [];
     const widget = vtkResliceCursorWidget.newInstance();
-    const widgetState = widget.getWidgetState();
-    const initialPlanesState = {...widgetState.getPlanes()}
+    const initialPlanesState = {...widget.getWidgetState().getPlanes()}
+    const viewAttributes = [];
 
-    // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
-    widgetState
-        .getStatesWithLabel('sphere')
-        .forEach((handle) => {
-            handle.setScale1(handleScale)
-            handle.setVisible(false)
-        })
+    function initWidgetState(widget) {
+        const widgetState = widget.getWidgetState()
 
-    // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
-    widgetState
-        .getStatesWithLabel('handles')
-        .forEach((handle) => handle.setOpacity(handleOpacity))
+        // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
+        widgetState
+            .getStatesWithLabel('sphere')
+            .forEach((handle) => {
+                handle.setScale1(handleScale)
+                handle.setVisible(false)
+            })
 
-    widgetState
-        .getStatesWithLabel('line')
-        .forEach((handle) => {
-            handle.setScale3(3, 3, 3)
-            handle.setVisible(false)
-        })
+        // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
+        widgetState
+            .getStatesWithLabel('handles')
+            .forEach((handle) => handle.setOpacity(handleOpacity))
 
-    // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
-    widgetState
-        .getStatesWithLabel('rotation')
-        .forEach((handle) => handle.setVisible(rotationVisible))
+        widgetState
+            .getStatesWithLabel('line')
+            .forEach((handle) => {
+                handle.setScale3(3, 3, 3)
+                handle.setVisible(false)
+            })
 
+        // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
+        widgetState
+            .getStatesWithLabel('rotation')
+            .forEach((handle) => handle.setVisible(rotationVisible))
 
-    // set handle colors
-    // [1, 0.3, 0], sagittal
-    widgetState.getRotationHandleXinY0().setColor3(...getColors256(0))
-    widgetState.getRotationHandleXinY1().setColor3(...getColors256(0))
-    widgetState.getRotationHandleXinZ0().setColor3(...getColors256(0))
-    widgetState.getRotationHandleXinZ1().setColor3(...getColors256(0))
-    widgetState.getAxisXinY().setColor3(...getColors256(0))
-    widgetState.getAxisXinZ().setColor3(...getColors256(0))
+        // set handle colors
+        // [1, 0.3, 0], sagittal
+        widgetState.getRotationHandleXinY0().setColor3(...getColor256(0))
+        widgetState.getRotationHandleXinY1().setColor3(...getColor256(0))
+        widgetState.getRotationHandleXinZ0().setColor3(...getColor256(0))
+        widgetState.getRotationHandleXinZ1().setColor3(...getColor256(0))
+        widgetState.getAxisXinY().setColor3(...getColor256(0))
+        widgetState.getAxisXinZ().setColor3(...getColor256(0))
 
-    // [0.3, 0.7, 0.3], // coronal
-    widgetState.getRotationHandleYinX0().setColor3(...getColors256(1))
-    widgetState.getRotationHandleYinX1().setColor3(...getColors256(1))
-    widgetState.getRotationHandleYinZ0().setColor3(...getColors256(1))
-    widgetState.getRotationHandleYinZ1().setColor3(...getColors256(1))
-    widgetState.getAxisYinX().setColor3(...getColors256(1))
-    widgetState.getAxisYinZ().setColor3(...getColors256(1))
+        // [0.3, 0.7, 0.3], // coronal
+        widgetState.getRotationHandleYinX0().setColor3(...getColor256(1))
+        widgetState.getRotationHandleYinX1().setColor3(...getColor256(1))
+        widgetState.getRotationHandleYinZ0().setColor3(...getColor256(1))
+        widgetState.getRotationHandleYinZ1().setColor3(...getColor256(1))
+        widgetState.getAxisYinX().setColor3(...getColor256(1))
+        widgetState.getAxisYinZ().setColor3(...getColor256(1))
 
-    // [0, 0.5, 1], // axial
-    widgetState.getRotationHandleZinX0().setColor3(...getColors256(2))
-    widgetState.getRotationHandleZinX1().setColor3(...getColors256(2))
-    widgetState.getRotationHandleZinY0().setColor3(...getColors256(2))
-    widgetState.getRotationHandleZinY1().setColor3(...getColors256(2))
-    widgetState.getAxisZinX().setColor3(...getColors256(2))
-    widgetState.getAxisZinY().setColor3(...getColors256(2))
+        // [0, 0.5, 1], // axial
+        widgetState.getRotationHandleZinX0().setColor3(...getColor256(2))
+        widgetState.getRotationHandleZinX1().setColor3(...getColor256(2))
+        widgetState.getRotationHandleZinY0().setColor3(...getColor256(2))
+        widgetState.getRotationHandleZinY1().setColor3(...getColor256(2))
+        widgetState.getAxisZinX().setColor3(...getColor256(2))
+        widgetState.getAxisZinY().setColor3(...getColor256(2))
 
-    widgetState.getCenterHandle().setOpacity(1)
+        widgetState.getCenterHandle().setOpacity(1)
+    }
 
 
     function updateReslice(
@@ -122,7 +126,7 @@
                 const dist = Math.sqrt(
                     vtkMath.distance2BetweenPoints(
                         planeExtremities[0],
-                        widgetState.getCenter()
+                        widget.getWidgetState().getCenter()
                     )
                 );
                 interactionContext.slider.min = 0;
@@ -135,8 +139,8 @@
             interactionContext.viewType,
             interactionContext.resetFocalPoint,
             interactionContext.computeFocalPointOffset
-        );
-        return modified;
+        )
+        return modified
     }
 
     function updateViews() {
@@ -149,28 +153,42 @@
                 resetFocalPoint: true,
                 computeFocalPointOffset: true,
                 resetViewUp: true,
-            });
+            })
             obj.renderWindow.render()
-        });
+        })
     }
 
     function resetViews() {
-        widgetState.setPlanes({...initialPlanesState});
-        widget.setCenter(widget.getWidgetState().getImage().getCenter());
-        updateViews();
+        widget.getWidgetState().setPlanes({...initialPlanesState})
+        widget.setCenter(widget.getWidgetState().getImage().getCenter())
+        updateViews()
     }
 
     onMount(() => {
+        initWidgetState(widget)
         widget.setImage(image)
         widget.setScaleInPixels(scaleInPixels) // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
 
         const maxSlabNumberOfSlices = vec3.length(image.getDimensions()) // set max number of slices to slider.
 
         viewAttributes.forEach((obj, i) => {
-            obj.reslice.setInputData(image);
-            obj.renderer.addActor(obj.resliceActor);
-            const reslice = obj.reslice;
-            const viewType = xyzToViewType[i];
+            obj.reslice.setInputData(image)
+            obj.renderer.addActor(obj.resliceActor)
+            const reslice = obj.reslice
+            const viewType = xyzToViewType[i]
+
+            obj.interactor.getInteractorStyle().onInteractionEvent((e) => {
+                const level = obj.resliceActor.getProperty().getColorLevel()
+                const window = obj.resliceActor.getProperty().getColorWindow()
+
+                viewAttributes.forEach((v) => {
+                    if (v !== obj) {
+                        v.resliceActor.getProperty().setColorLevel(level)
+                        v.resliceActor.getProperty().setColorWindow(window)
+                        v.renderWindow.getInteractor().render()
+                    }
+                })
+            })
 
             // No need to update plane nor refresh when interaction
             // is on current view. Plane can't be changed with interaction on current
@@ -190,8 +208,8 @@
                         resetFocalPoint: false,
                         computeFocalPointOffset: true,
                         slider: obj.slider,
-                    });
-                });
+                    })
+                })
 
                 // Interactions in other views may change current plane
                 v.widgetInstance.onInteractionEvent(
@@ -213,10 +231,10 @@
                             resetFocalPoint: false,
                             computeFocalPointOffset,
                             slider: obj.slider,
-                        });
+                        })
                     }
-                );
-            });
+                )
+            })
 
             updateReslice({
                 viewType,
@@ -228,8 +246,8 @@
                 slider: obj.slider,
             });
 
-            obj.renderer.resetCamera();
-            obj.renderer.getActiveCamera().zoom(1.25);
+            obj.renderer.resetCamera()
+            obj.renderer.getActiveCamera().zoom(1.25)
 
             obj.interactor.render();
         });
@@ -240,8 +258,8 @@
 
 <div style="display: flex">
     <main id="reslice" style="display: grid; grid-template-columns: repeat(3, 1fr)">
-        <ViewSlice index={0} {viewAttributes} {widget} {scaleInPixels} />
-        <ViewSlice index={1} {viewAttributes} {widget} {scaleInPixels} />
-        <ViewSlice index={2} {viewAttributes} {widget} {scaleInPixels} />
+        <ViewSlice index={0} {scaleInPixels} {viewAttributes} {widget}/>
+        <ViewSlice index={1} {scaleInPixels} {viewAttributes} {widget}/>
+        <ViewSlice index={2} {scaleInPixels} {viewAttributes} {widget}/>
     </main>
 </div>
