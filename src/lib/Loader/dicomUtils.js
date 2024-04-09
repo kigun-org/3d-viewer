@@ -11,78 +11,70 @@ const parseDICOMFiles = async function (fileList, progressCallback) {
         total: fileList.length
     }))
 
-    const fetchInfo = function (initialWorker) {
-        return function (file) {
-            let currentWorker = initialWorker
-            return readDicomTags(file, {
-                tagsToRead: {
-                    tags: [
-                        "0010|0020", "0010|0010", "0010|0030", "0010|0040", // patient ID, name, DoB, sex
-                        "0008|0021", "0008|0031", // study date and time
-                        "0008|103e", // series description
-                        "0020|000d", "0020|000e", // study instance ID, series instance ID
-                    ]
-                },
-                webWorker: currentWorker
-            }).then(({webWorker, tags}) => {
-                currentWorker = webWorker
-                progressCallback(new ProgressEvent('progress', {
-                    lengthComputable: true,
-                    loaded: ++loaded,
-                    total: fileList.length
-                }))
+    const fetchInfo = function (file, worker) {
+        return readDicomTags(file, {
+            tagsToRead: {
+                tags: [
+                    "0010|0020", "0010|0010", "0010|0030", "0010|0040", // patient ID, name, DoB, sex
+                    "0008|0021", "0008|0031", // study date and time
+                    "0008|103e", // series description
+                    "0020|000d", "0020|000e", // study instance ID, series instance ID
+                ]
+            },
+            webWorker: worker
+        }).then(({webWorker, tags}) => {
+            progressCallback(new ProgressEvent('progress', {
+                lengthComputable: true,
+                loaded: ++loaded,
+                total: fileList.length
+            }))
 
-                const tagMap = new Map(tags)
-                return {
-                    file: file,
-                    isDICOM: true,
-                    patientID: tagMap.get("0010|0020"),
-                    patientName: tagMap.get("0010|0010"),
-                    patientDateOfBirth: tagMap.get("0010|0030"),
-                    patientSex: tagMap.get("0010|0040"),
-                    studyDate: tagMap.get("0008|0021"),
-                    studyTime: tagMap.get("0008|0031"),
-                    seriesDescription: tagMap.get("0008|103e"),
-                    studyInstanceID: tagMap.get("0020|000d"),
-                    seriesInstanceID: tagMap.get("0020|000e"),
-                }
-            }).catch((e) => {
-                // currentWorker = null
-                console.log("ERROR: ", e)
+            const tagMap = new Map(tags)
+            return [ {
+                file: file,
+                isDICOM: true,
+                patientID: tagMap.get("0010|0020"),
+                patientName: tagMap.get("0010|0010"),
+                patientDateOfBirth: tagMap.get("0010|0030"),
+                patientSex: tagMap.get("0010|0040"),
+                studyDate: tagMap.get("0008|0021"),
+                studyTime: tagMap.get("0008|0031"),
+                seriesDescription: tagMap.get("0008|103e"),
+                studyInstanceID: tagMap.get("0020|000d"),
+                seriesInstanceID: tagMap.get("0020|000e"),
+            }, webWorker ]
+        }).catch((e) => {
+            console.log("ERROR: ", e)
 
-                progressCallback(new ProgressEvent('progress', {
-                    lengthComputable: true,
-                    loaded: ++loaded,
-                    total: fileList.length
-                }))
+            progressCallback(new ProgressEvent('progress', {
+                lengthComputable: true,
+                loaded: ++loaded,
+                total: fileList.length
+            }))
 
-                return {
-                    file: file,
-                    isDICOM: false
-                }
-            })
-        }
+            return [{
+                file: file,
+                isDICOM: false
+            }, null]
+        })
     }
 
     // split up the DICOM images and assign different workers per chunk; 200 seems to be a safe value
     let results = []
-    const chunkSize = 200;
+    const chunkSize = 200
     for (let i = 0; i < fileList.length; i += chunkSize) {
-        const chunk = [...fileList].slice(i, i + chunkSize);
+        const fileListChunk = [...fileList].slice(i, i + chunkSize)
+        let worker = null
 
-        let {webWorker: worker} = await readDicomTags(chunk[0], {
-            tagsToRead: {
-                tags: [
-                    "0010|0020", "0010|0010", "0010|0030", "0010|0040", // patient ID, name, DoB, sex
-                    "0008|0021", "0008|0031", // series date and time
-                    "0020|000d", "0020|000e", // study instance ID, series instance ID
-                ]
-            }
-        })
+        for (const file of fileListChunk) {
+            let fileInfo
+            [ fileInfo, worker ] = await fetchInfo(file, worker)
+            results.push(fileInfo)
+        }
 
-        const fetchFileInfoChunk = Array.from(chunk, fetchInfo(worker))
-        results = [...results, ...await Promise.all(fetchFileInfoChunk)]
-        worker.terminate()
+        if (worker !== null) {
+            worker.terminate()
+        }
     }
 
     return results
