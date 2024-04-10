@@ -13,14 +13,14 @@
     import vtkVolumeMapper from "@kitware/vtk.js/Rendering/Core/VolumeMapper";
     import vtkVolume from "@kitware/vtk.js/Rendering/Core/Volume";
 
-    import LocalToolbar from "./LocalToolbar.svelte";
+    import ToolbarLocal from "./ToolbarLocal.svelte";
     import {ViewMode} from "./ViewMode.js";
     import {createTrackballNoHotkeysStyle} from "./interactorStyles.js";
 
-    export let id
+    let containerElement
 
     export let maximized
-    export let showViewMode
+    export let showToolbar
 
     export let models
     export let volume
@@ -91,10 +91,18 @@
         return volume
     }
 
-    function resetCamera() {
+    export function resetCamera() {
         if (renderer && renderWindow) {
+            if (volume !== undefined) {
+                const camera = renderer.getActiveCamera()
+                camera.setPosition(0,-1,0)
+                camera.setViewUp([0,0,1])
+                renderer.updateLightsGeometryToFollowCamera()
+            }
+
             renderer.resetCamera()
             renderer.getActiveCamera().zoom(1.5)
+
             renderWindow.render()
         }
     }
@@ -104,13 +112,8 @@
     }
 
     onMount(() => {
-        // ----------------------------------------------------------------------------
-        // Standard rendering code setup
-        // ----------------------------------------------------------------------------
-
-        const container = document.getElementById(id);
         const openGLRenderWindow = vtkGenericRenderWindow.newInstance();
-        openGLRenderWindow.setContainer(container)
+        openGLRenderWindow.setContainer(containerElement)
         openGLRenderWindow.resize()
 
         renderer = openGLRenderWindow.getRenderer();
@@ -123,11 +126,6 @@
         const camera = renderer.getActiveCamera()
         camera.setParallelProjection(true)
 
-        const resizeObserver = new ResizeObserver((_) => {
-            openGLRenderWindow.resize()
-        });
-        resizeObserver.observe(container)
-
         for (const model of models) {
             model.actor = createModel(model)
             renderer.addActor(model.actor)
@@ -138,11 +136,6 @@
             renderer.addVolume(volume.actor)
         }
 
-        // if (volume !== undefined) {
-        //     camera.setPosition(0,-1,0)
-        //     camera.setViewUp([0,0,1])
-        // }
-
         resetCamera()
     })
 </script>
@@ -150,10 +143,12 @@
 <div style="position: relative"
      class:maximized={maximized === ViewMode.THREE_D}
      class:hidden={maximized !== null && maximized !== ViewMode.THREE_D}>
-    <div {id} style="min-height: 200px; aspect-ratio: 3 / 2; background-color: #cde"></div>
 
-    <LocalToolbar viewMode={ViewMode.THREE_D} {showViewMode} bind:maximized={maximized}
-                  on:resetCamera={resetCamera} />
+    <div bind:this={containerElement} style="min-height: 200px; aspect-ratio: 3 / 2"></div>
+
+    {#if showToolbar}
+    <ToolbarLocal viewMode={ViewMode.THREE_D} bind:maximized={maximized} />
+    {/if}
 </div>
 
 <style>

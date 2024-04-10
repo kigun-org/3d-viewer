@@ -16,7 +16,7 @@
     import vtkAnnotatedCubeActor from "@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor";
     import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants";
 
-    import LocalToolbar from "./LocalToolbar.svelte";
+    import ToolbarLocal from "./ToolbarLocal.svelte";
     import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants.js";
     import {getColorRGBString} from "../Loader/colors.js";
     import {xyzToViewType} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants.js";
@@ -26,7 +26,7 @@
 
     export let maximized
     export let viewMode
-    export let showViewMode
+    export let showToolbar
 
     const backgroundColor = [0.1, 0.1, 0.1]
 
@@ -95,27 +95,30 @@
             resolution: 400,
         });
         result.setXPlusFaceProperty({
-            text: '+X',
+            text: 'L',
+            faceRotation: 90,
             faceColor: getColorRGBString(0),
         });
         result.setXMinusFaceProperty({
-            text: '-X',
+            text: 'R',
+            faceRotation: -90,
             faceColor: getColorRGBString(0),
         });
         result.setYPlusFaceProperty({
-            text: '+Y',
+            text: 'P',
+            faceRotation: 180,
             faceColor: getColorRGBString(1),
         });
         result.setYMinusFaceProperty({
-            text: '-Y',
+            text: 'A',
             faceColor: getColorRGBString(1),
         });
         result.setZPlusFaceProperty({
-            text: '+Z',
+            text: 'S',
             faceColor: getColorRGBString(2),
         });
         result.setZMinusFaceProperty({
-            text: '-Z',
+            text: 'I',
             faceColor: getColorRGBString(2),
         });
 
@@ -294,10 +297,11 @@
      class:maximized={maximized === viewMode}
      class:hidden={maximized !== null && maximized !== viewMode}>
 
-    <div style="min-height: 200px; aspect-ratio: 3 / 2" bind:this={element}></div>
+    <div bind:this={element} style="min-height: 200px; aspect-ratio: 3 / 2"></div>
 
-    <LocalToolbar viewMode={viewMode} {showViewMode} bind:maximized={maximized}
-                  on:resetCamera={resetCamera} on:resetWL={resetWL}  />
+    {#if showToolbar}
+    <ToolbarLocal viewMode={viewMode} bind:maximized={maximized} />
+    {/if}
 </div>
 
 <style>

@@ -111,7 +111,7 @@
     }
 </script>
 
-<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>
+<!--<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>-->
 
 <!--<div>-->
 <!--    <Viewer id="model" resources={model}/>-->
@@ -125,9 +125,9 @@
 <!--    <Viewer id="models" resources={models}/>-->
 <!--</div>-->
 
-<!--<div>-->
-<!--    <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>-->
-<!--</div>-->
+<div>
+    <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>
+</div>
 
 <!--<div>-->
 <!--    <Viewer id="all" {resources} startMaximized={true} screenshotCallback={addScreenshot}/>-->

@@ -14,7 +14,7 @@
 
     import {ViewMode} from "./ViewMode.js";
     import {getColor256} from "../Loader/colors.js";
-    import GlobalToolbar from "./GlobalToolbar.svelte";
+    import ToolbarGlobal from "./ToolbarGlobal.svelte";
     import Window2D from "./Window2D.svelte";
     import Window3D from "./Window3D.svelte";
 
@@ -36,7 +36,7 @@
     let maximized = startMaximized ? ViewMode.THREE_D : null
 
     /* If no volumes are loaded, only show 3D view */
-    let showViewMode = (volume !== undefined)
+    let showLocalToolbar = (volume !== undefined)
 
     /* Show object list if more than one model/volume is loaded */
     let objectListVisible = (models.length > 1) || (models.length > 0 && volume !== undefined)
@@ -126,6 +126,9 @@
     // Set size in CSS pixel space because scaleInPixels defaults to true
     const handleScale = 15
     const handleOpacity = 255
+
+    const initialWindow = 4000
+    const initialLevel = 1000
 
     const widget = vtkResliceCursorWidget.newInstance();
     const initialPlanesState = {...widget.getWidgetState().getPlanes()};
@@ -251,10 +254,24 @@
         })
     }
 
-    function resetViews() {
+    function resetCamera() {
         widget.getWidgetState().setPlanes({...initialPlanesState})
         widget.setCenter(widget.getWidgetState().getImage().getCenter())
         updateViews()
+
+        window3D.resetCamera()
+    }
+
+    function resetWindowLevel() {
+        viewAttributes.forEach((v) => {
+            setWindowLevel(v, initialWindow, initialLevel)
+        })
+    }
+
+    function setWindowLevel(v, window, level) {
+        v.resliceActor.getProperty().setColorLevel(level)
+        v.resliceActor.getProperty().setColorWindow(window)
+        v.renderWindow.getInteractor().render()
     }
 
     onMount(() => {
@@ -280,9 +297,7 @@
 
                     viewAttributes.forEach((v) => {
                         if (v !== obj) {
-                            v.resliceActor.getProperty().setColorLevel(level)
-                            v.resliceActor.getProperty().setColorWindow(window)
-                            v.renderWindow.getInteractor().render()
+                            setWindowLevel(v, window, level)
                         }
                     })
                 })
@@ -368,17 +383,17 @@ It will show up on hover.
     <div style="display: grid; grid-template-columns: 1fr 1fr">
         <Window2D index={0} {scaleInPixels} {viewAttributes} {widget}
                   bind:this={windowAxial}
-                  viewMode={ViewMode.AXIAL} {showViewMode} bind:maximized={maximized}/>
-        <Window3D bind:this={window3D} id="{id}_3d"
-                  {showViewMode} bind:maximized={maximized}
-                  bind:models={models} bind:volume={volume}/>
+                  viewMode={ViewMode.AXIAL} showToolbar={showLocalToolbar} bind:maximized={maximized}/>
+        <Window3D bind:this={window3D} bind:models={models} bind:volume={volume}
+                  showToolbar={showLocalToolbar} bind:maximized={maximized} />
         <Window2D index={1} {scaleInPixels} {viewAttributes} {widget}
                   bind:this={windowCoronal}
-                  viewMode={ViewMode.CORONAL} {showViewMode} bind:maximized={maximized}/>
+                  viewMode={ViewMode.CORONAL} showToolbar={showLocalToolbar} bind:maximized={maximized}/>
         <Window2D index={2} {scaleInPixels} {viewAttributes} {widget}
                   bind:this={windowSagittal}
-                  viewMode={ViewMode.SAGITTAL} {showViewMode} bind:maximized={maximized}/>
+                  viewMode={ViewMode.SAGITTAL} showToolbar={showLocalToolbar} bind:maximized={maximized}/>
     </div>
-    <GlobalToolbar {objectListVisible} bind:models={models} bind:volume={volume}
+    <ToolbarGlobal {objectListVisible} bind:models={models} bind:volume={volume}
+                   on:resetCamera={resetCamera} on:resetWindowLevel={resetWindowLevel}
                    showScreenshotButton={screenshotCallback !== null} on:screenshot={saveScreenshot} />
 </div>
