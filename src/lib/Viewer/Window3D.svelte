@@ -13,9 +13,9 @@
     import vtkVolumeMapper from "@kitware/vtk.js/Rendering/Core/VolumeMapper";
     import vtkVolume from "@kitware/vtk.js/Rendering/Core/Volume";
 
-    import ToolbarLocal from "./ToolbarLocal.svelte";
-    import {ViewMode} from "./ViewMode.js";
+    import {ViewMode} from "./ViewMode";
     import {createTrackballNoHotkeysStyle} from "./interactorStyles.js";
+    import ToolbarLocal from "./ToolbarLocal.svelte";
 
     let containerElement
 

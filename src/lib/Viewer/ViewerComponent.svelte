@@ -11,7 +11,7 @@
 
     import {onMount} from "svelte";
 
-    import {ViewMode} from "./ViewMode.js";
+    import {getViewTypes, ViewMode} from "./ViewMode.js";
     import {getColor256} from "../Loader/colors.js";
     import ToolbarGlobal from "./ToolbarGlobal.svelte";
     import Window2D from "./Window2D.svelte";
@@ -248,7 +248,7 @@
     function updateViews() {
         viewAttributes.forEach((obj, i) => {
             updateReslice({
-                viewType: xyzToViewType[i],
+                viewType: getViewTypes(i),
                 reslice: obj.reslice,
                 actor: obj.resliceActor,
                 renderer: obj.renderer,
@@ -295,7 +295,7 @@
                 obj.reslice.setInputData(image)
                 obj.renderer.addActor(obj.resliceActor)
                 const reslice = obj.reslice
-                const viewType = xyzToViewType[i]
+                const viewType = getViewTypes(i)
 
                 obj.interactor.getInteractorStyle().onInteractionEvent(() => {
                     const level = obj.resliceActor.getProperty().getColorLevel()
@@ -387,17 +387,14 @@ It will show up on hover.
 -->
 <div style="position: relative; width: 100%; height: 100%">
     <div style="display: grid; grid-template-columns: 1fr 1fr">
-        <Window2D bind:maximized={maximized} bind:this={windowAxial} index={0} {scaleInPixels}
-                  showToolbar={showLocalToolbar}
-                  {viewAttributes} viewMode={ViewMode.AXIAL} {widget}/>
+        <Window2D bind:this={windowAxial} viewMode={ViewMode.AXIAL} bind:maximized={maximized}
+                  {viewAttributes} {widget} {scaleInPixels} />
         <Window3D bind:maximized={maximized} bind:models={models} bind:this={window3D}
                   bind:volume={volume} showToolbar={showLocalToolbar}/>
-        <Window2D bind:maximized={maximized} bind:this={windowCoronal} index={1} {scaleInPixels}
-                  showToolbar={showLocalToolbar}
-                  {viewAttributes} viewMode={ViewMode.CORONAL} {widget}/>
-        <Window2D bind:maximized={maximized} bind:this={windowSagittal} index={2} {scaleInPixels}
-                  showToolbar={showLocalToolbar}
-                  {viewAttributes} viewMode={ViewMode.SAGITTAL} {widget}/>
+        <Window2D bind:this={windowCoronal} viewMode={ViewMode.CORONAL} bind:maximized={maximized}
+                  {viewAttributes} {widget} {scaleInPixels} />
+        <Window2D bind:this={windowSagittal} viewMode={ViewMode.SAGITTAL} bind:maximized={maximized}
+                  {viewAttributes} {widget} {scaleInPixels} />
     </div>
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
                    on:resetCamera={resetCamera}

@@ -16,23 +16,20 @@
     import vtkAnnotatedCubeActor from "@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor";
     import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants";
 
-    import ToolbarLocal from "./ToolbarLocal.svelte";
     import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants";
-    import {getColorRGBString} from "../Loader/colors";
-    import {xyzToViewType} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
     import vtkWidgetManager from "@kitware/vtk.js/Widgets/Core/WidgetManager";
     import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera";
     import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
+    import {getColorRGBString} from "../Loader/colors";
+    import {ViewMode} from "./ViewMode";
+    import ToolbarLocal from "./ToolbarLocal.svelte";
 
     export let maximized
     export let viewMode
-    export let showToolbar
 
     const backgroundColor = [0.1, 0.1, 0.1]
 
     export let viewAttributes
-
-    export let index
 
     export let widget
 
@@ -118,22 +115,22 @@
     function handlePointerEnter() {
         const widgetState = widget.getWidgetState()
 
-        if (index === 0) {
-            widgetState.getRotationHandleYinX0().setVisible(true)
-            widgetState.getRotationHandleYinX1().setVisible(true)
-            widgetState.getRotationHandleZinX0().setVisible(true)
-            widgetState.getRotationHandleZinX1().setVisible(true)
+        if (viewMode === ViewMode.AXIAL) {
+            widgetState.getRotationHandleXinZ0().setVisible(true)
+            widgetState.getRotationHandleXinZ1().setVisible(true)
+            widgetState.getRotationHandleYinZ0().setVisible(true)
+            widgetState.getRotationHandleYinZ1().setVisible(true)
             widgetState.getCenterHandle().setVisible(true)
-            widgetState.getAxisYinX().setScale3(3, 3, 3)
-            widgetState.getAxisZinX().setScale3(3, 3, 3)
+            widgetState.getAxisXinZ().setScale3(3, 3, 3)
+            widgetState.getAxisYinZ().setScale3(3, 3, 3)
         } else {
-            widgetState.getAxisYinX().setScale3(0.75, 0.75, 0.75)
-            widgetState.getAxisZinX().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisXinZ().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisYinZ().setScale3(0.75, 0.75, 0.75)
         }
-        widgetState.getAxisYinX().setVisible(true)
-        widgetState.getAxisZinX().setVisible(true)
+        widgetState.getAxisXinZ().setVisible(true)
+        widgetState.getAxisYinZ().setVisible(true)
 
-        if (index === 1) {
+        if (viewMode === ViewMode.CORONAL) {
             widgetState.getRotationHandleXinY0().setVisible(true)
             widgetState.getRotationHandleXinY1().setVisible(true)
             widgetState.getRotationHandleZinY0().setVisible(true)
@@ -149,20 +146,21 @@
         widgetState.getAxisXinY().setVisible(true)
         widgetState.getAxisZinY().setVisible(true)
 
-        if (index === 2) {
-            widgetState.getRotationHandleXinZ0().setVisible(true)
-            widgetState.getRotationHandleXinZ1().setVisible(true)
-            widgetState.getRotationHandleYinZ0().setVisible(true)
-            widgetState.getRotationHandleYinZ1().setVisible(true)
+        if (viewMode === ViewMode.SAGITTAL) {
+            widgetState.getRotationHandleYinX0().setVisible(true)
+            widgetState.getRotationHandleYinX1().setVisible(true)
+            widgetState.getRotationHandleZinX0().setVisible(true)
+            widgetState.getRotationHandleZinX1().setVisible(true)
             widgetState.getCenterHandle().setVisible(true)
-            widgetState.getAxisXinZ().setScale3(3, 3, 3)
-            widgetState.getAxisYinZ().setScale3(3, 3, 3)
+            widgetState.getAxisYinX().setScale3(3, 3, 3)
+            widgetState.getAxisZinX().setScale3(3, 3, 3)
         } else {
-            widgetState.getAxisXinZ().setScale3(0.75, 0.75, 0.75)
-            widgetState.getAxisYinZ().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisYinX().setScale3(0.75, 0.75, 0.75)
+            widgetState.getAxisZinX().setScale3(0.75, 0.75, 0.75)
         }
-        widgetState.getAxisXinZ().setVisible(true)
-        widgetState.getAxisYinZ().setVisible(true)
+        widgetState.getAxisYinX().setVisible(true)
+        widgetState.getAxisZinX().setVisible(true)
+
 
         // low quality while scrolling
         viewAttributes.forEach((obj) => {
@@ -248,7 +246,7 @@
         state.interactor.onPointerEnter(handlePointerEnter)
         state.interactor.onPointerLeave(handlePointerLeave)
 
-        state.widgetInstance = state.widgetManager.addWidget(widget, xyzToViewType[index])
+        state.widgetInstance = state.widgetManager.addWidget(widget, viewMode.viewType)
         state.widgetInstance.setEnableTranslation(translationEnabled)
         state.widgetInstance.setEnableRotation(rotationEnabled)
         state.widgetInstance.setScaleInPixels(scaleInPixels)
@@ -289,9 +287,7 @@
 
     <div bind:this={element} style="min-height: 200px; aspect-ratio: 3 / 2"></div>
 
-    {#if showToolbar}
     <ToolbarLocal viewMode={viewMode} bind:maximized={maximized} />
-    {/if}
 </div>
 
 <style>
