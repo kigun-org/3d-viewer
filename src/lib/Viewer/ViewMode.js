@@ -1,6 +1,6 @@
-import {SlicingMode} from "@kitware/vtk.js/Rendering/Core/ImageMapper/Constants";
 import {ViewTypes} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
-import {getColorRGBString} from "../Loader/colors.js";
+// import {SlicingMode} from "@kitware/vtk.js/Rendering/Core/ImageMapper/Constants";
+import {getColorRGBString} from "../Loader/colors";
 
 export const ViewMode= {
     AXIAL: {

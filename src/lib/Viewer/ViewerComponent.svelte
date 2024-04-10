@@ -2,10 +2,7 @@
     // Load the rendering pieces we want to use (for both WebGL and WebGPU)
     import '@kitware/vtk.js/Rendering/Profiles/All';
 
-    import {
-        InteractionMethodsName,
-        xyzToViewType
-    } from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
+    import {InteractionMethodsName} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';
     import vtkResliceCursorWidget from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget";
 
@@ -387,17 +384,17 @@ It will show up on hover.
 -->
 <div style="position: relative; width: 100%; height: 100%">
     <div style="display: grid; grid-template-columns: 1fr 1fr">
-        <Window2D bind:this={windowAxial} viewMode={ViewMode.AXIAL} bind:maximized={maximized}
-                  {viewAttributes} {widget} {scaleInPixels} />
+        <Window2D bind:maximized={maximized} bind:this={windowAxial} {scaleInPixels}
+                  {viewAttributes} viewMode={ViewMode.AXIAL} {widget}/>
         <Window3D bind:maximized={maximized} bind:models={models} bind:this={window3D}
                   bind:volume={volume} showToolbar={showLocalToolbar}/>
-        <Window2D bind:this={windowCoronal} viewMode={ViewMode.CORONAL} bind:maximized={maximized}
-                  {viewAttributes} {widget} {scaleInPixels} />
-        <Window2D bind:this={windowSagittal} viewMode={ViewMode.SAGITTAL} bind:maximized={maximized}
-                  {viewAttributes} {widget} {scaleInPixels} />
+        <Window2D bind:maximized={maximized} bind:this={windowCoronal} {scaleInPixels}
+                  {viewAttributes} viewMode={ViewMode.CORONAL} {widget}/>
+        <Window2D bind:maximized={maximized} bind:this={windowSagittal} {scaleInPixels}
+                  {viewAttributes} viewMode={ViewMode.SAGITTAL} {widget}/>
     </div>
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
                    on:resetCamera={resetCamera}
-                   showWindowLevelButton={volume !== undefined} on:resetWindowLevel={resetWindowLevel}
-                   showScreenshotButton={screenshotCallback !== null} on:screenshot={saveScreenshot} />
+                   on:resetWindowLevel={resetWindowLevel} on:screenshot={saveScreenshot}
+                   showScreenshotButton={screenshotCallback !== null} showWindowLevelButton={volume !== undefined}/>
 </div>
