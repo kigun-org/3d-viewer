@@ -17,34 +17,18 @@
     import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants";
 
     import ToolbarLocal from "./ToolbarLocal.svelte";
-    import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants.js";
-    import {getColorRGBString} from "../Loader/colors.js";
-    import {xyzToViewType} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants.js";
-    import vtkWidgetManager from "@kitware/vtk.js/Widgets/Core/WidgetManager.js";
-    import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera.js";
-    import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants.js";
+    import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants";
+    import {getColorRGBString} from "../Loader/colors";
+    import {xyzToViewType} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
+    import vtkWidgetManager from "@kitware/vtk.js/Widgets/Core/WidgetManager";
+    import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera";
+    import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
 
     export let maximized
     export let viewMode
     export let showToolbar
 
     const backgroundColor = [0.1, 0.1, 0.1]
-
-    function resetCamera() {
-        state.renderer.resetCamera();
-        state.renderer.getActiveCamera().zoom(1.25);
-        state.renderWindow.render();
-    }
-
-    function resetWL() {
-        state.resliceActor.getProperty().setColorWindow(4000);
-        state.resliceActor.getProperty().setColorLevel(1000);
-    }
-
-    export function saveScreenshot() {
-        return state.renderWindow.captureImages()[0]
-    }
-
 
     export let viewAttributes
 
@@ -54,6 +38,10 @@
 
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     export let scaleInPixels
+
+    export function saveScreenshot() {
+        return state.renderWindow.captureImages()[0]
+    }
 
     let state
 
@@ -68,6 +56,8 @@
     // [SlabMode.MIN, SlabMode.MAX, SlabMode.MEAN, SlabMode.SUM]
     const slabMode = SlabMode.MEAN
     const slabNumberOfSlices = 1
+    // const maxSlabNumberOfSlices = vec3.length(image.getDimensions()) // set max number of slices to slider.
+
     // [InterpolationMode.NEAREST, InterpolationMode.LINEAR, InterpolationMode.CUBIC]
     const interpolationMode = InterpolationMode.NEAREST
     const windowLevelEnabled = true

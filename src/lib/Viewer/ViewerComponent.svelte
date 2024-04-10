@@ -8,7 +8,6 @@
     } from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';
     import vtkResliceCursorWidget from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget";
-    import {vec3} from "gl-matrix";
 
     import {onMount} from "svelte";
 
@@ -17,9 +16,6 @@
     import ToolbarGlobal from "./ToolbarGlobal.svelte";
     import Window2D from "./Window2D.svelte";
     import Window3D from "./Window3D.svelte";
-
-    /** A unique (per page) id, so that sub-components can have unique IDs */
-    export let id
 
     let window3D
     let windowAxial
@@ -53,16 +49,16 @@
     }
 
     async function mergeImages(axial, threeD, coronal, sagittal) {
-        const imageAxial = Object.assign(new Image(), { src: axial });
+        const imageAxial = Object.assign(new Image(), {src: axial});
         await new Promise(resolve => imageAxial.addEventListener('load', () => resolve()));
 
-        const image3D = Object.assign(new Image(), { src: threeD });
+        const image3D = Object.assign(new Image(), {src: threeD});
         await new Promise(resolve => image3D.addEventListener('load', () => resolve()));
 
-        const imageCoronal = Object.assign(new Image(), { src: coronal });
+        const imageCoronal = Object.assign(new Image(), {src: coronal});
         await new Promise(resolve => imageCoronal.addEventListener('load', () => resolve()));
 
-        const imageSagittal = Object.assign(new Image(), { src: sagittal });
+        const imageSagittal = Object.assign(new Image(), {src: sagittal});
         await new Promise(resolve => imageSagittal.addEventListener('load', () => resolve()));
 
         const canvas = Object.assign(document.createElement('canvas'), {
@@ -104,14 +100,24 @@
                 default:
                     let image3D, imageAxial, imageCoronal, imageSagittal
                     window3D.saveScreenshot()
-                        .then((image) => { image3D = image; return windowAxial.saveScreenshot() })
-                        .then((image) => { imageAxial = image; return windowCoronal.saveScreenshot() })
-                        .then((image) => { imageCoronal = image; return windowSagittal.saveScreenshot() })
-                        .then((image) => { imageSagittal = image;
-                            mergeImages(imageAxial, image3D, imageCoronal, imageSagittal)
-                                .then((mergedImage) => {
-                                    screenshotCallback(mergedImage)
-                                })
+                        .then((image) => {
+                            image3D = image;
+                            return windowAxial.saveScreenshot()
+                        })
+                        .then((image) => {
+                            imageAxial = image;
+                            return windowCoronal.saveScreenshot()
+                        })
+                        .then((image) => {
+                            imageCoronal = image;
+                            return windowSagittal.saveScreenshot()
+                        })
+                        .then((image) => {
+                            imageSagittal = image;
+                            return mergeImages(imageAxial, image3D, imageCoronal, imageSagittal)
+                        })
+                        .then((mergedImage) => {
+                            screenshotCallback(mergedImage)
                         })
             }
         }
@@ -283,15 +289,13 @@
             widget.setImage(image)
             widget.setScaleInPixels(scaleInPixels) // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
 
-            const maxSlabNumberOfSlices = vec3.length(image.getDimensions()) // set max number of slices to slider.
-
             viewAttributes.forEach((obj, i) => {
                 obj.reslice.setInputData(image)
                 obj.renderer.addActor(obj.resliceActor)
                 const reslice = obj.reslice
                 const viewType = xyzToViewType[i]
 
-                obj.interactor.getInteractorStyle().onInteractionEvent((e) => {
+                obj.interactor.getInteractorStyle().onInteractionEvent(() => {
                     const level = obj.resliceActor.getProperty().getColorLevel()
                     const window = obj.resliceActor.getProperty().getColorWindow()
 
@@ -381,19 +385,19 @@ It will show up on hover.
 -->
 <div style="position: relative; width: 100%; height: 100%">
     <div style="display: grid; grid-template-columns: 1fr 1fr">
-        <Window2D index={0} {scaleInPixels} {viewAttributes} {widget}
-                  bind:this={windowAxial}
-                  viewMode={ViewMode.AXIAL} showToolbar={showLocalToolbar} bind:maximized={maximized}/>
-        <Window3D bind:this={window3D} bind:models={models} bind:volume={volume}
-                  showToolbar={showLocalToolbar} bind:maximized={maximized} />
-        <Window2D index={1} {scaleInPixels} {viewAttributes} {widget}
-                  bind:this={windowCoronal}
-                  viewMode={ViewMode.CORONAL} showToolbar={showLocalToolbar} bind:maximized={maximized}/>
-        <Window2D index={2} {scaleInPixels} {viewAttributes} {widget}
-                  bind:this={windowSagittal}
-                  viewMode={ViewMode.SAGITTAL} showToolbar={showLocalToolbar} bind:maximized={maximized}/>
+        <Window2D bind:maximized={maximized} bind:this={windowAxial} index={0} {scaleInPixels}
+                  showToolbar={showLocalToolbar}
+                  {viewAttributes} viewMode={ViewMode.AXIAL} {widget}/>
+        <Window3D bind:maximized={maximized} bind:models={models} bind:this={window3D}
+                  bind:volume={volume} showToolbar={showLocalToolbar}/>
+        <Window2D bind:maximized={maximized} bind:this={windowCoronal} index={1} {scaleInPixels}
+                  showToolbar={showLocalToolbar}
+                  {viewAttributes} viewMode={ViewMode.CORONAL} {widget}/>
+        <Window2D bind:maximized={maximized} bind:this={windowSagittal} index={2} {scaleInPixels}
+                  showToolbar={showLocalToolbar}
+                  {viewAttributes} viewMode={ViewMode.SAGITTAL} {widget}/>
     </div>
-    <ToolbarGlobal {objectListVisible} bind:models={models} bind:volume={volume}
+    <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
                    on:resetCamera={resetCamera} on:resetWindowLevel={resetWindowLevel}
-                   showScreenshotButton={screenshotCallback !== null} on:screenshot={saveScreenshot} />
+                   on:screenshot={saveScreenshot} showScreenshotButton={screenshotCallback !== null}/>
 </div>

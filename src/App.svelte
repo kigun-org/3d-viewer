@@ -2,7 +2,7 @@
     import 'bootstrap-icons/font/bootstrap-icons.css'
     import 'bootstrap/dist/css/bootstrap.css'
 
-    import Viewer from "./lib/Viewer.svelte";
+    // import Viewer from "./lib/Viewer.svelte";
     import ViewerUpload from "./lib/ViewerUpload.svelte"
 
     // const model = [
@@ -38,7 +38,7 @@
     //     }
     // ]
     //
-    const resources = [
+    // const resources = [
     //     {
     //         id: 20,
     //         caption: "Upper arch",
@@ -60,19 +60,19 @@
     //         // resource__processed: "/testdata/LowerJawScan-gz.vtp"
     //         // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
     //     },
-        {
-            id: 31,
-            caption: "CBCT",
-            resource__id: 84,
-            resource__type: "VOLUME",
+    //     {
+    //         id: 31,
+    //         caption: "CBCT",
+    //         resource__id: 84,
+    //         resource__type: "VOLUME",
             // resource__processed: "/testdata/head-binary-gz.vti"
             // resource__processed: "/testdata/cbct-gz.vti"
             // resource__processed: "/testdata/1volume.vti"
             // resource__processed: "/testdata/axial.vti"
             // resource__processed: "/testdata/20240405.nrrd",
-            resource__processed: "/testdata/20231125.nrrd"
-        }
-    ]
+            // resource__processed: "/testdata/20231125.nrrd"
+        // }
+    // ]
     //
     //
     // const errorFileNotFound = [
@@ -111,7 +111,7 @@
     }
 </script>
 
-<!--<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>-->
+<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>
 
 <!--<div>-->
 <!--    <Viewer id="model" resources={model}/>-->
@@ -125,9 +125,9 @@
 <!--    <Viewer id="models" resources={models}/>-->
 <!--</div>-->
 
-<div>
-    <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>
-</div>
+<!--<div>-->
+<!--    <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>-->
+<!--</div>-->
 
 <!--<div>-->
 <!--    <Viewer id="all" {resources} startMaximized={true} screenshotCallback={addScreenshot}/>-->
