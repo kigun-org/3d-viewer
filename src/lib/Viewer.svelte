@@ -14,7 +14,7 @@
     export let mediaURL = ''
 
     let models = []
-    let volumes = []
+    let volume // only one volume can be visualized, even if more are loaded
 
     let clicked = false
     let ready = false
@@ -22,7 +22,7 @@
 
     const resourcesLoaded = function (event) {
         models = event.detail.models
-        volumes = event.detail.volumes
+        volume = event.detail.volumes[0]
         ready = true
     }
 
@@ -49,7 +49,7 @@
     </div>
 {:else}
     <div class="viewer_panel">
-        <ViewerComponent {id} {models} {volumes} {startMaximized} {screenshotCallback} />
+        <ViewerComponent {id} {models} {volume} {startMaximized} {screenshotCallback} />
     </div>
 {/if}
 

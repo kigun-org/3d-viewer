@@ -4,7 +4,6 @@
 
     import Viewer from "./lib/Viewer.svelte";
     import ViewerUpload from "./lib/ViewerUpload.svelte"
-    import ViewerReslice from "./lib/Reslice/ViewerReslice.svelte";
 
     // const model = [
     //     {
@@ -70,8 +69,8 @@
             // resource__processed: "/testdata/cbct-gz.vti"
             // resource__processed: "/testdata/1volume.vti"
             // resource__processed: "/testdata/axial.vti"
-            resource__processed: "/testdata/20240405.nrrd",
-            // resource__processed: "/testdata/20231125.nrrd"
+            // resource__processed: "/testdata/20240405.nrrd",
+            resource__processed: "/testdata/20231125.nrrd"
         }
     ]
     //
@@ -112,9 +111,7 @@
     }
 </script>
 
-<!--<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>-->
-
-<ViewerReslice {resources} />
+<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>
 
 <!--<div>-->
 <!--    <Viewer id="model" resources={model}/>-->

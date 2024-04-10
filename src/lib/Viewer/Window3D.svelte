@@ -23,13 +23,13 @@
     export let showViewMode
 
     export let models
-    export let volumes
+    export let volume
 
     let renderer
     let renderWindow
 
     $: models, renderWindow && renderWindow.render()
-    $: volumes, renderWindow && renderWindow.render()
+    $: volume, renderWindow && renderWindow.render()
 
     function createModel(model_resource) {
         const mapper = vtkMapper.newInstance({ scalarVisibility: false });
@@ -133,12 +133,12 @@
             renderer.addActor(model.actor)
         }
 
-        for (const volume of volumes) {
+        if (volume !== undefined) {
             volume.actor = createVolume(volume)
             renderer.addVolume(volume.actor)
         }
 
-        // if (volumes.length > 0) {
+        // if (volume !== undefined) {
         //     camera.setPosition(0,-1,0)
         //     camera.setViewUp([0,0,1])
         // }

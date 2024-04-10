@@ -1,7 +1,7 @@
 <script>
     export let models
 
-    export let volumes
+    export let volume
 
     function generateRGBColor(params) {
         return `rgba(${params.color[0] * 255}, ${params.color[1] * 255}, ${params.color[2] * 255}, ${params.opacity})`
@@ -9,11 +9,11 @@
 </script>
 
 <div class="overlay-menu">
-    {#each volumes as volume, index}
+    {#if volume}
         <div role="menuitem">
-            Volume {index+1}
+            Volume
         </div>
-    {/each}
+    {/if}
 
     {#each models as model, index}
         <label>

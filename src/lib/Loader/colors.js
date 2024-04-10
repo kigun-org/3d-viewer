@@ -1,7 +1,10 @@
+const HIGH_VALUE = 0.75
+const LOW_VALUE = 0.5
+
 const viewColors = [
-    [0.67, 0.33, 0.33], // sagittal
-    [0.33, 0.67, 0.33], // coronal
-    [0.33, 0.33, 0.67], // axial
+    [HIGH_VALUE, LOW_VALUE, LOW_VALUE], // sagittal
+    [LOW_VALUE, HIGH_VALUE, LOW_VALUE], // coronal
+    [LOW_VALUE, LOW_VALUE, HIGH_VALUE], // axial
 ]
 
 function getColor(i) {

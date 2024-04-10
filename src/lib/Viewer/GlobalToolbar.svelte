@@ -10,9 +10,9 @@
     export let showScreenshotButton
 
     export let models
-    export let volumes
+    export let volume
 
-    $: objectCount = models.length + volumes.length
+    $: objectCount = models.length + (volume !== undefined ? 1 : 0)
 
     function saveScreenshot() {
         dispatch('screenshot')
@@ -39,7 +39,7 @@
 </div>
 
 {#if objectListVisible}
-    <ObjectList bind:models={models} bind:volumes={volumes} />
+    <ObjectList bind:models={models} bind:volume={volume} />
 {/if}
 
 <style>

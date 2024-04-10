@@ -11,20 +11,20 @@
     export let fileList = null
 
     let models = []
-    let volumes = []
+    let volume
 
     let ready = false
     let errorMessage = null
 
     const resourcesLoaded = function (event) {
-        volumes = [{
+        volume = {
             id: 42,
             caption: "CBCT",
             resource__id: 0,
             resource__type: "VOLUME",
             source: event.detail.image,
             visible: true
-        }]
+        }
         ready = true
     }
 
@@ -58,7 +58,7 @@
 
     {#if ready}
         <div class="viewer_panel">
-            <ViewerComponent {id} {models} {volumes} startMaximized={false} {screenshotCallback} />
+            <ViewerComponent {id} {models} {volume} startMaximized={false} {screenshotCallback} />
         </div>
     {/if}
 {/if}
