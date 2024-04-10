@@ -261,9 +261,11 @@
     }
 
     function resetCamera() {
-        widget.getWidgetState().setPlanes({...initialPlanesState})
-        widget.setCenter(widget.getWidgetState().getImage().getCenter())
-        updateViews()
+        if (volume !== undefined) {
+            widget.getWidgetState().setPlanes({...initialPlanesState})
+            widget.setCenter(widget.getWidgetState().getImage().getCenter())
+            updateViews()
+        }
 
         window3D.resetCamera()
     }
@@ -398,6 +400,7 @@ It will show up on hover.
                   {viewAttributes} viewMode={ViewMode.SAGITTAL} {widget}/>
     </div>
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
-                   on:resetCamera={resetCamera} on:resetWindowLevel={resetWindowLevel}
-                   on:screenshot={saveScreenshot} showScreenshotButton={screenshotCallback !== null}/>
+                   on:resetCamera={resetCamera}
+                   showWindowLevelButton={volume !== undefined} on:resetWindowLevel={resetWindowLevel}
+                   showScreenshotButton={screenshotCallback !== null} on:screenshot={saveScreenshot} />
 </div>
