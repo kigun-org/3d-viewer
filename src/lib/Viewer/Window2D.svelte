@@ -36,26 +36,6 @@
     let renderer
     let renderWindow
 
-    function createModelSlice(model_resource) {
-        const slicePlane = vtkPlane.newInstance()
-        slicePlane.setNormal(viewMode.cameraPosition)
-        slicePlane.setOrigin(0, 0, 0)
-
-        const cutter = vtkCutter.newInstance();
-        cutter.setInputData(model_resource.source)
-        cutter.setCutFunction(slicePlane)
-
-        const mapper = vtkMapper.newInstance();
-        mapper.setInputConnection(cutter.getOutputPort());
-
-        const actor = vtkActor.newInstance();
-        actor.setMapper(mapper);
-        actor.getProperty().setColor(model_resource.params.color);
-        actor.getProperty().setOpacity(model_resource.params.opacity);
-
-        return actor
-    }
-
     function createVolumeSlice(volume_resource) {
         // const reslice = vtkImageReslice.newInstance();
         // reslice.setSlabMode(SlabMode.MEAN);
@@ -123,12 +103,7 @@
         });
         resizeObserver.observe(container)
 
-        // for (const model of models) {
-        //     const actor = createModelSlice(model)
-        //     renderer.addActor(actor)
-        // }
-
-        for (const volume of volumes) {
+        if (volume !== undefined) {
             const actor = createVolumeSlice(volume)
             renderer.addActor(actor)
         }
