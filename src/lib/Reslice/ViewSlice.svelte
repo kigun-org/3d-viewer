@@ -1,18 +1,18 @@
 <script>
     import {onMount} from "svelte";
-    import vtkGenericRenderWindow from "@kitware/vtk.js/Rendering/Misc/GenericRenderWindow.js";
-    import vtkWidgetManager from "@kitware/vtk.js/Widgets/Core/WidgetManager.js";
-    import vtkImageReslice from "@kitware/vtk.js/Imaging/Core/ImageReslice.js";
-    import vtkOrientationMarkerWidget from "@kitware/vtk.js/Interaction/Widgets/OrientationMarkerWidget.js";
-    import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage.js";
-    import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera.js";
-    import {xyzToViewType} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants.js";
-    import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants.js";
-    import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper.js";
-    import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice.js";
-    import vtkAnnotatedCubeActor from "@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor.js";
-    import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants.js";
-    import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants.js";
+    import vtkGenericRenderWindow from "@kitware/vtk.js/Rendering/Misc/GenericRenderWindow";
+    import vtkWidgetManager from "@kitware/vtk.js/Widgets/Core/WidgetManager";
+    import vtkImageReslice from "@kitware/vtk.js/Imaging/Core/ImageReslice";
+    import vtkOrientationMarkerWidget from "@kitware/vtk.js/Interaction/Widgets/OrientationMarkerWidget";
+    import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage";
+    import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera";
+    import {xyzToViewType} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
+    import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
+    import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper";
+    import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice";
+    import vtkAnnotatedCubeActor from "@kitware/vtk.js/Rendering/Core/AnnotatedCubeActor";
+    import {SlabMode} from "@kitware/vtk.js/Imaging/Core/ImageReslice/Constants";
+    import {InterpolationMode} from "@kitware/vtk.js/Imaging/Core/AbstractImageInterpolator/Constants";
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';
     import {getColorRGBString, getColor} from './colors';
 
