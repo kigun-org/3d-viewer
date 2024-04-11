@@ -45,7 +45,22 @@
         }
     }
 
-    async function mergeImages(axial, threeD, coronal, sagittal) {
+    async function createBlob(imageData) {
+        const image = Object.assign(new Image(), {src: imageData});
+        await new Promise(resolve => image.addEventListener('load', () => resolve()));
+
+        const canvas = Object.assign(document.createElement('canvas'), {
+            width: image.width,
+            height: image.height
+        })
+        const context = canvas.getContext('2d');
+        context.imageSmoothingEnabled = false;
+        context.drawImage(image, 0, 0);
+
+        return await new Promise(resolve => canvas.toBlob((blob) => resolve(blob)))
+    }
+
+    async function createMontage(axial, threeD, coronal, sagittal) {
         const imageAxial = Object.assign(new Image(), {src: axial});
         await new Promise(resolve => imageAxial.addEventListener('load', () => resolve()));
 
@@ -68,7 +83,8 @@
         context.drawImage(image3D, imageAxial.width, 0);
         context.drawImage(imageCoronal, 0, imageAxial.height);
         context.drawImage(imageSagittal, imageAxial.width, imageAxial.height);
-        return canvas.toDataURL()
+
+        return await new Promise(resolve => canvas.toBlob((blob) => resolve(blob)))
     }
 
     function saveScreenshot() {
@@ -76,22 +92,30 @@
             switch (maximized) {
                 case ViewMode.THREE_D:
                     window3D.saveScreenshot().then((image) => {
-                        screenshotCallback(image)
+                        return createBlob(image)
+                    }).then((blob) => {
+                        screenshotCallback(blob)
                     })
                     break;
                 case ViewMode.AXIAL:
                     windowAxial.saveScreenshot().then((image) => {
-                        screenshotCallback(image)
+                        return createBlob(image)
+                    }).then((blob) => {
+                        screenshotCallback(blob)
                     })
                     break;
                 case ViewMode.CORONAL:
                     windowCoronal.saveScreenshot().then((image) => {
-                        screenshotCallback(image)
+                        return createBlob(image)
+                    }).then((blob) => {
+                        screenshotCallback(blob)
                     })
                     break;
                 case ViewMode.SAGITTAL:
                     windowSagittal.saveScreenshot().then((image) => {
-                        screenshotCallback(image)
+                        return createBlob(image)
+                    }).then((blob) => {
+                        screenshotCallback(blob)
                     })
                     break;
                 default:
@@ -111,10 +135,10 @@
                         })
                         .then((image) => {
                             imageSagittal = image;
-                            return mergeImages(imageAxial, image3D, imageCoronal, imageSagittal)
+                            return createMontage(imageAxial, image3D, imageCoronal, imageSagittal)
                         })
-                        .then((mergedImage) => {
-                            screenshotCallback(mergedImage)
+                        .then((blob) => {
+                            screenshotCallback(blob)
                         })
             }
         }

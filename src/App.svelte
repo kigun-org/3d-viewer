@@ -97,16 +97,11 @@
     //     },
     // ]
 
+    let imageSources = []
     let showScreenshots = false
 
     const addScreenshot = (image) => {
-        const images = document.getElementById('images')
-
-        const img = document.createElement('img')
-        img.src = image
-        img.style = 'height: 100px'
-        images.appendChild(img)
-
+        imageSources = [...imageSources, URL.createObjectURL(image)]
         showScreenshots = true
     }
 </script>
@@ -143,5 +138,15 @@
 
 <div class:d-none={!showScreenshots}>
     <div class="my-3">Screenshots</div>
-    <div id="images" class="d-flex flex-wrap gap-2"></div>
+    <div class="screenshots d-flex flex-wrap gap-2">
+        {#each imageSources as src}
+            <img src={src} alt="Screenshot" />
+        {/each}
+    </div>
 </div>
+
+<style>
+    .screenshots img {
+        height: 100px;
+    }
+</style>
