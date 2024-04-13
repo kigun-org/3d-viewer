@@ -5,7 +5,6 @@
     import LoaderURL from "./LoaderURL.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
 
-    export let id
     export let resources = []
     export let clickToLoad = resources.some((element) => element.resource__type === "VOLUME")
     export let startMaximized = resources.every((element) => element.resource__type !== "VOLUME")
@@ -49,7 +48,7 @@
     </div>
 {:else}
     <div class="viewer_panel">
-        <ViewerComponent {id} {models} {volume} {startMaximized} {screenshotCallback} />
+        <ViewerComponent {models} {volume} {startMaximized} {screenshotCallback} />
     </div>
 {/if}
 
