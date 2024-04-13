@@ -5,7 +5,6 @@
     import {convertItkToNRRD} from "./Loader/nrrdUtils.js";
     import {Status} from "./Loader/Status.js";
 
-
     const dispatch = createEventDispatcher();
 
     export let fileList
@@ -102,8 +101,6 @@
         }
     }
 
-
-
     function uploadProgressCallback(event) {
         if (event.lengthComputable) {
             const loaded = event.loaded
@@ -166,7 +163,6 @@
         uploadMessage = 'Starting upload...'
         uploadProgress = 0 / image.byteLength
     }
-
 
     onMount(() => {
         statusMessages = [{status: Status.RUNNING, message: "Loading DICOM files"}]

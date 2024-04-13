@@ -9,7 +9,7 @@ export default defineConfig({
     base: '/static/eos/',
     publicDir: false,
     plugins: [
-        svelte(),
+        svelte({ emitCss: false }),
         viteStaticCopy({
             targets: [
                 { src: 'node_modules/@itk-wasm/image-io/dist/pipelines/nrrd-*.{js,wasm,wasm.zst}', dest: 'pipelines' },

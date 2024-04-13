@@ -1,5 +1,4 @@
 <script>
-    import './Viewer/viewer.css'
     import ViewerComponent from "./Viewer/ViewerComponent.svelte";
     import LoaderDICOM from "./LoaderDICOM.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
@@ -58,7 +57,7 @@
 
     {#if ready}
         <div class="viewer_panel">
-            <ViewerComponent {id} {models} {volume} startMaximized={false} {screenshotCallback} />
+            <ViewerComponent {models} {volume} startMaximized={false} {screenshotCallback} />
         </div>
     {/if}
 {/if}
@@ -90,5 +89,19 @@
         justify-content: center;
 
         text-align: center;
+    }
+
+    .viewer_panel {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        aspect-ratio: 3 / 2;
+    }
+
+    .viewer_panel.error {
+        background-color: #edd;
     }
 </style>

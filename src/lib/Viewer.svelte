@@ -1,6 +1,5 @@
 <!--<svelte:options customElement={{tag: "eos-viewer", shadow: 'none'}}/>-->
 <script>
-    import './Viewer/viewer.css'
     import ViewerComponent from "./Viewer/ViewerComponent.svelte";
     import LoaderURL from "./LoaderURL.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
@@ -63,5 +62,22 @@
         justify-content: center;
 
         text-align: center;
+    }
+
+    .viewer_panel {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        aspect-ratio: 3 / 2;
+    }
+
+    .viewer_panel.loading {
+        background-color: #cde;
+    }
+    .viewer_panel.error {
+        background-color: #edd;
     }
 </style>
