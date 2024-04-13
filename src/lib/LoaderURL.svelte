@@ -5,7 +5,7 @@
 
     import {createEventDispatcher} from 'svelte';
     import {convertNRRDtoItk} from "./Loader/nrrdUtils.js";
-    import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper.js";
+    import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper";
 
     const dispatch = createEventDispatcher();
 

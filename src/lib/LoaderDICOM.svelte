@@ -1,9 +1,9 @@
 <script>
+    import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper";
     import {onMount, createEventDispatcher} from "svelte";
     import {loadImages, parseDICOMFiles} from "./Loader/dicomUtils.js";
     import {convertItkToNRRD} from "./Loader/nrrdUtils.js";
     import {Status} from "./Loader/Status.js";
-    import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper";
 
 
     const dispatch = createEventDispatcher();
