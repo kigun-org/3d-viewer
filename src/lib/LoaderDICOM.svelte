@@ -148,7 +148,7 @@
         }
 
         const today = new Date().toISOString().slice(0, 10).replaceAll('-', '')
-        formData.append('nrrd', new Blob([image]), `${today}.nrrd`)
+        formData.append('uploaded_file', new Blob([image]), `${today}.nrrd`)
 
         const req = new XMLHttpRequest()
         req.upload.addEventListener("progress", uploadProgressCallback)
