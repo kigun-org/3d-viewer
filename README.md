@@ -1,13 +1,15 @@
-# eos viewer
+# 3D viewer
 
-A viewer for medical imaging and
-and related Svelte components.
+A web-based 3D viewer with specialized functionality for medical imaging data.
+DICOM volumes and STL files are supported.
+
+Based on VTK (vtk.js and itk-wasm), will eventually support all formats itk-wasm supports.
 
 ## Installation
 
 ```
-git clone https://github.com/kigun-org/eos/
-cd eos
+git clone https://github.com/kigun-org/3d-viewer/
+cd 3d-viewer
 npm install
 ```
 
