@@ -1,6 +1,7 @@
 <script>
     import HttpDataAccessHelper from "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
     import vtkXMLPolyDataReader from "@kitware/vtk.js/IO/XML/XMLPolyDataReader";
+    import vtkSTLReader from "@kitware/vtk.js/IO/Geometry/STLReader";
 
     import {createEventDispatcher} from 'svelte';
     import {convertNRRDtoItk} from "./Loader/nrrdUtils.js";
@@ -52,18 +53,23 @@
         }
         progressBars = [...progressBars, progressBar]
 
-        // const reader = vtkSTLReader.newInstance();
-        const reader = vtkXMLPolyDataReader.newInstance();
-
         const progressCallback = createProgressCallback(progressBar)
 
-        HttpDataAccessHelper.fetchBinary(mediaURL + model_resource.resource__processed, {progressCallback})
+        HttpDataAccessHelper
+            .fetchBinary(mediaURL + model_resource.resource__processed, {progressCallback})
             .then((arrayBuffer) => {
+                let reader = vtkXMLPolyDataReader.newInstance()
                 try {
                     reader.parseAsArrayBuffer(arrayBuffer)
                 } catch (e) {
-                    dispatch('loadError', {message: `could not open resource (${e.name}).`})
-                    return
+                    // error reading the XMLPolyData, try using the STL reader
+                    try {
+                        reader = vtkSTLReader.newInstance()
+                        reader.parseAsArrayBuffer(arrayBuffer)
+                    } catch (e) {
+                        dispatch('loadError', {message: `could not open resource (${e.name}).`})
+                        return
+                    }
                 }
 
                 model_resource.source = reader.getOutputData()
@@ -73,7 +79,11 @@
                 pending--
             })
             .catch((e) => {
-                dispatch('loadError', {message: `could not download resource (${e.xhr.statusText}).`})
+                if (e.xhr === undefined) {
+                    dispatch('loadError', {message: `could not open resource (${e.message}).`})
+                } else {
+                    dispatch('loadError', {message: `could not download resource (${e.xhr.statusText}).`})
+                }
             })
     }
 

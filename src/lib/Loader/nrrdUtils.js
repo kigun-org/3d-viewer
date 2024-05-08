@@ -1,4 +1,4 @@
-import {setPipelinesBaseUrl, readImage, writeImage} from "@itk-wasm/image-io";
+import {setPipelinesBaseUrl, nrrdReadImage, writeImage} from "@itk-wasm/image-io";
 
 setPipelinesBaseUrl(import.meta.env.BASE_URL + "pipelines")
 
@@ -31,7 +31,7 @@ function convertNRRDtoItk(arrayBuffer, progressCallback) {
     }))
 
     const inputFile = new File([arrayBuffer], "input.nrrd")
-    return readImage(inputFile)
+    return nrrdReadImage(inputFile)
         .then(function ({webWorker: webWorker, image: itkImage}) {
             webWorker.terminate()
 
