@@ -1,6 +1,5 @@
 <script>
     import HttpDataAccessHelper from "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
-    import vtkXMLImageDataReader from "@kitware/vtk.js/IO/XML/XMLImageDataReader";
     import vtkXMLPolyDataReader from "@kitware/vtk.js/IO/XML/XMLPolyDataReader";
 
     import {createEventDispatcher} from 'svelte';
@@ -27,6 +26,22 @@
         })
     }
 
+    function createProgressCallback(progressBar) {
+        return (progressEvent) => {
+            progressBar.loaded = progressEvent.loaded
+
+            if (progressEvent.lengthComputable) {
+                progressBar.total = progressEvent.total
+                progressBar.progress = progressEvent.loaded / progressEvent.total
+                progressBar.percent = Math.floor(progressBar.progress * 100)
+            } else {
+                progressBar.progress = null
+                progressBar.percent = null
+            }
+            progressBars = progressBars
+        }
+    }
+
     function processModel(model_resource) {
         pending++
 
@@ -40,19 +55,7 @@
         // const reader = vtkSTLReader.newInstance();
         const reader = vtkXMLPolyDataReader.newInstance();
 
-        const progressCallback = (progressEvent) => {
-            progressBar.loaded = progressEvent.loaded
-
-            if (progressEvent.lengthComputable) {
-                progressBar.total = progressEvent.total
-                progressBar.progress = progressEvent.loaded / progressEvent.total
-                progressBar.percent = Math.floor(progressBar.progress * 100)
-            } else {
-                progressBar.progress = null
-                progressBar.percent = null
-            }
-            progressBars = progressBars
-        }
+        const progressCallback = createProgressCallback(progressBar)
 
         HttpDataAccessHelper.fetchBinary(mediaURL + model_resource.resource__processed, {progressCallback})
             .then((arrayBuffer) => {
@@ -84,21 +87,7 @@
         }
         progressBars = [...progressBars, progressBar]
 
-        const reader = vtkXMLImageDataReader.newInstance()
-
-        const progressCallback = (progressEvent) => {
-            progressBar.loaded = progressEvent.loaded
-
-            if (progressEvent.lengthComputable) {
-                progressBar.total = progressEvent.total
-                progressBar.progress = progressEvent.loaded / progressEvent.total
-                progressBar.percent = Math.floor(progressBar.progress * 100)
-            } else {
-                progressBar.progress = null
-                progressBar.percent = null
-            }
-            progressBars = progressBars
-        }
+        const progressCallback = createProgressCallback(progressBar)
 
         HttpDataAccessHelper
             .fetchBinary(mediaURL + volume_resource.resource__processed, {progressCallback})
