@@ -56,7 +56,7 @@
         const progressCallback = createProgressCallback(progressBar)
 
         HttpDataAccessHelper
-            .fetchBinary(mediaURL + model_resource.resource__processed, {progressCallback})
+            .fetchBinary(mediaURL + model_resource.url, {progressCallback})
             .then((arrayBuffer) => {
                 let reader = vtkXMLPolyDataReader.newInstance()
                 try {
@@ -100,7 +100,7 @@
         const progressCallback = createProgressCallback(progressBar)
 
         HttpDataAccessHelper
-            .fetchBinary(mediaURL + volume_resource.resource__processed, {progressCallback})
+            .fetchBinary(mediaURL + volume_resource.url, {progressCallback})
             .then((arrayBuffer) => {
                 try {
                     return convertNRRDtoItk(arrayBuffer, progressCallback)
@@ -129,9 +129,9 @@
     }
 
     for (const resource of resources) {
-        if (resource.resource__type === "VOLUME") {
+        if (resource.type === "VOLUME") {
             processVolume(resource)
-        } else if (resource.resource__type === "MODEL") {
+        } else if (resource.type === "MODEL") {
             // parse JSON string to extract parameters
             if (resource.params === undefined || resource.params === null || resource.params === "") {
                 resource.params = {
@@ -143,9 +143,6 @@
             }
 
             processModel(resource)
-        } else {
-            dispatch('loadError', {message: "unsupported resource type."})
-            break
         }
     }
 </script>

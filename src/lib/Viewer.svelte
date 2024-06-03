@@ -5,8 +5,8 @@
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
 
     export let resources = []
-    export let clickToLoad = resources.some((element) => element.resource__type === "VOLUME")
-    export let startMaximized = resources.every((element) => element.resource__type !== "VOLUME")
+    export let clickToLoad = resources.some((r) => r.type === "VOLUME")
+    export let startMaximized = resources.every((r) => r.type !== "VOLUME")
     export let screenshotCallback = null
 
     export let mediaURL = ''

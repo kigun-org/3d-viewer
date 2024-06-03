@@ -10,10 +10,10 @@
     //         id: 20,
     //         caption: "Upper arch",
     //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-    //         resource__id: 55,
-    //         resource__type: "MODEL",
-    //         resource__processed: "/testdata/UpperJawScan-gz.vtp"
-    //         // resource__processed: "resources/2023/09/UpperJawScan.vtp"
+    //         r_id: 55,
+    //         type: "MODEL",
+    //         url: "/testdata/UpperJawScan-gz.vtp"
+    //         // url: "resources/2023/09/UpperJawScan.vtp"
     //     },
     // ]
     //
@@ -22,19 +22,19 @@
     //         id: 20,
     //         caption: "Upper arch",
     //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-    //         resource__id: 55,
-    //         resource__type: "MODEL",
-    //         resource__processed: "/testdata/UpperJawScan-gz.vtp"
-    //         // resource__processed: "resources/2023/09/UpperJawScan.vtp"
+    //         r_id: 55,
+    //         type: "MODEL",
+    //         url: "/testdata/UpperJawScan-gz.vtp"
+    //         // url: "resources/2023/09/UpperJawScan.vtp"
     //     },
     //     {
     //         id: 22,
     //         caption: "Lower arch",
     //         params: '{ "color": [ 1.0, 1.0, 0.8 ], "opacity": 1.0 }',
-    //         resource__id: 43,
-    //         resource__type: "MODEL",
-    //         resource__processed: "/testdata/LowerJawScan-gz.vtp"
-    //         // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
+    //         r_id: 43,
+    //         type: "MODEL",
+    //         url: "/testdata/LowerJawScan-gz.vtp"
+    //         // url: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
     //     }
     // ]
     //
@@ -43,34 +43,34 @@
     //         id: 20,
     //         caption: "Upper arch",
     //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-    //         resource__id: 55,
-    //         resource__type: "MODEL",
-    //         resource__processed: "/testdata/1upper.vtp"
-    //         // resource__processed: "/testdata/UpperJawScan-gz.vtp"
-    //         // resource__processed: "resources/2023/09/UpperJawScan.vtp"
+    //         r_id: 55,
+    //         type: "MODEL",
+    //         url: "/testdata/1upper.vtp"
+    //         // url: "/testdata/UpperJawScan-gz.vtp"
+    //         // url: "resources/2023/09/UpperJawScan.vtp"
     //     },
     //     {
     //         id: 22,
     //         caption: "Lower arch",
     //         // params: '{ "color": [ 1.0, 1.0, 0.8 ], "opacity": 1.0 }',
     //         params: '',
-    //         resource__id: 43,
-    //         resource__type: "MODEL",
-    //         resource__processed: "/testdata/1lower.vtp"
-    //         // resource__processed: "/testdata/LowerJawScan-gz.vtp"
-    //         // resource__processed: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
+    //         r_id: 43,
+    //         type: "MODEL",
+    //         url: "/testdata/1lower.vtp"
+    //         // url: "/testdata/LowerJawScan-gz.vtp"
+    //         // url: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
     //     },
     //     {
     //         id: 31,
     //         caption: "CBCT",
-    //         resource__id: 84,
-    //         resource__type: "VOLUME",
-            // resource__processed: "/testdata/head-binary-gz.vti"
-            // resource__processed: "/testdata/cbct-gz.vti"
-            // resource__processed: "/testdata/1volume.vti"
-            // resource__processed: "/testdata/axial.vti"
-            // resource__processed: "/testdata/20240405.nrrd",
-            // resource__processed: "/testdata/20231125.nrrd"
+    //         r_id: 84,
+    //         type: "VOLUME",
+            // url: "/testdata/head-binary-gz.vti"
+            // url: "/testdata/cbct-gz.vti"
+            // url: "/testdata/1volume.vti"
+            // url: "/testdata/axial.vti"
+            // url: "/testdata/20240405.nrrd",
+            // url: "/testdata/20231125.nrrd"
         // }
     // ]
     //
@@ -80,9 +80,9 @@
     //         id: 20,
     //         caption: "Upper arch",
     //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-    //         resource__id: 55,
-    //         resource__type: "MODEL",
-    //         resource__processed: "/testdata/non_existant.vtp"
+    //         r_id: 55,
+    //         type: "MODEL",
+    //         url: "/testdata/non_existant.vtp"
     //     },
     // ]
     //
@@ -91,9 +91,9 @@
     //         id: 20,
     //         caption: "Upper arch",
     //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-    //         resource__id: 55,
-    //         resource__type: "MODEL",
-    //         resource__processed: "/testdata/LowerJawScan.stl"
+    //         r_id: 55,
+    //         type: "MODEL",
+    //         url: "/testdata/LowerJawScan.stl"
     //     },
     // ]
 
