@@ -16,7 +16,7 @@
     {/if}
 
     {#each models as model, index}
-        <label>
+        <label class="d-flex align-items-baseline gap-2">
             <input type="checkbox" bind:checked={model.visible}>
             <i class="bi-circle-fill" style="color: {generateRGBColor(model.params)}"></i>
             Model {index+1}
@@ -33,7 +33,6 @@
         flex-direction: column;
         gap: 0.5em;
 
-        font-size: small;
         text-align: left;
 
         background-color: rgba(var(--bs-light-rgb), 0.9);

@@ -16,7 +16,7 @@
 
     let clicked = false
     let ready = false
-    let errorMessage = null
+    let errorMessage
 
     const resourcesLoaded = function (event) {
         models = event.detail.models
@@ -29,7 +29,7 @@
     }
 </script>
 
-{#if errorMessage !== null}
+{#if errorMessage !== undefined}
     <div class="viewer_panel error">
         <ErrorMessage {errorMessage}/>
     </div>
@@ -37,9 +37,9 @@
     <div class="viewer_panel loading">
     {#if clickToLoad && !clicked}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="load" role="button" tabindex="0" on:click={() => {clicked = true}}>
-            <i class="bi-download fs-4"></i>
-            <span>Click to load data</span>
+        <div class="flex-grow-1 w-100" role="button" tabindex="0" on:click={() => {clicked = true}}>
+            <i class="bi bi-download fs-1"></i>
+            <div>Click to load data</div>
         </div>
     {:else}
         <LoaderURL {resources} {mediaURL} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
@@ -52,32 +52,26 @@
 {/if}
 
 <style>
-    .load {
-        flex-grow: 1;
-        width: 100%;
-
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        justify-content: center;
-
-        text-align: center;
-    }
-
     .viewer_panel {
         display: flex;
         flex-direction: column;
-        gap: 0.5em;
         align-items: center;
         justify-content: center;
+        gap: 0.25rem;
         min-height: 400px;
         aspect-ratio: 4 / 3;
     }
-
     .viewer_panel.loading {
         background-color: #cde;
     }
     .viewer_panel.error {
         background-color: #edd;
+    }
+
+    .viewer_panel > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 </style>

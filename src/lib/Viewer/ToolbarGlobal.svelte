@@ -29,7 +29,7 @@
     }
 </script>
 
-<div class="overlay-global px-2 py-1">
+<div class="overlay-global d-flex align-items-center gap-4 px-2 py-1">
     <div class="d-flex gap-1">
         {#if showWindowLevelButton}
             <button class="btn btn-sm" on:click={resetWindowLevel} aria-label="Reset W/L" title="Reset window/level">
@@ -42,21 +42,19 @@
         </button>
     </div>
 
-    <div class="d-flex gap-1">
-        {#if objectCount > 1}
-            <button class="btn btn-sm" class:active={objectListVisible}
-                    on:click={() => { objectListVisible = !objectListVisible }}
-                    aria-label="Show/hide object list" title="Show/hide object list">
-                <i class="bi bi-list-check"></i>
-            </button>
-        {/if}
+    {#if objectCount > 1}
+        <button class="btn btn-sm" class:active={objectListVisible}
+                on:click={() => { objectListVisible = !objectListVisible }}
+                aria-label="Show/hide object list" title="Show/hide object list">
+            <i class="bi bi-list-check"></i>
+        </button>
+    {/if}
 
-        {#if showScreenshotButton}
-            <button class="btn btn-sm" on:click={saveScreenshot} aria-label="Save screenshot" title="Save screenshot">
-                <i class="bi bi-camera"></i>
-            </button>
-        {/if}
-    </div>
+    {#if showScreenshotButton}
+        <button class="btn btn-sm" on:click={saveScreenshot} aria-label="Save screenshot" title="Save screenshot">
+            <i class="bi bi-camera"></i>
+        </button>
+    {/if}
 </div>
 
 {#if objectListVisible}
@@ -68,10 +66,6 @@
         position: absolute;
         top: 0;
         right: 0;
-
-        display: flex;
-        gap: 1.5em;
-        align-items: center;
     }
 
     .active {

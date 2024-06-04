@@ -147,13 +147,11 @@
     }
 </script>
 
-<div>Loading data...</div>
-<div style="display: flex; flex-direction: column">
-    {#each progressBars as progressBar}
-        {#if progressBar.percent === null}
-            <progress></progress>
-        {:else}
-            <progress value={progressBar.progress}>{progressBar.percent}%</progress>
-        {/if}
-    {/each}
-</div>
+<div>Loading data</div>
+{#each progressBars as progressBar}
+    {#if progressBar.percent === null}
+        <progress></progress>
+    {:else}
+        <progress value={progressBar.progress}>{progressBar.percent}%</progress>
+    {/if}
+{/each}
