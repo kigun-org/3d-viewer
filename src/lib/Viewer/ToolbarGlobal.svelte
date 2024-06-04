@@ -31,7 +31,7 @@
     }
 </script>
 
-<div class="overlay-global d-flex align-items-center gap-4 px-2 py-1" class:background={toolbarBackground}>
+<div class="overlay-global d-flex align-items-center justify-content-end gap-4 px-2 py-1" class:background={toolbarBackground}>
     <div class="d-flex gap-1">
         {#if showWindowLevelButton}
             <button class="btn btn-sm" on:click={resetWindowLevel} aria-label="Reset W/L" title="Reset window/level">
@@ -75,6 +75,7 @@
     }
 
     .background {
+        left: 0;
         background-color: rgba(var(--bs-light-rgb), 0.9);
     }
 </style>
