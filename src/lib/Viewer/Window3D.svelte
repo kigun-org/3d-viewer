@@ -144,7 +144,7 @@
      class:maximized={maximized === ViewMode.THREE_D}
      class:hidden={maximized !== null && maximized !== ViewMode.THREE_D}>
 
-    <div bind:this={containerElement} style="min-height: 200px; aspect-ratio: 3 / 2"></div>
+    <div bind:this={containerElement} style="min-height: 200px; aspect-ratio: 4 / 3"></div>
 
     {#if showToolbar}
     <ToolbarLocal viewMode={ViewMode.THREE_D} bind:maximized={maximized} />

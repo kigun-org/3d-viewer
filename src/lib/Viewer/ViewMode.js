@@ -23,7 +23,7 @@ export const ViewMode= {
     },
     THREE_D: {
         label: "3D",
-        color: "rgba(200,200,200,1)"
+        color: "rgba(224,224,224,1)"
     }
 }
 

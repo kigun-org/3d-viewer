@@ -8,7 +8,7 @@
     }
 </script>
 
-<div class="overlay-menu">
+<div class="overlay-menu p-2">
     {#if volume}
         <div role="menuitem">
             Volume
@@ -27,16 +27,16 @@
 <style>
     .overlay-menu {
         position: absolute;
-        top: 2.6em;
-        right: 0.5em;
-        font-size: small;
-        text-align: left;
-        padding: 0.5em;
+        top: 3.6em;
+        right: 0.7em;
         display: flex;
         flex-direction: column;
         gap: 0.5em;
 
-        background-color: rgba(255, 255, 255, 0.7);
+        font-size: small;
+        text-align: left;
+
+        background-color: rgba(var(--bs-light-rgb), 0.9);
     }
 
     .overlay-menu div, .overlay-menu label {

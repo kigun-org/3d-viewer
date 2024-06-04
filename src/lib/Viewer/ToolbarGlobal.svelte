@@ -29,39 +29,32 @@
     }
 </script>
 
-<div class="overlay-global">
-    <div style="display: flex; gap: 0.75rem">
+<div class="overlay-global px-2 py-1">
+    <div class="d-flex gap-1">
         {#if showWindowLevelButton}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <i class="bi bi-brightness-high-fill"
-               on:click={resetWindowLevel}
-               aria-label="Reset W/L" role="button" tabindex="0"
-               title="Reset window/level"></i>
+            <button class="btn btn-sm" on:click={resetWindowLevel} aria-label="Reset W/L" title="Reset window/level">
+                <i class="bi bi-circle-half"></i>
+            </button>
         {/if}
 
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <i class="bi bi-camera-reels"
-           on:click={resetCamera}
-           aria-label="Reset camera" role="button" tabindex="0"
-           title="Reset camera"></i>
+        <button class="btn btn-sm" on:click={resetCamera} aria-label="Reset camera" title="Reset camera">
+            <i class="bi bi-fullscreen"></i>
+        </button>
     </div>
 
-    <div style="display: flex; gap: 0.75rem">
+    <div class="d-flex gap-1">
         {#if objectCount > 1}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <i class="bi bi-list-check"
-               class:active={objectListVisible}
-               on:click={() => { objectListVisible = !objectListVisible }}
-               aria-label="Show/hide object list" role="button" tabindex="0"
-               title="Show/hide object list"></i>
+            <button class="btn btn-sm" class:active={objectListVisible}
+                    on:click={() => { objectListVisible = !objectListVisible }}
+                    aria-label="Show/hide object list" title="Show/hide object list">
+                <i class="bi bi-list-check"></i>
+            </button>
         {/if}
 
         {#if showScreenshotButton}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <i class="bi bi-camera"
-               on:click={saveScreenshot}
-               aria-label="Save screenshot" role="button" tabindex="0"
-               title="Save screenshot"></i>
+            <button class="btn btn-sm" on:click={saveScreenshot} aria-label="Save screenshot" title="Save screenshot">
+                <i class="bi bi-camera"></i>
+            </button>
         {/if}
     </div>
 </div>
@@ -75,10 +68,9 @@
         position: absolute;
         top: 0;
         right: 0;
-        padding: 0.1em 0.5em;
 
         display: flex;
-        gap: 2.5em;
+        gap: 1.5em;
         align-items: center;
     }
 

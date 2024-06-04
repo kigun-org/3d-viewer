@@ -285,7 +285,7 @@
      class:maximized={maximized === viewMode}
      class:hidden={maximized !== null && maximized !== viewMode}>
 
-    <div bind:this={element} style="min-height: 200px; aspect-ratio: 3 / 2"></div>
+    <div bind:this={element} style="min-height: 200px; aspect-ratio: 4 / 3"></div>
 
     <ToolbarLocal viewMode={viewMode} bind:maximized={maximized} />
 </div>

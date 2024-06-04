@@ -9,12 +9,12 @@
     }
 </script>
 
-<div class="overlay-local" style="border-color: {viewMode.color}">
-    <div style="width: 5em">
+<div class="overlay-local px-2 py-1" style="border-color: {viewMode.color}">
+    <div style="width: 7em">
         {#if !maximized || viewMode === ViewMode.THREE_D}
-            <span style="width: 4em; font-size: small;">{viewMode.label}</span>
+            <span class="small">{viewMode.label}</span>
         {:else}
-            <select bind:value={maximized} tabindex="0">
+            <select class="form-select form-select-sm" bind:value={maximized} tabindex="0" aria-label="View">
                 {#each Object.values(ViewMode) as view_mode}}
                     {#if view_mode !== ViewMode.THREE_D}
                         <option value="{view_mode}">{view_mode.label}</option>
@@ -25,18 +25,9 @@
     </div>
 
     <div>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-<!--            <i class={maximized ? "bi bi-grid" : "bi bi-square"} on:click={maximize}-->
-        <i class={maximized ? "bi bi-arrows-angle-contract" : "bi bi-arrows-angle-expand"} on:click={maximize}
-           aria-label="Toggle layout" role="button" tabindex="0"
-           title="Toggle layout"></i>
-        <!--            <i class="bi-grid-3x2" style="margin-right: 1em"></i>-->
-
-        <!--            <i class="bi-arrows-fullscreen"></i>-->
-        <!--            <i class="bi-arrows-angle-contract"></i>-->
-        <!--            <i class="bi-arrows-angle-expand"></i>-->
-        <!--            <i class="bi-layout-split"></i>-->
-        <!--            <i class="bi-box"></i>-->
+        <button class="btn btn-sm" on:click={maximize} aria-label="Toggle layout" title="Toggle layout">
+            <i class={maximized ? "bi bi-arrows-angle-contract" : "bi bi-arrows-angle-expand"}></i>
+        </button>
     </div>
 </div>
 
@@ -46,13 +37,14 @@
         top: 0;
         left: 0;
         right: 0;
-        background-color: rgba(255, 255, 255, 0.9);
-        text-align: left;
-        padding: 0.1em 0.5em;
-        border-left: transparent solid 1em;
+
+        background-color: rgba(var(--bs-light-rgb), 0.9);
+        border-bottom: transparent solid 0.35rem;
 
         display: flex;
         gap: 1.5em;
         align-items: center;
+
+        text-align: left;
     }
 </style>

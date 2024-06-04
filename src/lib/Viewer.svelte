@@ -71,7 +71,7 @@
         align-items: center;
         justify-content: center;
         min-height: 400px;
-        aspect-ratio: 3 / 2;
+        aspect-ratio: 4 / 3;
     }
 
     .viewer_panel.loading {
