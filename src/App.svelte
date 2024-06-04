@@ -97,6 +97,14 @@
     //     },
     // ]
 
+    const sampleResource = {
+        id: 42,
+        caption: "CBCT",
+        r_id: 0,
+        type: "VOLUME",
+        url: 'data/sample.nrrd'
+    }
+
     let imageSources = []
     let showScreenshots = false
 
@@ -106,7 +114,8 @@
     }
 </script>
 
-<ViewerUpload id="upload" screenshotCallback={addScreenshot}/>
+<ViewerUpload id="upload" screenshotCallback={addScreenshot} />
+<!--<ViewerUpload id="upload" screenshotCallback={addScreenshot} {sampleResource} />-->
 
 <!--<div>-->
 <!--    <Viewer id="model" resources={model}/>-->

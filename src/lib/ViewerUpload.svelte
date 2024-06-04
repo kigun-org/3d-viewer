@@ -3,19 +3,23 @@
     import LoaderDICOM from "./LoaderDICOM.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
     import {onMount} from "svelte";
+    import LoaderURL from "./LoaderURL.svelte";
 
     export let id
     export let screenshotCallback = null
 
-    export let fileList = null
+    export let sampleResource = undefined
+
+    export let fileList = []
 
     let models = []
     let volume
 
+    let sampleData = false
     let ready = false
-    let errorMessage = null
+    let errorMessage = undefined
 
-    const resourcesLoaded = function (event) {
+    function resourcesLoaded(event) {
         volume = {
             id: 42,
             caption: "CBCT",
@@ -27,33 +31,56 @@
         ready = true
     }
 
-    const handleError = function (event) {
-        errorMessage = event.detail.message
+    function sampleResourceLoaded(event) {
+        models = event.detail.models
+        volume = event.detail.volumes[0]
+        ready = true
     }
 
-    onMount(() => {
-        document.getElementById(`upload_${id}`).addEventListener('change', (event) => {
-            fileList = event.target.files || event.dataTransfer.files
-        })
-    })
+    function handleError(event) {
+        errorMessage = event.detail.message
+    }
 </script>
 
-{#if errorMessage !== null}
+{#if errorMessage !== undefined}
     <div class="viewer_panel error">
         <ErrorMessage {errorMessage}/>
     </div>
 {:else}
-    <div class="upload">
-    {#if fileList === null}
-        <input id={`upload_${id}`} type="file" webkitdirectory directory multiple />
-        <label for={`upload_${id}`}>
-            <i class="bi-upload fs-4"></i>
-            <span>Click to select folder</span>
-        </label>
+    {#if fileList.length === 0 && !sampleData}
+        <div class="row">
+            <div class="col">
+                <div class="upload text-secondary">
+                    <input id={`upload_${id}`} type="file" webkitdirectory directory multiple
+                           on:change={(ev) => fileList = ev.target.files || ev.dataTransfer.files} />
+                    <label for={`upload_${id}`}>
+                        <div>
+                            <i class="bi-folder fs-1"></i>
+                        </div>
+                        <span>Click to select folder<br>or drag and drop DICOM files</span>
+                    </label>
+                </div>
+            </div>
+            {#if sampleResource !== undefined}
+                <div class="col-4">
+                    <div class="upload text-secondary">
+                        <div on:click={() => sampleData = true} role="button" tabindex="0">
+                            <i class="bi bi-download fs-1"></i>
+                            <div>Load sample data</div>
+                        </div>
+                    </div>
+                </div>
+            {/if}
+        </div>
     {:else}
-        <LoaderDICOM {fileList} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
+        <div class="upload">
+            {#if fileList.length > 0}
+                <LoaderDICOM {fileList} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
+            {:else}
+                <LoaderURL resources={[sampleResource]} on:loadComplete={sampleResourceLoaded} on:loadError={handleError} />
+            {/if}
+        </div>
     {/if}
-    </div>
 
     {#if ready}
         <div class="viewer_panel">
@@ -63,19 +90,6 @@
 {/if}
 
 <style>
-    .viewer_panel {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.25rem;
-        min-height: 400px;
-        aspect-ratio: 4 / 3;
-    }
-    .viewer_panel.error {
-        background-color: #edd;
-    }
-
     .upload {
         min-height: 12em;
 
@@ -92,7 +106,7 @@
         display: none;
     }
 
-    .upload label {
+    .upload > label, .upload > div {
         height: 100%;
         min-height: 12em;
 
@@ -102,5 +116,18 @@
         justify-content: center;
 
         text-align: center;
+    }
+
+    .viewer_panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        min-height: 400px;
+        aspect-ratio: 4 / 3;
+    }
+    .viewer_panel.error {
+        background-color: #edd;
     }
 </style>
