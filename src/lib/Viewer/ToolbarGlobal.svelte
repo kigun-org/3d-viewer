@@ -11,6 +11,8 @@
 
     export let showScreenshotButton
 
+    export let toolbarBackground = false
+
     export let models
     export let volume
 
@@ -29,7 +31,7 @@
     }
 </script>
 
-<div class="overlay-global d-flex align-items-center gap-4 px-2 py-1">
+<div class="overlay-global d-flex align-items-center gap-4 px-2 py-1" class:background={toolbarBackground}>
     <div class="d-flex gap-1">
         {#if showWindowLevelButton}
             <button class="btn btn-sm" on:click={resetWindowLevel} aria-label="Reset W/L" title="Reset window/level">
@@ -70,5 +72,9 @@
 
     .active {
         color: dodgerblue;
+    }
+
+    .background {
+        background-color: rgba(var(--bs-light-rgb), 0.9);
     }
 </style>

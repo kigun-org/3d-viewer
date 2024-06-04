@@ -420,5 +420,7 @@ It will show up on hover.
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
                    on:resetCamera={resetCamera}
                    on:resetWindowLevel={resetWindowLevel} on:screenshot={saveScreenshot}
-                   showScreenshotButton={screenshotCallback !== null} showWindowLevelButton={volume !== undefined}/>
+                   showWindowLevelButton={volume !== undefined}
+                   showScreenshotButton={screenshotCallback !== null}
+                   toolbarBackground={volume === undefined}/>
 </div>
