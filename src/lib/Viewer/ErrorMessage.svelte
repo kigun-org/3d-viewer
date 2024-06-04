@@ -2,7 +2,5 @@
     export let errorMessage
 </script>
 
-<div>
-    <i class="bi-exclamation-triangle" style="font-size: 3em; color: #e77"></i>
-</div>
-<div>Error: {errorMessage}</div>
+<i class="bi bi-exclamation-triangle fs-1 text-danger"></i>
+<div class="text-danger-emphasis">Error: {errorMessage}</div>

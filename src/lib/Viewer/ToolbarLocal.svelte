@@ -9,7 +9,7 @@
     }
 </script>
 
-<div class="overlay-local px-2 py-1" style="border-color: {viewMode.color}">
+<div class="overlay-local d-flex align-items-center gap-1 px-2 py-1" style="border-color: {viewMode.color}">
     <div style="width: 7em">
         {#if !maximized || viewMode === ViewMode.THREE_D}
             <span class="small">{viewMode.label}</span>
@@ -40,10 +40,6 @@
 
         background-color: rgba(var(--bs-light-rgb), 0.9);
         border-bottom: transparent solid 0.35rem;
-
-        display: flex;
-        gap: 1.5em;
-        align-items: center;
 
         text-align: left;
     }

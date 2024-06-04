@@ -63,6 +63,19 @@
 {/if}
 
 <style>
+    .viewer_panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        min-height: 400px;
+        aspect-ratio: 4 / 3;
+    }
+    .viewer_panel.error {
+        background-color: #edd;
+    }
+
     .upload {
         min-height: 12em;
 
@@ -89,19 +102,5 @@
         justify-content: center;
 
         text-align: center;
-    }
-
-    .viewer_panel {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5em;
-        align-items: center;
-        justify-content: center;
-        min-height: 400px;
-        aspect-ratio: 4 / 3;
-    }
-
-    .viewer_panel.error {
-        background-color: #edd;
     }
 </style>
