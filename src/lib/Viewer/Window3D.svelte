@@ -33,19 +33,6 @@
     $: models, renderWindow && renderWindow.render()
     $: volume, renderWindow && renderWindow.render()
 
-    export function updateShift(newValue) {
-        console.log(newValue)
-
-        const piecewiseFunction = vtkPiecewiseFunction.newInstance()
-        piecewiseFunction.addPoint(200.0 + newValue, 0);
-        piecewiseFunction.addPoint(400.0 + newValue, 0.7);
-        piecewiseFunction.addPoint(2000.0 + newValue, 1.0);
-
-        vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction);
-
-        renderWindow.render()
-    }
-
     function createModel(model_resource) {
         const mapper = vtkMapper.newInstance({ scalarVisibility: false });
         const actor = vtkActor.newInstance();
@@ -120,6 +107,19 @@
 
             renderWindow.render()
         }
+    }
+
+    export function updateShift(newValue) {
+        console.log(newValue)
+
+        const piecewiseFunction = vtkPiecewiseFunction.newInstance()
+        piecewiseFunction.addPoint(200.0 + newValue, 0);
+        piecewiseFunction.addPoint(400.0 + newValue, 0.7);
+        piecewiseFunction.addPoint(2000.0 + newValue, 1.0);
+
+        vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction);
+
+        renderWindow.render()
     }
 
     export function saveScreenshot() {

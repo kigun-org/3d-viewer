@@ -398,18 +398,6 @@
     })
 </script>
 
-<!--
-@component
-Here's some documentation for this component.
-It will show up on hover.
-
-- You can use markdown here.
-- You can also use code blocks here.
-- Usage:
-  ```tsx
-  <main name="Arethra">
-  ```
--->
 <div style="position: relative; width: 100%; height: 100%">
     <div style="display: grid; grid-template-columns: 1fr 1fr">
         <Window2D bind:maximized={maximized} bind:this={windowAxial} {scaleInPixels}

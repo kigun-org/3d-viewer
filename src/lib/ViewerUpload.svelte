@@ -2,7 +2,6 @@
     import ViewerComponent from "./Viewer/ViewerComponent.svelte";
     import LoaderDICOM from "./LoaderDICOM.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
-    import {onMount} from "svelte";
     import LoaderURL from "./LoaderURL.svelte";
 
     export let id

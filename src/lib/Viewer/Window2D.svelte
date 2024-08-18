@@ -1,6 +1,4 @@
 <script>
-    import {onMount} from 'svelte'
-
     // Load the rendering pieces we want to use (for both WebGL and WebGPU)
     import '@kitware/vtk.js/Rendering/Profiles/All';
 
@@ -21,6 +19,9 @@
     import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera";
     import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
     import {getColorRGBString} from "../Loader/colors";
+
+    import {onMount} from 'svelte'
+
     import {ViewMode} from "./ViewMode";
     import ToolbarLocal from "./ToolbarLocal.svelte";
 

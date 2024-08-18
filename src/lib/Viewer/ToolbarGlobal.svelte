@@ -1,9 +1,9 @@
 <script>
-    import ObjectList from "./ObjectList.svelte";
-
     import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
+
+    import ObjectList from "./ObjectList.svelte";
 
     export let objectListVisible
 
