@@ -1,7 +1,19 @@
 <script>
+    import {createEventDispatcher} from "svelte";
+
+    const dispatch = createEventDispatcher();
+
     export let models
 
     export let volume
+
+    let shift = 0
+
+    $: updateShift(shift)
+
+    function updateShift(newValue) {
+        dispatch('updateShift', newValue)
+    }
 
     function generateRGBColor(params) {
         return `rgba(${params.color[0] * 255}, ${params.color[1] * 255}, ${params.color[2] * 255}, ${params.opacity})`
@@ -11,7 +23,12 @@
 <div class="overlay-menu p-2">
     {#if volume}
         <div role="menuitem">
-            Volume
+            <label>
+                <input type="checkbox" bind:checked={volume.visible}>
+                Volume
+            </label>
+            <br>
+            <input type="range" min="-2000" max="2000" bind:value={shift} disabled={!volume.visible} />
         </div>
     {/if}
 
@@ -42,5 +59,9 @@
 
     .overlay-menu div, .overlay-menu label {
         user-select: none;
+    }
+
+    input[type=range] {
+        width: 7rem;
     }
 </style>

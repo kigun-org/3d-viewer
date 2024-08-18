@@ -25,11 +25,26 @@
     export let models
     export let volume
 
+    let vtk_volume
+
     let renderer
     let renderWindow
 
     $: models, renderWindow && renderWindow.render()
     $: volume, renderWindow && renderWindow.render()
+
+    export function updateShift(newValue) {
+        console.log(newValue)
+
+        const piecewiseFunction = vtkPiecewiseFunction.newInstance()
+        piecewiseFunction.addPoint(200.0 + newValue, 0);
+        piecewiseFunction.addPoint(400.0 + newValue, 0.7);
+        piecewiseFunction.addPoint(2000.0 + newValue, 1.0);
+
+        vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction);
+
+        renderWindow.render()
+    }
 
     function createModel(model_resource) {
         const mapper = vtkMapper.newInstance({ scalarVisibility: false });
@@ -48,7 +63,7 @@
 
     function createVolume(volume_resource) {
         const mapper = vtkVolumeMapper.newInstance();
-        const volume = vtkVolume.newInstance();
+        vtk_volume = vtkVolume.newInstance();
 
         // const sourceData = volume_resource.getOutputData(0)
         // const dataArray =
@@ -64,31 +79,31 @@
         piecewiseFunction.addPoint(400.0, 0.7);
         piecewiseFunction.addPoint(2000.0, 1.0);
 
-        volume.setMapper(mapper);
+        vtk_volume.setMapper(mapper);
         // mapper.setInputConnection(volume_resource.source.getOutputPort(0));
         mapper.setInputData(volume_resource.source);
         mapper.setSampleDistance(0.4);
 
-        volume.getProperty().setRGBTransferFunction(0, lookupTable);
-        volume.getProperty().setScalarOpacity(0, piecewiseFunction);
-        volume.getProperty().setInterpolationTypeToLinear();
+        vtk_volume.getProperty().setRGBTransferFunction(0, lookupTable);
+        vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction);
+        vtk_volume.getProperty().setInterpolationTypeToLinear();
 
         // - Use shading based on gradient
-        // volume.getProperty().setUseGradientOpacity(0, true);
+        // vtk_volume.getProperty().setUseGradientOpacity(0, true);
         // - generic good default
-        // volume.getProperty().setGradientOpacityMinimumValue(0, 2);
-        // volume.getProperty().setGradientOpacityMinimumOpacity(0, 0.0);
-        // volume.getProperty().setGradientOpacityMaximumValue(0, (4000 - 500) * 0.05);
-        // volume.getProperty().setGradientOpacityMaximumValue(0, 200);
-        // volume.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
+        // vtk_volume.getProperty().setGradientOpacityMinimumValue(0, 2);
+        // vtk_volume.getProperty().setGradientOpacityMinimumOpacity(0, 0.0);
+        // vtk_volume.getProperty().setGradientOpacityMaximumValue(0, (4000 - 500) * 0.05);
+        // vtk_volume.getProperty().setGradientOpacityMaximumValue(0, 200);
+        // vtk_volume.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
 
-        volume.getProperty().setShade(true);
-        volume.getProperty().setAmbient(0.2);
-        volume.getProperty().setDiffuse(0.7);
-        volume.getProperty().setSpecular(0.3);
-        volume.getProperty().setSpecularPower(8.0);
+        vtk_volume.getProperty().setShade(true);
+        vtk_volume.getProperty().setAmbient(0.2);
+        vtk_volume.getProperty().setDiffuse(0.7);
+        vtk_volume.getProperty().setSpecular(0.3);
+        vtk_volume.getProperty().setSpecularPower(8.0);
 
-        return volume
+        return vtk_volume
     }
 
     export function resetCamera() {

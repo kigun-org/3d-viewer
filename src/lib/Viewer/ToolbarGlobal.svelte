@@ -29,6 +29,10 @@
     function saveScreenshot() {
         dispatch('screenshot')
     }
+
+    function updateShift(e) {
+        dispatch('updateShift', e.detail)
+    }
 </script>
 
 <div class="overlay-global d-flex align-items-center justify-content-end gap-4 px-2 py-1" class:background={toolbarBackground}>
@@ -44,7 +48,7 @@
         </button>
     </div>
 
-    {#if objectCount > 1}
+    {#if objectCount > 1 || volume !== undefined}
         <button class="btn btn-sm" class:active={objectListVisible}
                 on:click={() => { objectListVisible = !objectListVisible }}
                 aria-label="Show/hide object list" title="Show/hide object list">
@@ -60,7 +64,7 @@
 </div>
 
 {#if objectListVisible}
-    <ObjectList bind:models={models} bind:volume={volume} />
+    <ObjectList bind:models={models} bind:volume={volume} on:updateShift={updateShift} />
 {/if}
 
 <style>

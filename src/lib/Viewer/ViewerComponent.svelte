@@ -32,7 +32,7 @@
     let showLocalToolbar = (volume !== undefined)
 
     /* Show object list if more than one model/volume is loaded */
-    let objectListVisible = (models.length > 1) || (models.length > 0 && volume !== undefined)
+    let objectListVisible = (models.length > 1) || (volume !== undefined)
 
     /* If model values change (most likely visibility), update actor properties */
     $: for (const model of models) {
@@ -303,6 +303,10 @@
         v.renderWindow.getInteractor().render()
     }
 
+    function updateShift(e) {
+        window3D.updateShift(e.detail)
+    }
+
     onMount(() => {
         // for DICOM volumes only
         if (volume !== undefined) {
@@ -420,6 +424,7 @@ It will show up on hover.
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
                    on:resetCamera={resetCamera}
                    on:resetWindowLevel={resetWindowLevel} on:screenshot={saveScreenshot}
+                   on:updateShift={updateShift}
                    showWindowLevelButton={volume !== undefined}
                    showScreenshotButton={screenshotCallback !== null}
                    toolbarBackground={volume === undefined}/>
