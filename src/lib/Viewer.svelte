@@ -12,7 +12,7 @@
     export let mediaURL = ''
 
     let models = []
-    let volume // only one volume can be visualized, even if more are loaded
+    let volume // only one volume can currently be visualized
 
     let clicked = false
     let ready = false

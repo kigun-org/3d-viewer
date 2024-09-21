@@ -25,7 +25,7 @@
     export let screenshotCallback = null
 
     /** Should four panels (3D + orthogonal views) be shown on start up? default is true if showing a volume */
-    export let startMaximized = (volume !== undefined)
+    export let startMaximized = (volume === undefined)
     let maximized = startMaximized ? ViewMode.THREE_D : null
 
     /* If no volumes are loaded, only show 3D view */
@@ -147,6 +147,7 @@
 
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     const rotationVisible = false
+    let hideAxisTimeout
 
     // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
     const scaleInPixels = true
@@ -307,6 +308,22 @@
         window3D.updateShift(e.detail)
     }
 
+    function pointerEntered() {
+        clearTimeout(hideAxisTimeout)
+
+        windowAxial.showAxisWidget()
+        windowCoronal.showAxisWidget()
+        windowSagittal.showAxisWidget()
+    }
+
+    function pointerLeft() {
+        hideAxisTimeout = setTimeout(() => {
+            windowAxial.hideAxisWidget()
+            windowCoronal.hideAxisWidget()
+            windowSagittal.hideAxisWidget()
+        }, 1000)
+    }
+
     onMount(() => {
         // for DICOM volumes only
         if (volume !== undefined) {
@@ -400,13 +417,16 @@
 
 <div style="position: relative; width: 100%; height: 100%">
     <div style="display: grid; grid-template-columns: 1fr 1fr">
-        <Window2D bind:maximized={maximized} bind:this={windowAxial} {scaleInPixels}
+        <Window2D bind:this={windowAxial} bind:maximized={maximized} {scaleInPixels}
+                  on:pointerEntered={pointerEntered} on:pointerLeft={pointerLeft}
                   {viewAttributes} viewMode={ViewMode.AXIAL} {widget}/>
-        <Window3D bind:maximized={maximized} bind:models={models} bind:this={window3D}
+        <Window3D bind:models={models} bind:maximized={maximized} bind:this={window3D}
                   bind:volume={volume} showToolbar={showLocalToolbar}/>
-        <Window2D bind:maximized={maximized} bind:this={windowCoronal} {scaleInPixels}
+        <Window2D bind:this={windowCoronal} bind:maximized={maximized} {scaleInPixels}
+                  on:pointerEntered={pointerEntered} on:pointerLeft={pointerLeft}
                   {viewAttributes} viewMode={ViewMode.CORONAL} {widget}/>
-        <Window2D bind:maximized={maximized} bind:this={windowSagittal} {scaleInPixels}
+        <Window2D bind:this={windowSagittal} bind:maximized={maximized} {scaleInPixels}
+                  on:pointerEntered={pointerEntered} on:pointerLeft={pointerLeft}
                   {viewAttributes} viewMode={ViewMode.SAGITTAL} {widget}/>
     </div>
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}

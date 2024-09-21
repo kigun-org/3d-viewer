@@ -110,8 +110,6 @@
     }
 
     export function updateShift(newValue) {
-        console.log(newValue)
-
         const piecewiseFunction = vtkPiecewiseFunction.newInstance()
         piecewiseFunction.addPoint(200.0 + newValue, 0);
         piecewiseFunction.addPoint(400.0 + newValue, 0.7);

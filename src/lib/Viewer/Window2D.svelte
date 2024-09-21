@@ -20,10 +20,12 @@
     import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
     import {getColorRGBString} from "../Loader/colors";
 
-    import {onMount} from 'svelte'
+    import {createEventDispatcher, onMount} from 'svelte'
 
     import {ViewMode} from "./ViewMode";
     import ToolbarLocal from "./ToolbarLocal.svelte";
+
+    const dispatch = createEventDispatcher()
 
     export let maximized
     export let viewMode
@@ -114,6 +116,7 @@
     }
 
     function handlePointerEnter() {
+        dispatch('pointerEntered')
         const widgetState = widget.getWidgetState()
 
         if (viewMode === ViewMode.AXIAL) {
@@ -128,8 +131,6 @@
             widgetState.getAxisXinZ().setScale3(0.75, 0.75, 0.75)
             widgetState.getAxisYinZ().setScale3(0.75, 0.75, 0.75)
         }
-        widgetState.getAxisXinZ().setVisible(true)
-        widgetState.getAxisYinZ().setVisible(true)
 
         if (viewMode === ViewMode.CORONAL) {
             widgetState.getRotationHandleXinY0().setVisible(true)
@@ -142,10 +143,7 @@
         } else {
             widgetState.getAxisXinY().setScale3(0.75, 0.75, 0.75)
             widgetState.getAxisZinY().setScale3(0.75, 0.75, 0.75)
-
         }
-        widgetState.getAxisXinY().setVisible(true)
-        widgetState.getAxisZinY().setVisible(true)
 
         if (viewMode === ViewMode.SAGITTAL) {
             widgetState.getRotationHandleYinX0().setVisible(true)
@@ -159,18 +157,70 @@
             widgetState.getAxisYinX().setScale3(0.75, 0.75, 0.75)
             widgetState.getAxisZinX().setScale3(0.75, 0.75, 0.75)
         }
+
+        viewAttributes.forEach((obj) => {
+            obj.interactor.render()
+        })
+    }
+
+    function handlePointerLeave() {
+        dispatch('pointerLeft')
+        const widgetState = widget.getWidgetState()
+
+        if (viewMode === ViewMode.AXIAL) {
+            widgetState.getRotationHandleXinZ0().setVisible(false)
+            widgetState.getRotationHandleXinZ1().setVisible(false)
+            widgetState.getRotationHandleYinZ0().setVisible(false)
+            widgetState.getRotationHandleYinZ1().setVisible(false)
+            widgetState.getCenterHandle().setVisible(false)
+        }
+        widgetState.getAxisXinZ().setScale3(0.75, 0.75, 0.75)
+        widgetState.getAxisYinZ().setScale3(0.75, 0.75, 0.75)
+
+        if (viewMode === ViewMode.CORONAL) {
+            widgetState.getRotationHandleXinY0().setVisible(false)
+            widgetState.getRotationHandleXinY1().setVisible(false)
+            widgetState.getRotationHandleZinY0().setVisible(false)
+            widgetState.getRotationHandleZinY1().setVisible(false)
+            widgetState.getCenterHandle().setVisible(false)
+        }
+        widgetState.getAxisXinY().setScale3(0.75, 0.75, 0.75)
+        widgetState.getAxisZinY().setScale3(0.75, 0.75, 0.75)
+
+        if (viewMode === ViewMode.SAGITTAL) {
+            widgetState.getRotationHandleYinX0().setVisible(false)
+            widgetState.getRotationHandleYinX1().setVisible(false)
+            widgetState.getRotationHandleZinX0().setVisible(false)
+            widgetState.getRotationHandleZinX1().setVisible(false)
+            widgetState.getCenterHandle().setVisible(false)
+        }
+        widgetState.getAxisYinX().setScale3(0.75, 0.75, 0.75)
+        widgetState.getAxisZinX().setScale3(0.75, 0.75, 0.75)
+
+        viewAttributes.forEach((obj) => {
+            obj.interactor.render()
+        })
+    }
+
+    export function showAxisWidget() {
+        const widgetState = widget.getWidgetState()
+
+        widgetState.getAxisXinZ().setVisible(true)
+        widgetState.getAxisYinZ().setVisible(true)
+
+        widgetState.getAxisXinY().setVisible(true)
+        widgetState.getAxisZinY().setVisible(true)
+
         widgetState.getAxisYinX().setVisible(true)
         widgetState.getAxisZinX().setVisible(true)
 
-
-        // low quality while scrolling
         viewAttributes.forEach((obj) => {
             obj.reslice.setInterpolationMode(InterpolationMode.NEAREST)
             obj.interactor.render()
         })
     }
 
-    function handlePointerLeave() {
+    export function hideAxisWidget() {
         const widgetState = widget.getWidgetState()
 
         // i === 0
@@ -200,7 +250,6 @@
         widgetState.getRotationHandleYinZ1().setVisible(false)
         widgetState.getCenterHandle().setVisible(false)
 
-        // re-enable high quality interpolation when finished scrolling
         viewAttributes.forEach((obj) => {
             obj.reslice.setInterpolationMode(InterpolationMode.LINEAR)
             obj.interactor.render()
