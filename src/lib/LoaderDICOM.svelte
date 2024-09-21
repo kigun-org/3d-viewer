@@ -29,7 +29,7 @@
 
     $: progress = loaded / total
 
-    const progressCallback = function (event) {
+    function progressCallback (event) {
         if (event.lengthComputable) {
             progressBarIndeterminate = false
             loaded = event.loaded
@@ -39,7 +39,7 @@
         }
     }
 
-    const updateState = function (message, status = Status.RUNNING, append = true) {
+    function updateState (message, status = Status.RUNNING, append = true) {
         statusMessages.forEach((s) => {
             if (s.status === Status.RUNNING) {
                 s.status = Status.INFO
@@ -55,7 +55,7 @@
         return statusMessages
     }
 
-    const processImageSeries = function (fileInfoList, appendState = false) {
+    function processImageSeries (fileInfoList, appendState = false) {
         multipleSeriesMap = null
 
         statusMessages = updateState(
@@ -70,7 +70,7 @@
             .then(convertItkImage)
     }
 
-    const convertItkImage = (itkImage) => {
+    function convertItkImage (itkImage) {
         statusMessages = updateState("Converting image")
         if (outputNRRD) {
             convertItkToNRRD(itkImage, progressCallback)
