@@ -25,7 +25,6 @@
         volume = {
             id: 42,
             caption: "CBCT",
-            r_id: 0,
             type: "VOLUME",
             source: event.detail.image,
             visible: true

@@ -100,7 +100,6 @@
     const sampleVolumeResource = {
         id: 42,
         caption: "CBCT",
-        r_id: 0,
         type: "VOLUME",
         url: 'data/sample.nrrd'
     }
@@ -109,7 +108,6 @@
         id: 45,
         caption: "Model",
         params: '{ "color": [ 0.8, 1.0, 0.8 ], "opacity": 1.0 }',
-        r_id: 0,
         type: "MODEL",
         url: 'data/sample.stl'
     }
