@@ -4,21 +4,24 @@
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
     import LoaderURL from "./LoaderURL.svelte";
 
-    export let id
     export let screenshotCallback = null
 
-    export let sampleResource = undefined
+    export let sampleModel = undefined
+    export let sampleVolume = undefined
 
-    export let fileList = []
+    export let modelFileList = []
+    export let dicomFileList = []
 
     let models = []
     let volume
 
-    let sampleData = false
+    let sampleModelSelected = false
+    let sampleVolumeSelected = false
+
     let ready = false
     let errorMessage = undefined
 
-    function resourcesLoaded(event) {
+    function volumeLoaded(event) {
         volume = {
             id: 42,
             caption: "CBCT",
@@ -46,26 +49,47 @@
         <ErrorMessage {errorMessage}/>
     </div>
 {:else}
-    {#if fileList.length === 0 && !sampleData}
+    {#if dicomFileList.length === 0 && modelFileList.length === 0 && !sampleModelSelected && !sampleVolumeSelected}
         <div class="row">
-            <div class="col">
+<!--            <div class="col">-->
+<!--                <div class="upload text-secondary">-->
+<!--                    <label>-->
+<!--                        <input type="file" multiple accept=".stl"-->
+<!--                               on:change={(ev) => modelFileList = ev.target.files || ev.dataTransfer.files}/>-->
+<!--                        <div>-->
+<!--                            <i class="bi-box fs-1"></i>-->
+<!--                        </div>-->
+<!--                        <span>Click to select STL file</span>-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="col-8">
                 <div class="upload text-secondary">
-                    <input id={`upload_${id}`} type="file" webkitdirectory directory multiple
-                           on:change={(ev) => fileList = ev.target.files || ev.dataTransfer.files} />
-                    <label for={`upload_${id}`}>
+                    <label>
+                        <input type="file" webkitdirectory directory multiple
+                               on:change={(ev) => dicomFileList = ev.target.files || ev.dataTransfer.files}/>
                         <div>
-                            <i class="bi-folder fs-1"></i>
+                            <i class="bi-radioactive fs-1"></i>
                         </div>
-                        <span>Click to select folder<br>or drag and drop DICOM files</span>
+                        <span>Click to select DICOM folder</span>
                     </label>
                 </div>
             </div>
-            {#if sampleResource !== undefined}
-                <div class="col-4">
+            {#if sampleModel !== undefined || sampleVolume !== undefined}
+                <div class="w-100 d-block d-md-none"></div>
+                <div class="col-4 col-md-2">
                     <div class="upload text-secondary">
-                        <div on:click={() => sampleData = true} role="button" tabindex="0">
+                        <div on:click={() => sampleModelSelected = true} role="button" tabindex="0">
                             <i class="bi bi-download fs-1"></i>
-                            <div>Load sample data</div>
+                            <div>Load sample model</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="upload text-secondary">
+                        <div on:click={() => sampleVolumeSelected = true} role="button" tabindex="0">
+                            <i class="bi bi-download fs-1"></i>
+                            <div>Load sample volume</div>
                         </div>
                     </div>
                 </div>
@@ -73,17 +97,24 @@
         </div>
     {:else}
         <div class="upload">
-            {#if fileList.length > 0}
-                <LoaderDICOM {fileList} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
-            {:else}
-                <LoaderURL resources={[sampleResource]} on:loadComplete={sampleResourceLoaded} on:loadError={handleError} />
+            {#if modelFileList.length > 0}
+                <LoaderURL resources={[sampleModel]} on:loadComplete={sampleResourceLoaded}
+                           on:loadError={handleError}/>
+            {:else if dicomFileList.length > 0}
+                <LoaderDICOM fileList={dicomFileList} on:loadComplete={volumeLoaded} on:loadError={handleError}/>
+            {:else if sampleModelSelected}
+                <LoaderURL resources={[sampleModel]} on:loadComplete={sampleResourceLoaded}
+                           on:loadError={handleError}/>
+            {:else if sampleVolumeSelected}
+                <LoaderURL resources={[sampleVolume]} on:loadComplete={sampleResourceLoaded}
+                           on:loadError={handleError}/>
             {/if}
         </div>
     {/if}
 
     {#if ready}
         <div class="viewer_panel">
-            <ViewerComponent {models} {volume} startMaximized={false} {screenshotCallback} />
+            <ViewerComponent {models} {volume} {screenshotCallback}/>
         </div>
     {/if}
 {/if}
@@ -126,6 +157,7 @@
         min-height: 400px;
         aspect-ratio: 4 / 3;
     }
+
     .viewer_panel.error {
         background-color: #edd;
     }
