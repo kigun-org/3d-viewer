@@ -120,11 +120,6 @@
         const widgetState = widget.getWidgetState()
 
         if (viewMode === ViewMode.AXIAL) {
-            widgetState.getRotationHandleXinZ0().setVisible(true)
-            widgetState.getRotationHandleXinZ1().setVisible(true)
-            widgetState.getRotationHandleYinZ0().setVisible(true)
-            widgetState.getRotationHandleYinZ1().setVisible(true)
-            widgetState.getCenterHandle().setVisible(true)
             widgetState.getAxisXinZ().setScale3(3, 3, 3)
             widgetState.getAxisYinZ().setScale3(3, 3, 3)
         } else {
@@ -133,11 +128,6 @@
         }
 
         if (viewMode === ViewMode.CORONAL) {
-            widgetState.getRotationHandleXinY0().setVisible(true)
-            widgetState.getRotationHandleXinY1().setVisible(true)
-            widgetState.getRotationHandleZinY0().setVisible(true)
-            widgetState.getRotationHandleZinY1().setVisible(true)
-            widgetState.getCenterHandle().setVisible(true)
             widgetState.getAxisXinY().setScale3(3, 3, 3)
             widgetState.getAxisZinY().setScale3(3, 3, 3)
         } else {
@@ -146,11 +136,6 @@
         }
 
         if (viewMode === ViewMode.SAGITTAL) {
-            widgetState.getRotationHandleYinX0().setVisible(true)
-            widgetState.getRotationHandleYinX1().setVisible(true)
-            widgetState.getRotationHandleZinX0().setVisible(true)
-            widgetState.getRotationHandleZinX1().setVisible(true)
-            widgetState.getCenterHandle().setVisible(true)
             widgetState.getAxisYinX().setScale3(3, 3, 3)
             widgetState.getAxisZinX().setScale3(3, 3, 3)
         } else {
@@ -167,33 +152,12 @@
         dispatch('pointerLeft')
         const widgetState = widget.getWidgetState()
 
-        if (viewMode === ViewMode.AXIAL) {
-            widgetState.getRotationHandleXinZ0().setVisible(false)
-            widgetState.getRotationHandleXinZ1().setVisible(false)
-            widgetState.getRotationHandleYinZ0().setVisible(false)
-            widgetState.getRotationHandleYinZ1().setVisible(false)
-            widgetState.getCenterHandle().setVisible(false)
-        }
         widgetState.getAxisXinZ().setScale3(0.75, 0.75, 0.75)
         widgetState.getAxisYinZ().setScale3(0.75, 0.75, 0.75)
 
-        if (viewMode === ViewMode.CORONAL) {
-            widgetState.getRotationHandleXinY0().setVisible(false)
-            widgetState.getRotationHandleXinY1().setVisible(false)
-            widgetState.getRotationHandleZinY0().setVisible(false)
-            widgetState.getRotationHandleZinY1().setVisible(false)
-            widgetState.getCenterHandle().setVisible(false)
-        }
         widgetState.getAxisXinY().setScale3(0.75, 0.75, 0.75)
         widgetState.getAxisZinY().setScale3(0.75, 0.75, 0.75)
 
-        if (viewMode === ViewMode.SAGITTAL) {
-            widgetState.getRotationHandleYinX0().setVisible(false)
-            widgetState.getRotationHandleYinX1().setVisible(false)
-            widgetState.getRotationHandleZinX0().setVisible(false)
-            widgetState.getRotationHandleZinX1().setVisible(false)
-            widgetState.getCenterHandle().setVisible(false)
-        }
         widgetState.getAxisYinX().setScale3(0.75, 0.75, 0.75)
         widgetState.getAxisZinX().setScale3(0.75, 0.75, 0.75)
 
@@ -205,14 +169,28 @@
     export function showAxisWidget() {
         const widgetState = widget.getWidgetState()
 
-        widgetState.getAxisXinZ().setVisible(true)
-        widgetState.getAxisYinZ().setVisible(true)
+        widgetState.getAxisYinX().setVisible(true)
+        widgetState.getAxisZinX().setVisible(true)
+        widgetState.getRotationHandleYinX0().setVisible(true)
+        widgetState.getRotationHandleYinX1().setVisible(true)
+        widgetState.getRotationHandleZinX0().setVisible(true)
+        widgetState.getRotationHandleZinX1().setVisible(true)
 
         widgetState.getAxisXinY().setVisible(true)
         widgetState.getAxisZinY().setVisible(true)
+        widgetState.getRotationHandleXinY0().setVisible(true)
+        widgetState.getRotationHandleXinY1().setVisible(true)
+        widgetState.getRotationHandleZinY0().setVisible(true)
+        widgetState.getRotationHandleZinY1().setVisible(true)
 
-        widgetState.getAxisYinX().setVisible(true)
-        widgetState.getAxisZinX().setVisible(true)
+        widgetState.getAxisXinZ().setVisible(true)
+        widgetState.getAxisYinZ().setVisible(true)
+        widgetState.getRotationHandleXinZ0().setVisible(true)
+        widgetState.getRotationHandleXinZ1().setVisible(true)
+        widgetState.getRotationHandleYinZ0().setVisible(true)
+        widgetState.getRotationHandleYinZ1().setVisible(true)
+
+        widgetState.getCenterHandle().setVisible(true)
 
         viewAttributes.forEach((obj) => {
             obj.reslice.setInterpolationMode(InterpolationMode.NEAREST)
@@ -223,31 +201,27 @@
     export function hideAxisWidget() {
         const widgetState = widget.getWidgetState()
 
-        // i === 0
         widgetState.getAxisYinX().setVisible(false)
         widgetState.getAxisZinX().setVisible(false)
         widgetState.getRotationHandleYinX0().setVisible(false)
         widgetState.getRotationHandleYinX1().setVisible(false)
         widgetState.getRotationHandleZinX0().setVisible(false)
         widgetState.getRotationHandleZinX1().setVisible(false)
-        widgetState.getCenterHandle().setVisible(false)
 
-        // i === 1
         widgetState.getAxisXinY().setVisible(false)
         widgetState.getAxisZinY().setVisible(false)
         widgetState.getRotationHandleXinY0().setVisible(false)
         widgetState.getRotationHandleXinY1().setVisible(false)
         widgetState.getRotationHandleZinY0().setVisible(false)
         widgetState.getRotationHandleZinY1().setVisible(false)
-        widgetState.getCenterHandle().setVisible(false)
 
-        // i === 2
         widgetState.getAxisXinZ().setVisible(false)
         widgetState.getAxisYinZ().setVisible(false)
         widgetState.getRotationHandleXinZ0().setVisible(false)
         widgetState.getRotationHandleXinZ1().setVisible(false)
         widgetState.getRotationHandleYinZ0().setVisible(false)
         widgetState.getRotationHandleYinZ1().setVisible(false)
+
         widgetState.getCenterHandle().setVisible(false)
 
         viewAttributes.forEach((obj) => {
