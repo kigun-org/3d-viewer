@@ -59,7 +59,7 @@
     // const maxSlabNumberOfSlices = vec3.length(image.getDimensions()) // set max number of slices to slider.
 
     // [InterpolationMode.NEAREST, InterpolationMode.LINEAR, InterpolationMode.CUBIC]
-    const interpolationMode = InterpolationMode.NEAREST
+    const interpolationMode = InterpolationMode.LINEAR
     const windowLevelEnabled = true
 
     const initialWindow = 4000
