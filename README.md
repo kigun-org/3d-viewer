@@ -27,21 +27,25 @@ vite -c vite.lib.config.js build
 
 Copy the contents of the `dist` directory to your project.
 
-## Using the viewer in your website
+## Using the viewer
 
 ```html
+<link rel="stylesheet" href=".../bootstrap/dist/css/bootstrap.min.css"></link>
+<link rel="stylesheet" href=".../bootstrap-icons/font/bootstrap-icons.min.css"></link>
+
+...
+
 <div id="viewer"></div>
 
-<script href="/path/to/bootstrap.min.css"></script>
 <script type="module">
-    import Viewer from /path/to/Viewer.js;
+    import Viewer from '.../Viewer.js';
     const viewerElement = document.getElementById("viewer")
     
     const resourceExample = [
         {
             id: 42, // a unique ID
             caption: "Model", // a description of the model
-            params: '{ "color": [ 0.8, 1.0, 0.8 ], "opacity": 1.0 }', // display color and opacity
+            params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }', // display color and opacity
             type: "MODEL", // MODEL for STL files
             url: 'data/sample.stl' // the URL of the model
         }
@@ -49,122 +53,12 @@ Copy the contents of the `dist` directory to your project.
     
     function saveScreenshot(imageBlob) {
         // process the Blob containing a PNG image
-        
-        // should return a Promise for further processing (e.g., to update the UI once the operation is finished)
     }
     
     new Viewer({
         target: viewerElement,
         props: {
-            resources: resourceExample, // A list of resources to load (see the example above)
-            screenshotCallback: saveScreenshot // A function that is called with the screenshot image as an argument (optional)
-        }
-    })
-</script>
-```
-
-## Using the viewer in your website
-
-```html
-<div id="viewer"></div>
-
-<script href="/path/to/bootstrap.min.css"></script>
-<script type="module">
-    import Viewer from /path/to/Viewer.js;
-    const viewerElement = document.getElementById("viewer")
-    
-    const resourceExample = [
-        {
-            id: 42, // a unique ID
-            caption: "Model", // a description of the model
-            params: '{ "color": [ 0.8, 1.0, 0.8 ], "opacity": 1.0 }', // display color and opacity
-            type: "MODEL", // MODEL for STL files
-            url: 'data/sample.stl' // the URL of the model
-        }
-    ]
-    
-    function saveScreenshot(imageBlob) {
-        // process the Blob containing a PNG image
-        
-        // should return a Promise for further processing (e.g., to update the UI once the operation is finished)
-    }
-    
-    new Viewer({
-        target: viewerElement,
-        props: {
-            resources: resourceExample, // A list of resources to load (see the example above)
-            screenshotCallback: saveScreenshot // A function that is called with the screenshot image as an argument (optional)
-        }
-    })
-</script>
-```
-
-## Using the viewer in your website
-
-```html
-<div id="viewer"></div>
-
-<script href="/path/to/bootstrap.min.css"></script>
-<script type="module">
-    import Viewer from /path/to/Viewer.js;
-    const viewerElement = document.getElementById("viewer")
-    
-    const resourceExample = [
-        {
-            id: 42, // a unique ID
-            caption: "Model", // a description of the model
-            params: '{ "color": [ 0.8, 1.0, 0.8 ], "opacity": 1.0 }', // display color and opacity
-            type: "MODEL", // MODEL for STL files
-            url: 'data/sample.stl' // the URL of the model
-        }
-    ]
-    
-    function saveScreenshot(imageBlob) {
-        // process the Blob containing a PNG image
-        
-        // should return a Promise for further processing (e.g., to update the UI once the operation is finished)
-    }
-    
-    new Viewer({
-        target: viewerElement,
-        props: {
-            resources: resourceExample, // A list of resources to load (see the example above)
-            screenshotCallback: saveScreenshot // A function that is called with the screenshot image as an argument (optional)
-        }
-    })
-</script>
-```
-
-## Using the viewer in your website
-
-```html
-<div id="viewer"></div>
-
-<script href="/path/to/bootstrap.min.css"></script>
-<script type="module">
-    import Viewer from /path/to/Viewer.js;
-    const viewerElement = document.getElementById("viewer")
-    
-    const resourceExample = [
-        {
-            id: 42, // a unique ID
-            caption: "Model", // a description of the model
-            params: '{ "color": [ 0.8, 1.0, 0.8 ], "opacity": 1.0 }', // display color and opacity
-            type: "MODEL", // MODEL for STL files
-            url: 'data/sample.stl' // the URL of the model
-        }
-    ]
-    
-    function saveScreenshot(imageBlob) {
-        // process the Blob containing a PNG image
-        
-        // should return a Promise for further processing (e.g., to update the UI once the operation is finished)
-    }
-    
-    new Viewer({
-        target: viewerElement,
-        props: {
-            resources: resourceExample, // A list of resources to load (see the example above)
+            resources: resourceExample, // A list of resources to load (see example above)
             screenshotCallback: saveScreenshot // A function that is called with the screenshot image as an argument (optional)
         }
     })
