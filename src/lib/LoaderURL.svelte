@@ -1,5 +1,4 @@
 <script>
-    import HttpDataAccessHelper from "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
     import vtkXMLPolyDataReader from "@kitware/vtk.js/IO/XML/XMLPolyDataReader";
     import vtkSTLReader from "@kitware/vtk.js/IO/Geometry/STLReader";
 
@@ -43,6 +42,59 @@
         }
     }
 
+    async function fetchData(url, progressCallback) {
+        return fetch(url)
+            .then((response) => {
+                let total_length = 0
+                let current_length = 0
+
+                if (response.headers.has('content-length')) {
+                    total_length = parseInt(response.headers.get('content-length'))
+                    }
+
+                progressCallback(new ProgressEvent('loadstart', {
+                    lengthComputable: total_length > 0,
+                    loaded: 0,
+                    total: total_length
+                }))
+
+                const reader = response.body.getReader();
+                return new ReadableStream({
+                    start(controller) {
+                        return pump()
+
+                        function pump() {
+                            return reader.read().then(({done, value}) => {
+                                if (done) {
+                                    controller.close()
+
+                                    progressCallback(new ProgressEvent('loadend', {
+                                        lengthComputable: total_length > 0,
+                                        loaded: current_length,
+                                        total: total_length
+                                    }))
+
+                                    return
+                                } else {
+                                    current_length += value.length
+
+                                    progressCallback(new ProgressEvent('progress', {
+                                        lengthComputable: total_length > 0,
+                                        loaded: current_length,
+                                        total: total_length
+                                    }))
+                                }
+                                controller.enqueue(value)
+                                return pump()
+                            })
+                        }
+                    },
+                });
+            })
+            .then((stream) => new Response(stream))
+            .then((response) => response.arrayBuffer())
+    }
+
     function processModel(model_resource) {
         pending++
 
@@ -55,8 +107,7 @@
 
         const progressCallback = createProgressCallback(progressBar)
 
-        HttpDataAccessHelper
-            .fetchBinary(mediaURL + model_resource.url, {progressCallback})
+        fetchData(mediaURL + model_resource.url, progressCallback)
             .then((arrayBuffer) => {
                 let reader = vtkXMLPolyDataReader.newInstance()
                 try {
@@ -78,12 +129,8 @@
                 models = [...models, model_resource]
                 pending--
             })
-            .catch((e) => {
-                if (e.xhr === undefined) {
-                    dispatch('loadError', {message: `could not open resource (${e.message}).`})
-                } else {
-                    dispatch('loadError', {message: `could not download resource (${e.xhr.statusText}).`})
-                }
+            .catch((err) => {
+                dispatch('loadError', {message: `could not open resource (${err}).`})
             })
     }
 
@@ -99,8 +146,7 @@
 
         const progressCallback = createProgressCallback(progressBar)
 
-        HttpDataAccessHelper
-            .fetchBinary(mediaURL + volume_resource.url, {progressCallback})
+        fetchData(mediaURL + volume_resource.url, progressCallback)
             .then((arrayBuffer) => {
                 try {
                     return convertNRRDtoItk(arrayBuffer, progressCallback)
@@ -119,12 +165,8 @@
                         pending--
                     })
             })
-            .catch((e) => {
-                if (e.xhr === undefined) {
-                    dispatch('loadError', {message: `could not open resource (${e.message}).`})
-                } else {
-                    dispatch('loadError', {message: `could not download resource (${e.xhr.statusText}).`})
-                }
+            .catch((err) => {
+                dispatch('loadError', {message: `could not open resource (${err}).`})
             })
     }
 
