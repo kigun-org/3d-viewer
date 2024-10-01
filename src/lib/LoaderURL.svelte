@@ -117,8 +117,8 @@
                     try {
                         reader = vtkSTLReader.newInstance()
                         reader.parseAsArrayBuffer(arrayBuffer)
-                    } catch (e) {
-                        dispatch('loadError', {message: `could not open resource (${e.name}).`})
+                    } catch (err) {
+                        dispatch('loadError', {message: `could not open resource (${err.name}).`})
                         return
                     }
                 }
@@ -150,8 +150,8 @@
             .then((arrayBuffer) => {
                 try {
                     return convertNRRDtoItk(arrayBuffer, progressCallback)
-                } catch (e) {
-                    dispatch('loadError', {message: `could not open resource (${e.name}).`})
+                } catch (err) {
+                    dispatch('loadError', {message: `could not open resource (${err.name}).`})
                 }
             })
             .then((itkImage) => {
