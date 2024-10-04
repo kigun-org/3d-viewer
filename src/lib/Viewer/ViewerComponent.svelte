@@ -1,5 +1,6 @@
 <script>
-    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/All';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/Geometry';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/Volume';
 
     import {InteractionMethodsName} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';

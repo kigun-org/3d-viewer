@@ -1,5 +1,7 @@
 <script>
-    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/All';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/Geometry';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/Glyph';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/Volume';
 
     import vtkGenericRenderWindow from '@kitware/vtk.js/Rendering/Misc/GenericRenderWindow';
 
