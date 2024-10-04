@@ -1,6 +1,5 @@
 <script>
-    // Load the rendering pieces we want to use (for both WebGL and WebGPU)
-    import '@kitware/vtk.js/Rendering/Profiles/All';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/All';
 
     import vtkGenericRenderWindow from '@kitware/vtk.js/Rendering/Misc/GenericRenderWindow';
 

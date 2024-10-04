@@ -1,8 +1,8 @@
 <script>
     import { onMount } from 'svelte'
 
-    import '@kitware/vtk.js/Rendering/Profiles/Geometry';
-    import '@kitware/vtk.js/Rendering/Profiles/Volume';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/Geometry';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/Volume';
 
     import vtkActor           from '@kitware/vtk.js/Rendering/Core/Actor';
     import vtkMapper          from '@kitware/vtk.js/Rendering/Core/Mapper';

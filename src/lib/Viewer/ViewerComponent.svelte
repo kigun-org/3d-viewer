@@ -1,6 +1,5 @@
 <script>
-    // Load the rendering pieces we want to use (for both WebGL and WebGPU)
-    import '@kitware/vtk.js/Rendering/Profiles/All';
+    import '@kitware/vtk.js/Rendering/OpenGL/Profiles/All';
 
     import {InteractionMethodsName} from "@kitware/vtk.js/Widgets/Widgets3D/ResliceCursorWidget/Constants";
     import vtkMath from '@kitware/vtk.js/Common/Core/Math';
