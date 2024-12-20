@@ -125,12 +125,12 @@
     }
 
     onMount(() => {
-        const openGLRenderWindow = vtkGenericRenderWindow.newInstance();
-        openGLRenderWindow.setContainer(containerElement)
-        openGLRenderWindow.resize()
+        const genericRenderWindow = vtkGenericRenderWindow.newInstance();
+        genericRenderWindow.setContainer(containerElement)
+        genericRenderWindow.resize()
 
-        renderer = openGLRenderWindow.getRenderer();
-        renderWindow = openGLRenderWindow.getRenderWindow();
+        renderer = genericRenderWindow.getRenderer();
+        renderWindow = genericRenderWindow.getRenderWindow();
 
         const iStyle = createTrackballNoHotkeysStyle()
         renderWindow.getInteractor().setInteractorStyle(iStyle)

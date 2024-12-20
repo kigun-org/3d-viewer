@@ -9,7 +9,7 @@ function convertItkToNRRD(itkImage, progressCallback) {
         total: 0
     }))
 
-    return writeImage(itkImage, "out.nrrd", {useCompression: true})
+    return writeImage(itkImage, "out.nrrd", {useCompression: true, componentType: "int16"})
         .then(function ({webWorker, serializedImage}) {
             webWorker.terminate()
 

@@ -289,6 +289,7 @@
         state.reslice.setOutputDimensionality(2)
 
         state.resliceMapper.setInputConnection(state.reslice.getOutputPort())
+        state.resliceMapper.setPreferSizeOverAccuracy(true)
 
         state.resliceActor.setMapper(state.resliceMapper)
         state.resliceActor.getProperty().setColorWindow(initialWindow)
