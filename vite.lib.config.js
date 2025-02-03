@@ -5,7 +5,6 @@ import {viteStaticCopy} from "vite-plugin-static-copy"
 
 let entries = [
     resolve(__dirname, 'src/lib/Viewer.svelte'),
-    resolve(__dirname, 'src/lib/LoaderDICOM.svelte'),
 ]
 
 const customArgIndex = process.argv.indexOf('--')
@@ -27,9 +26,7 @@ export default defineConfig({
         }),
         viteStaticCopy({
             targets: [
-                { src: 'node_modules/@itk-wasm/image-io/dist/pipelines/nrrd-*.{js,wasm,wasm.zst}', dest: 'pipelines' },
-                { src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-dicom-tags.{js,wasm,wasm.zst}', dest: 'pipelines' },
-                { src: 'node_modules/@itk-wasm/dicom/dist/pipelines/read-image-dicom-*.{js,wasm,wasm.zst}', dest: 'pipelines' },
+                { src: 'node_modules/@itk-wasm/image-io/dist/pipelines/nrrd-read-*.{js,wasm,wasm.zst}', dest: 'pipelines' },
             ],
         })
     ],

@@ -50,7 +50,7 @@
 
                 if (response.headers.has('content-length')) {
                     total_length = parseInt(response.headers.get('content-length'))
-                    }
+                }
 
                 progressCallback(new ProgressEvent('loadstart', {
                     lengthComputable: total_length > 0,
@@ -148,22 +148,21 @@
 
         fetchData(mediaURL + volume_resource.url, progressCallback)
             .then((arrayBuffer) => {
-                try {
-                    return convertNRRDtoItk(arrayBuffer, progressCallback)
-                } catch (err) {
-                    dispatch('loadError', {message: `could not open resource (${err.name}).`})
-                }
+                console.log(arrayBuffer)
+                return convertNRRDtoItk(arrayBuffer, progressCallback)
             })
             .then((itkImage) => {
+                console.log(itkImage)
                 const convert = async (itkImage) => convertItkToVtkImage(itkImage)
-                convert(itkImage)
-                    .then((vtkImage) => {
-                        volume_resource.source = vtkImage
-                        volume_resource.visible = true
+                return convert(itkImage)
+            })
+            .then((vtkImage) => {
+                console.log(vtkImage)
+                volume_resource.source = vtkImage
+                volume_resource.visible = true
 
-                        volumes = [...volumes, volume_resource]
-                        pending--
-                    })
+                volumes = [...volumes, volume_resource]
+                pending--
             })
             .catch((err) => {
                 dispatch('loadError', {message: `could not open resource (${err}).`})

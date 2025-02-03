@@ -62,8 +62,8 @@
         lookupTable.addRGBPoint(2000.0, 1.0, 1.0, 1.0);
 
         const piecewiseFunction = vtkPiecewiseFunction.newInstance()
-        piecewiseFunction.addPoint(200.0, 0);
-        piecewiseFunction.addPoint(400.0, 0.7);
+        piecewiseFunction.addPoint(300.0, 0);
+        piecewiseFunction.addPoint(500.0, 0.7);
         piecewiseFunction.addPoint(2000.0, 1.0);
 
         vtk_volume.setMapper(mapper);
@@ -111,8 +111,8 @@
 
     export function updateShift(newValue) {
         const piecewiseFunction = vtkPiecewiseFunction.newInstance()
-        piecewiseFunction.addPoint(200.0 + newValue, 0);
-        piecewiseFunction.addPoint(400.0 + newValue, 0.7);
+        piecewiseFunction.addPoint(300.0 + newValue, 0);
+        piecewiseFunction.addPoint(500.0 + newValue, 0.7);
         piecewiseFunction.addPoint(2000.0 + newValue, 1.0);
 
         vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction);
