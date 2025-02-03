@@ -44,7 +44,7 @@
 <style>
     .overlay-menu {
         position: absolute;
-        top: 39px;
+        top: 3rem;
         right: 0;
         margin: 0.5rem;
 
@@ -54,7 +54,7 @@
 
         text-align: left;
 
-        background-color: rgba(var(--bs-light-rgb), 0.9);
+        background-color: rgba(255, 255, 255, 0.9);
     }
 
     .overlay-menu div, .overlay-menu label {
