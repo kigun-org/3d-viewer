@@ -148,16 +148,13 @@
 
         fetchData(mediaURL + volume_resource.url, progressCallback)
             .then((arrayBuffer) => {
-                console.log(arrayBuffer)
                 return convertNRRDtoItk(arrayBuffer, progressCallback)
             })
             .then((itkImage) => {
-                console.log(itkImage)
                 const convert = async (itkImage) => convertItkToVtkImage(itkImage)
                 return convert(itkImage)
             })
             .then((vtkImage) => {
-                console.log(vtkImage)
                 volume_resource.source = vtkImage
                 volume_resource.visible = true
 
