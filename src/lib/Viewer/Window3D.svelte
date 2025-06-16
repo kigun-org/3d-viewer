@@ -49,46 +49,47 @@
     }
 
     function createVolume(volume_resource) {
-        const mapper = vtkVolumeMapper.newInstance();
-        vtk_volume = vtkVolume.newInstance();
+        const mapper = vtkVolumeMapper.newInstance()
+        vtk_volume = vtkVolume.newInstance()
 
         // const sourceData = volume_resource.getOutputData(0)
         // const dataArray =
         //     sourceData.getPointData().getScalars() || sourceData.getPointData().getArrays()[0];
         // const dataRange = dataArray.getRange()
 
-        const lookupTable = vtkColorTransferFunction.newInstance();
-        lookupTable.addRGBPoint(200.0, 0.8, 0.6, 0.4);
-        lookupTable.addRGBPoint(2000.0, 1.0, 1.0, 1.0);
+        const lookupTable = vtkColorTransferFunction.newInstance()
+        Array.from(volume_resource.params.color_transfer).forEach((e) => {
+            lookupTable.addRGBPoint(e[0], e[1], e[2], e[3])
+        })
 
         const piecewiseFunction = vtkPiecewiseFunction.newInstance()
-        piecewiseFunction.addPoint(300.0, 0);
-        piecewiseFunction.addPoint(500.0, 0.7);
-        piecewiseFunction.addPoint(2000.0, 1.0);
+        Array.from(volume_resource.params.piecewise).forEach((e) => {
+            piecewiseFunction.addPoint(e[0], e[1])
+        })
 
-        vtk_volume.setMapper(mapper);
-        // mapper.setInputConnection(volume_resource.source.getOutputPort(0));
-        mapper.setInputData(volume_resource.source);
-        mapper.setSampleDistance(0.4);
+        vtk_volume.setMapper(mapper)
+        // mapper.setInputConnection(volume_resource.source.getOutputPort(0))
+        mapper.setInputData(volume_resource.source)
+        mapper.setSampleDistance(0.4)
 
-        vtk_volume.getProperty().setRGBTransferFunction(0, lookupTable);
-        vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction);
-        vtk_volume.getProperty().setInterpolationTypeToLinear();
+        vtk_volume.getProperty().setRGBTransferFunction(0, lookupTable)
+        vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction)
+        vtk_volume.getProperty().setInterpolationTypeToLinear()
 
         // - Use shading based on gradient
-        // vtk_volume.getProperty().setUseGradientOpacity(0, true);
+        // vtk_volume.getProperty().setUseGradientOpacity(0, true)
         // - generic good default
-        // vtk_volume.getProperty().setGradientOpacityMinimumValue(0, 2);
-        // vtk_volume.getProperty().setGradientOpacityMinimumOpacity(0, 0.0);
-        // vtk_volume.getProperty().setGradientOpacityMaximumValue(0, (4000 - 500) * 0.05);
-        // vtk_volume.getProperty().setGradientOpacityMaximumValue(0, 200);
-        // vtk_volume.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
+        // vtk_volume.getProperty().setGradientOpacityMinimumValue(0, 2)
+        // vtk_volume.getProperty().setGradientOpacityMinimumOpacity(0, 0.0)
+        // vtk_volume.getProperty().setGradientOpacityMaximumValue(0, (4000 - 500) * 0.05)
+        // vtk_volume.getProperty().setGradientOpacityMaximumValue(0, 200)
+        // vtk_volume.getProperty().setGradientOpacityMaximumOpacity(0, 1.0)
 
-        vtk_volume.getProperty().setShade(true);
-        vtk_volume.getProperty().setAmbient(0.2);
-        vtk_volume.getProperty().setDiffuse(0.7);
-        vtk_volume.getProperty().setSpecular(0.3);
-        vtk_volume.getProperty().setSpecularPower(8.0);
+        vtk_volume.getProperty().setShade(volume_resource.params.shading)
+        vtk_volume.getProperty().setAmbient(volume_resource.params.ambient)
+        vtk_volume.getProperty().setDiffuse(volume_resource.params.diffuse)
+        vtk_volume.getProperty().setSpecular(volume_resource.params.specular)
+        vtk_volume.getProperty().setSpecularPower(volume_resource.params.specular_power)
 
         return vtk_volume
     }
@@ -111,9 +112,9 @@
 
     export function updateShift(newValue) {
         const piecewiseFunction = vtkPiecewiseFunction.newInstance()
-        piecewiseFunction.addPoint(300.0 + newValue, 0);
-        piecewiseFunction.addPoint(500.0 + newValue, 0.7);
-        piecewiseFunction.addPoint(2000.0 + newValue, 1.0);
+        Array.from(volume.params.piecewise).forEach((e) => {
+            piecewiseFunction.addPoint(e[0] + newValue, e[1])
+        })
 
         vtk_volume.getProperty().setScalarOpacity(0, piecewiseFunction);
 

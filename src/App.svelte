@@ -101,15 +101,31 @@
         id: 42,
         caption: "CBCT",
         type: "VOLUME",
-        url: 'data/sample.nrrd'
+        url: 'data/sample.nrrd',
+        params: {
+            level: 300,
+            window: 500,
+            color_transfer: [
+                [200.0, 0.4, 0.6, 0.8],
+                [8000.0, 1.0, 1.0, 0]
+            ],
+            piecewise: [
+                [300.0, 0],
+                [500.0, 0.1],
+                [2000.0, 0.2]
+            ]
+        }
     }
 
     const sampleModelResource = {
         id: 45,
         caption: "Model",
-        params: '{ "color": [ 0.8, 1.0, 0.8 ], "opacity": 1.0 }',
         type: "MODEL",
-        url: 'data/sample.stl'
+        url: 'data/sample.stl',
+        params: {
+            color: [ 0.8, 1.0, 0.8 ],
+            opacity: 0.5
+        },
     }
 
     let imageSources = []

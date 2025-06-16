@@ -168,16 +168,42 @@
 
     for (const resource of resources) {
         if (resource.type === "VOLUME") {
+            // Set default paramaters for VOLUME if none are specified
+            const defaultParams = {
+                window: 4000,
+                level: 1000,
+                color_transfer: [ // intensity, R (0-1), G, B
+                    [200.0, 0.8, 0.6, 0.4],
+                    [2000.0, 1.0, 1.0, 1.0]
+                ],
+                piecewise: [ // intensity, opacity (0-1)
+                    [300.0, 0],
+                    [500.0, 0.7],
+                    [2000.0, 1.0]
+                ],
+                shading: true,
+                ambient: 0.2,
+                diffuse: 0.7,
+                specular: 0.3,
+                specular_power: 8.0
+            }
+            if (resource.params !== undefined && resource.params !== null) {
+                resource.params = {...defaultParams, ...resource.params}
+            } else {
+                resource.params = defaultParams
+            }
+
             processVolume(resource)
         } else if (resource.type === "MODEL") {
-            // parse JSON string to extract parameters
-            if (resource.params === undefined || resource.params === null || resource.params === "") {
-                resource.params = {
-                    color: [0.8, 0.8, 1.0],
-                    opacity: 1.0
-                }
+            // Set default paramaters for MODEL if none are specified
+            const defaultParams = {
+                color: [0.8, 0.8, 1.0],
+                opacity: 1.0
+            }
+            if (resource.params !== undefined && resource.params !== null) {
+                resource.params = {...defaultParams, ...resource.params}
             } else {
-                resource.params = JSON.parse(resource.params)
+                resource.params = defaultParams
             }
 
             processModel(resource)

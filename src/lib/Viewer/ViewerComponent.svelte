@@ -155,8 +155,8 @@
     const handleScale = 15
     const handleOpacity = 255
 
-    const initialWindow = 4000
-    const initialLevel = 1000
+    let initialWindow = 4000
+    let initialLevel = 1000
 
     const widget = vtkResliceCursorWidget.newInstance();
     const initialPlanesState = {...widget.getWidgetState().getPlanes()};
@@ -328,6 +328,9 @@
         // for DICOM volumes only
         if (volume !== undefined) {
             const image = volume.source
+
+            initialWindow = volume.params.window
+            initialLevel = volume.params.level
 
             initWidgetState(widget)
             widget.setImage(image)
