@@ -5,7 +5,7 @@ import {viteStaticCopy} from 'vite-plugin-static-copy'
 
 export default defineConfig({
     optimizeDeps: {
-        exclude: ['itk-wasm', '@itk-wasm/image-io', '@itk-wasm/dicom']
+        exclude: ['itk-wasm', '@itk-wasm/mesh-io', '@itk-wasm/image-io', '@itk-wasm/dicom']
     },
     test: {
         globals: true,

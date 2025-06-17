@@ -433,8 +433,8 @@
     })
 </script>
 
-<div style="position: relative; width: 100%; height: 100%">
-    <div style="display: grid; grid-template-columns: 1fr 1fr">
+<div class="k-relative k-w-full k-h-full">
+    <div class="k-grid k-grid-cols-2">
         {#if volume}
             <Window2D bind:this={windowAxial} bind:maximized={maximized} {scaleInPixels}
                       {pointerEntered} {pointerLeft}

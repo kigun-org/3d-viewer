@@ -1,5 +1,7 @@
 <!--<svelte:options customElement={{tag: "eos-viewer", shadow: 'none'}}/>-->
 <script>
+    import "./tailwind.css";
+
     import ViewerComponent from "./Viewer/ViewerComponent.svelte";
     import LoaderURL from "./LoaderURL.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
@@ -57,8 +59,10 @@
     {/if}
     </div>
 {:else}
-    <div class="viewer_panel">
-        <ViewerComponent bind:models={models} bind:volume={volume} {startMaximized} {screenshotCallback} />
+    <div class="viewers" style="aspect-ratio: 4 / 3">
+        <div class="k-relative k-h-full k-bg-base-200">
+            <ViewerComponent bind:models={models} bind:volume={volume} {startMaximized} {screenshotCallback} />
+        </div>
     </div>
 {/if}
 

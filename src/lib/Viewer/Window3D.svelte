@@ -166,9 +166,9 @@
     })
 </script>
 
-<div class:hidden={maximized !== null && maximized !== ViewMode.THREE_D}
-     class:maximized={maximized === ViewMode.THREE_D}
-     style="position: relative">
+<div class="k-relative"
+     class:k-hidden={maximized !== null && maximized !== ViewMode.THREE_D}
+     class:maximized={maximized === ViewMode.THREE_D}>
 
     <div bind:this={containerElement} style="min-height: 200px; aspect-ratio: 4 / 3"></div>
 
@@ -181,9 +181,5 @@
     .maximized {
         grid-column: span 2;
         grid-row: span 2;
-    }
-
-    .hidden {
-        display: none;
     }
 </style>

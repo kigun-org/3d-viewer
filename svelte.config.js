@@ -1,10 +1,17 @@
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import {vitePreprocess} from '@sveltejs/vite-plugin-svelte'
 
 export default {
-  // Consult https://svelte.dev/docs#compile-time-svelte-preprocess
-  // for more information about preprocessors
-  preprocess: vitePreprocess(),
-  kit: {
-    inlineStyleThreshold: 4096
-  }
+    // Consult https://svelte.dev/docs#compile-time-svelte-preprocess
+    // for more information about preprocessors
+    preprocess: vitePreprocess(),
+
+    compilerOptions: {
+        compatibility: {
+            componentApi: 4
+        }
+    },
+
+    kit: {
+        inlineStyleThreshold: 4096
+    }
 }

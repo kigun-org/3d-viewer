@@ -1,4 +1,6 @@
 <script>
+    import "./tailwind.css";
+
     import ViewerComponent from "./Viewer/ViewerComponent.svelte";
     import LoaderDICOM from "./LoaderDICOM.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
@@ -138,8 +140,10 @@
     {/if}
 
     {#if ready}
-        <div class="viewer_panel">
-            <ViewerComponent bind:models={models} bind:volume={volume} {screenshotCallback}/>
+        <div class="viewers" style="aspect-ratio: 4 / 3">
+            <div class="k-relative k-h-full k-bg-base-200">
+                <ViewerComponent bind:models={models} bind:volume={volume} {screenshotCallback}/>
+            </div>
         </div>
     {/if}
 {/if}
@@ -171,16 +175,6 @@
         justify-content: center;
 
         text-align: center;
-    }
-
-    .viewer_panel {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.25rem;
-        min-height: 400px;
-        aspect-ratio: 4 / 3;
     }
 
     .viewer_panel.error {
