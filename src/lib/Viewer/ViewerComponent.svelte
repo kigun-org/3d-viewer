@@ -357,6 +357,8 @@
                 const reslice = obj.reslice
                 const viewType = getViewTypes(i)
 
+                setWindowLevel(obj, initialWindow, initialLevel)
+
                 obj.interactor.getInteractorStyle().onInteractionEvent(() => {
                     const level = obj.resliceActor.getProperty().getColorLevel()
                     const window = obj.resliceActor.getProperty().getColorWindow()

@@ -87,8 +87,8 @@
         type: "VOLUME",
         url: 'data/sample.nrrd',
         params: {
-            level: 300,
-            window: 500,
+            level: 1000,
+            window: 800,
             color_transfer: [
                 [200.0, 0.4, 0.6, 0.8],
                 [8000.0, 1.0, 1.0, 0]
