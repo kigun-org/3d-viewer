@@ -16,15 +16,15 @@
     })
 </script>
 
-<div class="overlay-menu p-2">
+<div class="k-absolute k-top-14 k-right-2 k-bg-base-200/90 k-p-2">
     {#if volume}
         <div role="menuitem">
-            <label>
-                <input type="checkbox" bind:checked={volume.visible}>
+            <label class="k-label">
                 Volume
+                <input class="k-checkbox" type="checkbox" bind:checked={volume.visible}>
             </label>
-            <br>
             <input type="range" min="-2000" max="2000"
+                   class="k-range k-range-sm"
                    bind:value={shift} disabled={!volume.visible} />
         </div>
     {/if}
@@ -40,18 +40,9 @@
 
 <style>
     .overlay-menu {
-        position: absolute;
-        top: 3rem;
-        right: 0;
-        margin: 0.5rem;
-
         display: flex;
         flex-direction: column;
         gap: 0.5em;
-
-        text-align: left;
-
-        background-color: rgba(255, 255, 255, 0.9);
     }
 
     .overlay-menu div, .overlay-menu label {
