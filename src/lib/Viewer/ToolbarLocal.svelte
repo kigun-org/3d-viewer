@@ -8,7 +8,7 @@
     }
 </script>
 
-<div class="k-absolute k-top-0 k-left-0 k-right-0 k-border-b-8 k-border-b-transparent k-bg-base-200/90
+<div class="k-absolute k-top-0 k-left-0 k-right-0 k-border-b-4 k-border-b-transparent k-bg-base-200/90
             d-flex align-items-center gap-1 px-2 py-1"
      style="border-color: {viewMode.color}">
     <div class="k-w-28 k-me-4">
