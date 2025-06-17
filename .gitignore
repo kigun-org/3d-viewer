@@ -25,3 +25,6 @@ dist-ssr
 
 /coverage/
 /testdata/
+
+/demo
+/public/data
