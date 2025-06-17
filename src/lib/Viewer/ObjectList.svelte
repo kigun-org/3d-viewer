@@ -1,23 +1,19 @@
 <script>
-    import {createEventDispatcher} from "svelte";
+    let {
+        models = $bindable(),
+        volume = $bindable(),
+        updateShift
+    } = $props();
 
-    const dispatch = createEventDispatcher();
-
-    export let models
-
-    export let volume
-
-    let shift = 0
-
-    $: updateShift(shift)
-
-    function updateShift(newValue) {
-        dispatch('updateShift', newValue)
-    }
+    let shift = $state(0)
 
     function generateRGBColor(params) {
         return `rgba(${params.color[0] * 255}, ${params.color[1] * 255}, ${params.color[2] * 255}, ${params.opacity})`
     }
+
+    $effect(() => {
+        updateShift(shift)
+    })
 </script>
 
 <div class="overlay-menu p-2">
@@ -28,7 +24,8 @@
                 Volume
             </label>
             <br>
-            <input type="range" min="-2000" max="2000" bind:value={shift} disabled={!volume.visible} />
+            <input type="range" min="-2000" max="2000"
+                   bind:value={shift} disabled={!volume.visible} />
         </div>
     {/if}
 

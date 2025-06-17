@@ -14,19 +14,29 @@
     import Window2D from "./Window2D.svelte";
     import Window3D from "./Window3D.svelte";
 
-    let window3D
-    let windowAxial
-    let windowCoronal
-    let windowSagittal
+    let window3D = $state()
+    let windowAxial = $state()
+    let windowCoronal = $state()
+    let windowSagittal = $state()
 
-    /** A list of resources to load; can be of type VOLUME or MODEL */
-    export let models = []
-    export let volume
-    export let screenshotCallback = null
+    
+    /**
+     * @typedef {Object} Props
+     * @property {any} [models] - A list of resources to load; can be of type VOLUME or MODEL
+     * @property {any} volume
+     * @property {any} [screenshotCallback]
+     * @property {any} [startMaximized] - Should four panels (3D + orthogonal views) be shown on start up? default is true if showing a volume
+     */
 
-    /** Should four panels (3D + orthogonal views) be shown on start up? default is true if showing a volume */
-    export let startMaximized = (volume === undefined)
-    let maximized = startMaximized ? ViewMode.THREE_D : null
+    /** @type {Props} */
+    let {
+        models = $bindable([]),
+        volume = $bindable(undefined),
+        screenshotCallback = null,
+        startMaximized = false
+    } = $props();
+
+    let maximized = $state.raw((startMaximized || volume === undefined) ? ViewMode.THREE_D : null)
 
     /* If no volumes are loaded, only show 3D view */
     let showLocalToolbar = (volume !== undefined)
@@ -34,16 +44,21 @@
     /* Show object list if more than one model/volume is loaded */
     let objectListVisible = (models.length > 1) || (volume !== undefined)
 
-    /* If model values change (most likely visibility), update actor properties */
-    $: for (const model of models) {
-        if (model.actor !== undefined) {
-            if (model.visible) {
-                model.actor.getProperty().setOpacity(model.params.opacity)
-            } else {
-                model.actor.getProperty().setOpacity(0.0)
+    /* Toggle model visibility (update actor properties) */
+    $effect(() => {
+        for (const model of models) {
+            if (model.actor !== undefined) {
+                model.actor.setVisibility(model.visible)
             }
         }
-    }
+    });
+
+    /* Toggle volume visibility (update actor properties) */
+    $effect(() => {
+        if (volume !== undefined && volume.actor !== undefined) {
+            volume.actor.setVisibility(volume.visible)
+        }
+    })
 
     async function createBlob(imageData) {
         const image = Object.assign(new Image(), {src: imageData});
@@ -304,8 +319,8 @@
         v.renderWindow.getInteractor().render()
     }
 
-    function updateShift(e) {
-        window3D.updateShift(e.detail)
+    function updateShift(value) {
+        window3D.updateShift(value)
     }
 
     function pointerEntered() {
@@ -420,22 +435,24 @@
 
 <div style="position: relative; width: 100%; height: 100%">
     <div style="display: grid; grid-template-columns: 1fr 1fr">
-        <Window2D bind:this={windowAxial} bind:maximized={maximized} {scaleInPixels}
-                  on:pointerEntered={pointerEntered} on:pointerLeft={pointerLeft}
-                  {viewAttributes} viewMode={ViewMode.AXIAL} {widget}/>
+        {#if volume}
+            <Window2D bind:this={windowAxial} bind:maximized={maximized} {scaleInPixels}
+                      {pointerEntered} {pointerLeft}
+                      {viewAttributes} viewMode={ViewMode.AXIAL} {widget}/>
+        {/if}
         <Window3D bind:models={models} bind:maximized={maximized} bind:this={window3D}
                   bind:volume={volume} showToolbar={showLocalToolbar}/>
-        <Window2D bind:this={windowCoronal} bind:maximized={maximized} {scaleInPixels}
-                  on:pointerEntered={pointerEntered} on:pointerLeft={pointerLeft}
-                  {viewAttributes} viewMode={ViewMode.CORONAL} {widget}/>
-        <Window2D bind:this={windowSagittal} bind:maximized={maximized} {scaleInPixels}
-                  on:pointerEntered={pointerEntered} on:pointerLeft={pointerLeft}
-                  {viewAttributes} viewMode={ViewMode.SAGITTAL} {widget}/>
+        {#if volume}
+            <Window2D bind:this={windowCoronal} bind:maximized={maximized} {scaleInPixels}
+                      {pointerEntered} {pointerLeft}
+                      {viewAttributes} viewMode={ViewMode.CORONAL} {widget}/>
+            <Window2D bind:this={windowSagittal} bind:maximized={maximized} {scaleInPixels}
+                      {pointerEntered} {pointerLeft}
+                      {viewAttributes} viewMode={ViewMode.SAGITTAL} {widget}/>
+        {/if}
     </div>
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
-                   on:resetCamera={resetCamera}
-                   on:resetWindowLevel={resetWindowLevel} on:screenshot={saveScreenshot}
-                   on:updateShift={() => updateShift}
+                   {resetCamera} {resetWindowLevel} {updateShift} screenshot={saveScreenshot}
                    showWindowLevelButton={volume !== undefined}
                    showScreenshotButton={screenshotCallback !== null}
                    toolbarBackground={volume === undefined}/>

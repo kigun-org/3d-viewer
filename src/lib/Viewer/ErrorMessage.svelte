@@ -1,5 +1,5 @@
 <script>
-    export let errorMessage
+    let { errorMessage } = $props();
 </script>
 
 <i class="bi bi-exclamation-triangle fs-1 text-danger"></i>

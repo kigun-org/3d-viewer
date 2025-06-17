@@ -21,33 +21,30 @@
     import {CaptureOn} from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
     import {getColorRGBString} from "../Loader/colors";
 
-    import {createEventDispatcher, onMount} from 'svelte'
+    import {onMount} from 'svelte'
 
     import {ViewMode} from "./ViewMode";
     import ToolbarLocal from "./ToolbarLocal.svelte";
 
-    const dispatch = createEventDispatcher()
-
-    export let maximized
-    export let viewMode
+    let {
+        viewMode,
+        maximized = $bindable(),
+        viewAttributes,
+        widget,
+        scaleInPixels, // On change: viewAttributes.forEach((obj) => { obj.interactor.render() }),
+        pointerEntered,
+        pointerLeft
+    } = $props();
 
     const backgroundColor = [0.1, 0.1, 0.1]
 
-    export let viewAttributes
-
-    export let widget
-
-    // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
-    export let scaleInPixels
-
     export function saveScreenshot() {
-        return state.renderWindow.captureImages()[0]
+        return componentState.renderWindow.captureImages()[0]
     }
 
-    let state
+    let componentState
 
     let element
-    let sliderElement
 
     const translationEnabled = true
 
@@ -117,7 +114,7 @@
     }
 
     function handlePointerEnter() {
-        dispatch('pointerEntered')
+        pointerEntered()
         const widgetState = widget.getWidgetState()
 
         if (viewMode === ViewMode.AXIAL) {
@@ -150,7 +147,7 @@
     }
 
     function handlePointerLeave() {
-        dispatch('pointerLeft')
+        pointerLeft()
         const widgetState = widget.getWidgetState()
 
         widgetState.getAxisXinZ().setScale3(0.75, 0.75, 0.75)
@@ -239,7 +236,7 @@
         const grw = vtkGenericRenderWindow.newInstance();
         grw.setContainer(element);
         grw.resize();
-        state = {
+        componentState = {
             renderWindow: grw.getRenderWindow(),
             renderer: grw.getRenderer(),
             GLWindow: grw.getApiSpecificRenderWindow(),
@@ -252,58 +249,57 @@
                 actor: createAxes(),
                 interactor: grw.getInteractor(),
             }),
-            slider: sliderElement
         };
 
-        state.renderer.getActiveCamera().setParallelProjection(true)
+        componentState.renderer.getActiveCamera().setParallelProjection(true)
         // state.renderer.setBackground(...getColor(index))
-        state.renderer.setBackground(...backgroundColor)
-        state.renderWindow.addRenderer(state.renderer)
-        state.renderWindow.addView(state.GLWindow)
-        state.renderWindow.setInteractor(state.interactor)
-        state.interactor.setView(state.GLWindow)
-        state.interactor.initialize()
-        state.widgetManager.setRenderer(state.renderer)
-        state.interactor.setInteractorStyle(windowLevelEnabled ?
+        componentState.renderer.setBackground(...backgroundColor)
+        componentState.renderWindow.addRenderer(componentState.renderer)
+        componentState.renderWindow.addView(componentState.GLWindow)
+        componentState.renderWindow.setInteractor(componentState.interactor)
+        componentState.interactor.setView(componentState.GLWindow)
+        componentState.interactor.initialize()
+        componentState.widgetManager.setRenderer(componentState.renderer)
+        componentState.interactor.setInteractorStyle(windowLevelEnabled ?
             vtkInteractorStyleImage.newInstance()
             : vtkInteractorStyleTrackballCamera.newInstance()
         )
-        state.interactor.onPointerEnter(handlePointerEnter)
-        state.interactor.onPointerLeave(handlePointerLeave)
+        componentState.interactor.onPointerEnter(handlePointerEnter)
+        componentState.interactor.onPointerLeave(handlePointerLeave)
 
-        state.widgetInstance = state.widgetManager.addWidget(widget, viewMode.viewType)
-        state.widgetInstance.setEnableTranslation(translationEnabled)
-        state.widgetInstance.setEnableRotation(rotationEnabled)
-        state.widgetInstance.setScaleInPixels(scaleInPixels)
-        state.widgetInstance.setKeepOrthogonality(keepOrthogonality)
-        state.widgetInstance.setCursorStyles(appCursorStyles)
-        state.widgetManager.enablePicking()
+        componentState.widgetInstance = componentState.widgetManager.addWidget(widget, viewMode.viewType)
+        componentState.widgetInstance.setEnableTranslation(translationEnabled)
+        componentState.widgetInstance.setEnableRotation(rotationEnabled)
+        componentState.widgetInstance.setScaleInPixels(scaleInPixels)
+        componentState.widgetInstance.setKeepOrthogonality(keepOrthogonality)
+        componentState.widgetInstance.setCursorStyles(appCursorStyles)
+        componentState.widgetManager.enablePicking()
         // Use to update all renderers buffer when actors are moved
-        state.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE)
+        componentState.widgetManager.setCaptureOn(CaptureOn.MOUSE_MOVE)
 
-        state.reslice.setSlabMode(slabMode) // On change: updateViews()
-        state.reslice.setSlabNumberOfSlices(slabNumberOfSlices) // On change: updateViews()
-        state.reslice.setInterpolationMode(interpolationMode)
-        state.reslice.setTransformInputSampling(false)
-        state.reslice.setAutoCropOutput(true)
-        state.reslice.setOutputDimensionality(2)
+        componentState.reslice.setSlabMode(slabMode) // On change: updateViews()
+        componentState.reslice.setSlabNumberOfSlices(slabNumberOfSlices) // On change: updateViews()
+        componentState.reslice.setInterpolationMode(interpolationMode)
+        componentState.reslice.setTransformInputSampling(false)
+        componentState.reslice.setAutoCropOutput(true)
+        componentState.reslice.setOutputDimensionality(2)
 
-        state.resliceMapper.setInputConnection(state.reslice.getOutputPort())
-        state.resliceMapper.setPreferSizeOverAccuracy(true)
+        componentState.resliceMapper.setInputConnection(componentState.reslice.getOutputPort())
+        componentState.resliceMapper.setPreferSizeOverAccuracy(true)
 
-        state.resliceActor.setMapper(state.resliceMapper)
-        state.resliceActor.getProperty().setColorWindow(initialWindow)
-        state.resliceActor.getProperty().setColorLevel(initialLevel)
+        componentState.resliceActor.setMapper(componentState.resliceMapper)
+        componentState.resliceActor.getProperty().setColorWindow(initialWindow)
+        componentState.resliceActor.getProperty().setColorLevel(initialLevel)
 
-        state.orientationWidget.setEnabled(true)
-        state.orientationWidget.setViewportCorner(
+        componentState.orientationWidget.setEnabled(true)
+        componentState.orientationWidget.setViewportCorner(
             vtkOrientationMarkerWidget.Corners.BOTTOM_RIGHT
         )
-        state.orientationWidget.setViewportSize(0.15)
-        state.orientationWidget.setMinPixelSize(100) // 50
-        state.orientationWidget.setMaxPixelSize(300) // 200
+        componentState.orientationWidget.setViewportSize(0.15)
+        componentState.orientationWidget.setMinPixelSize(100) // 50
+        componentState.orientationWidget.setMaxPixelSize(300) // 200
 
-        viewAttributes.push(state)
+        viewAttributes.push(componentState)
     })
 </script>
 

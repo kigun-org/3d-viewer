@@ -2,8 +2,8 @@
     import 'bootstrap-icons/font/bootstrap-icons.css'
     import 'bootstrap/dist/css/bootstrap.css'
 
-    // import Viewer from "./lib/Viewer.svelte";
     import ViewerUpload from "./lib/ViewerUpload.svelte"
+    import Viewer from "./lib/Viewer.svelte";
 
     // const model = [
     //     {
@@ -38,41 +38,25 @@
     //     }
     // ]
     //
-    // const resources = [
-    //     {
-    //         id: 20,
-    //         caption: "Upper arch",
-    //         params: '{ "color": [ 0.8, 0.8, 1.0 ], "opacity": 1.0 }',
-    //         r_id: 55,
-    //         type: "MODEL",
-    //         url: "/testdata/1upper.vtp"
-    //         // url: "/testdata/UpperJawScan-gz.vtp"
-    //         // url: "resources/2023/09/UpperJawScan.vtp"
-    //     },
-    //     {
-    //         id: 22,
-    //         caption: "Lower arch",
-    //         // params: '{ "color": [ 1.0, 1.0, 0.8 ], "opacity": 1.0 }',
-    //         params: '',
-    //         r_id: 43,
-    //         type: "MODEL",
-    //         url: "/testdata/1lower.vtp"
-    //         // url: "/testdata/LowerJawScan-gz.vtp"
-    //         // url: "resources/2023/09/LowerJawScan_3s19SPX.vtp"
-    //     },
-    //     {
-    //         id: 31,
-    //         caption: "CBCT",
-    //         r_id: 84,
-    //         type: "VOLUME",
-            // url: "/testdata/head-binary-gz.vti"
-            // url: "/testdata/cbct-gz.vti"
-            // url: "/testdata/1volume.vti"
-            // url: "/testdata/axial.vti"
+    const resources = [
+        {
+            id: 20,
+            caption: "Upper arch",
+            params: { color: [ 1.0, 0.8, 0.6 ], opacity: 1.0 },
+            r_id: 55,
+            type: "MODEL",
+            url: "/testdata/355166_UpperJawScan.stl"
+            // url: "/testdata/355166_UpperJawScan.vtp"
+        },
+        {
+            id: 31,
+            caption: "CBCT",
+            r_id: 84,
+            type: "VOLUME",
+            url: "/testdata/20231125.nrrd"
             // url: "/testdata/20240405.nrrd",
-            // url: "/testdata/20231125.nrrd"
-        // }
-    // ]
+        }
+    ]
     //
     //
     // const errorFileNotFound = [
@@ -128,8 +112,8 @@
         },
     }
 
-    let imageSources = []
-    let showScreenshots = false
+    let imageSources = $state([])
+    let showScreenshots = $state(false)
 
     const addScreenshot = (image) => {
         imageSources = [...imageSources, URL.createObjectURL(image)]
@@ -137,36 +121,45 @@
     }
 </script>
 
-<!--<ViewerUpload id="upload" screenshotCallback={addScreenshot} />-->
-<ViewerUpload id="upload" screenshotCallback={addScreenshot}
+<!--<ViewerUpload screenshotCallback={addScreenshot} />-->
+
+<ViewerUpload screenshotCallback={addScreenshot}
               sampleModel={sampleModelResource} sampleVolume={sampleVolumeResource} />
 
 <!--<div>-->
-<!--    <Viewer id="model" resources={model}/>-->
+<!--    <Viewer resources={model}/>-->
 <!--</div>-->
 
 <!--<div>-->
-<!--    <Viewer id="modelWithScreenshot" resources={model} screenshotCallback={addScreenshot}/>-->
+<!--    <Viewer resources={model} screenshotCallback={addScreenshot}/>-->
 <!--</div>-->
 
 <!--<div>-->
-<!--    <Viewer id="models" resources={models}/>-->
+<!--    <Viewer resources={models}/>-->
 <!--</div>-->
 
 <!--<div>-->
-<!--    <Viewer id="all" {resources} screenshotCallback={addScreenshot}/>-->
+<!--    <Viewer {resources} screenshotCallback={addScreenshot}/>-->
 <!--</div>-->
 
 <!--<div>-->
-<!--    <Viewer id="all" {resources} startMaximized={true} screenshotCallback={addScreenshot}/>-->
+<!--    <Viewer resources={[sampleModelResource]} screenshotCallback={addScreenshot}/>-->
 <!--</div>-->
 
 <!--<div>-->
-<!--    <Viewer id="error1" resources={errorFileNotFound}/>-->
+<!--    <Viewer resources={[sampleVolumeResource]} screenshotCallback={addScreenshot}/>-->
 <!--</div>-->
 
 <!--<div>-->
-<!--    <Viewer id="error2" resources={errorUnsupportedModelFormat}/>-->
+<!--    <Viewer {resources} startMaximized={true} screenshotCallback={addScreenshot}/>-->
+<!--</div>-->
+
+<!--<div>-->
+<!--    <Viewer resources={errorFileNotFound}/>-->
+<!--</div>-->
+
+<!--<div>-->
+<!--    <Viewer resources={errorUnsupportedModelFormat}/>-->
 <!--</div>-->
 
 <div class:d-none={!showScreenshots}>

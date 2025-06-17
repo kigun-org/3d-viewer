@@ -4,28 +4,40 @@
     import LoaderURL from "./LoaderURL.svelte";
     import ErrorMessage from "./Viewer/ErrorMessage.svelte";
 
-    export let resources = []
-    export let clickToLoad = resources.some((r) => r.type === "VOLUME")
-    export let startMaximized = resources.every((r) => r.type !== "VOLUME")
-    export let screenshotCallback = null
 
-    export let mediaURL = ''
+    /**
+     * @typedef {Object} Props
+     * @property {any} [resources]
+     * @property {any} [clickToLoad]
+     * @property {any} [startMaximized]
+     * @property {any} [screenshotCallback]
+     * @property {string} [mediaURL]
+     */
 
-    let models = []
-    let volume // only one volume can currently be visualized
+    /** @type {Props} */
+    let {
+        resources = [],
+        clickToLoad = resources.some((r) => r.type === "VOLUME"),
+        startMaximized = resources.every((r) => r.type !== "VOLUME"),
+        screenshotCallback = null,
+        mediaURL = ''
+    } = $props();
 
-    let clicked = false
-    let ready = false
-    let errorMessage
+    let models = $state([])
+    let volume = $state() // only one volume can currently be visualized
 
-    const resourcesLoaded = function (event) {
-        models = event.detail.models
-        volume = event.detail.volumes[0]
+    let clicked = $state(false)
+    let ready = $state(false)
+    let errorMessage = $state()
+
+    const resourcesLoaded = function (_models, _volume) {
+        models = _models
+        volume = _volume
         ready = true
     }
 
-    const handleError = function (event) {
-        errorMessage = event.detail.message
+    const handleError = function (message) {
+        errorMessage = message
     }
 </script>
 
@@ -36,17 +48,17 @@
 {:else if !ready}
     <div class="viewer_panel loading">
     {#if clickToLoad && !clicked}
-        <button class="btn btn-lg btn-outline-dark" on:click={() => {clicked = true}}>
+        <button class="btn btn-lg btn-outline-dark" onclick={() => {clicked = true}}>
             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-download"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
             <span>Click to load data</span>
         </button>
     {:else}
-        <LoaderURL {resources} {mediaURL} on:loadComplete={resourcesLoaded} on:loadError={handleError} />
+        <LoaderURL {resources} {mediaURL} complete={resourcesLoaded} error={handleError} />
     {/if}
     </div>
 {:else}
     <div class="viewer_panel">
-        <ViewerComponent {models} {volume} {startMaximized} {screenshotCallback} />
+        <ViewerComponent bind:models={models} bind:volume={volume} {startMaximized} {screenshotCallback} />
     </div>
 {/if}
 

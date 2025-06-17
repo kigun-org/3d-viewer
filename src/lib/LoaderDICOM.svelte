@@ -7,27 +7,33 @@
 
     const dispatch = createEventDispatcher();
 
-    export let fileList
-    export let outputNRRD = false
 
-    // Upload variables
-    export let upload = null
-    let uploading = false
-    let uploadComplete = false
-    let uploadError = false
-    let image = null
-    let uploadMessage = ''
-    let uploadProgress = 0
+    
+    /**
+     * @typedef {Object} Props
+     * @property {any} fileList
+     * @property {boolean} [outputNRRD]
+     * @property {any} [upload] - Upload variables
+     */
 
-    let loaded = 0
-    let total = 100
-    let progressBarIndeterminate = false
+    /** @type {Props} */
+    let { fileList, outputNRRD = false, upload = null } = $props();
+    let uploading = $state(false)
+    let uploadComplete = $state(false)
+    let uploadError = $state(false)
+    let image = $state(null)
+    let uploadMessage = $state('')
+    let uploadProgress = $state(0)
 
-    let statusMessages = []
+    let loaded = $state(0)
+    let total = $state(100)
+    let progressBarIndeterminate = $state(false)
 
-    let multipleSeriesMap = null
+    let statusMessages = $state([])
 
-    $: progress = loaded / total
+    let multipleSeriesMap = $state(null)
+
+    let progress = $derived(loaded / total)
 
     function progressCallback (event) {
         if (event.lengthComputable) {
@@ -287,10 +293,10 @@
                                     {#each seriesMap as [series, images]}
                                         <li class="series"
                                             class:suggested={images[0].seriesDescription.toLowerCase().includes('axial')}>
-                                            <!-- svelte-ignore a11y-missing-attribute -->
-                                            <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                            <!-- svelte-ignore a11y_missing_attribute -->
+                                            <!-- svelte-ignore a11y_click_events_have_key_events -->
                                             <a class="link-primary" role="button" tabindex="0"
-                                               on:click={() => { processImageSeries(images) }}>
+                                               onclick={() => { processImageSeries(images) }}>
                                                 Series
                                                 [{images[0].seriesDescription};
                                                 {series}]
@@ -312,7 +318,7 @@
     <div class="d-flex align-items-center gap-3 mt-2">
         <button class="btn" class:btn-primary={!uploadError} class:btn-danger={uploadError}
                 disabled={uploading || uploadComplete || uploadError}
-                on:click={() => uploadImage(image)}>
+                onclick={() => uploadImage(image)}>
             Upload image
         </button>
         {#if uploading || uploadComplete || uploadError}

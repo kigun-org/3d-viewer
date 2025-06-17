@@ -2,43 +2,59 @@
     import vtkXMLPolyDataReader from "@kitware/vtk.js/IO/XML/XMLPolyDataReader";
     import vtkSTLReader from "@kitware/vtk.js/IO/Geometry/STLReader";
 
-    import {createEventDispatcher} from 'svelte';
     import {convertNRRDtoItk} from "./Loader/nrrdUtils.js";
     import {convertItkToVtkImage} from "@kitware/vtk.js/Common/DataModel/ITKHelper";
 
-    const dispatch = createEventDispatcher();
 
-    export let resources
+    /**
+     * @typedef {Object} Props
+     * @property {any} resources
+     * @property {string} [mediaURL] - A base URL to prepend to all resource URLs
+     * @property {any} complete
+     * @property {any} error
+     */
 
-    /** A base URL to prepend to all resource URLs */
-    export let mediaURL = ''
+    /** @type {Props} */
+    let {
+        resources = $bindable(),
+        mediaURL = '',
+        complete,
+        error
+    } = $props();
 
-    let models = []
-    let volumes = []
-    let pending = 0
+    let models = $state([])
+    let volume = $state(undefined)
 
-    let progressBars = []
+    let loading = $state(false)
+    let pending = $state(0)
 
-    $: if (pending === 0) {
-        dispatch('loadComplete', {
-            models: models,
-            volumes: volumes
-        })
-    }
+    let progressBars = $state({})
 
-    function createProgressCallback(progressBar) {
+    $effect(() => {
+        if (loading && pending === 0) {
+            complete(models, volume)
+            loading = false
+        }
+    });
+
+    function createProgressCallback(url) {
+        progressBars[url] = {
+            loaded: 0,
+            total: null,
+            percent: null
+        }
+
         return (progressEvent) => {
-            progressBar.loaded = progressEvent.loaded
+            progressBars[url].loaded = progressEvent.loaded
 
             if (progressEvent.lengthComputable) {
-                progressBar.total = progressEvent.total
-                progressBar.progress = progressEvent.loaded / progressEvent.total
-                progressBar.percent = Math.floor(progressBar.progress * 100)
+                progressBars[url].total = progressEvent.total
+                progressBars[url].progress = progressEvent.loaded / progressEvent.total
+                progressBars[url].percent = Math.floor(progressBars[url].progress * 100)
             } else {
-                progressBar.progress = null
-                progressBar.percent = null
+                progressBars[url].progress = null
+                progressBars[url].percent = null
             }
-            progressBars = progressBars
         }
     }
 
@@ -98,14 +114,7 @@
     function processModel(model_resource) {
         pending++
 
-        let progressBar = {
-            loaded: 0,
-            total: null,
-            percent: null
-        }
-        progressBars = [...progressBars, progressBar]
-
-        const progressCallback = createProgressCallback(progressBar)
+        const progressCallback = createProgressCallback(model_resource.url)
 
         fetchData(mediaURL + model_resource.url, progressCallback)
             .then((arrayBuffer) => {
@@ -118,7 +127,7 @@
                         reader = vtkSTLReader.newInstance()
                         reader.parseAsArrayBuffer(arrayBuffer)
                     } catch (err) {
-                        dispatch('loadError', {message: `could not open resource (${err.name}).`})
+                        error(`could not open resource (${err.name}).`)
                         return
                     }
                 }
@@ -130,21 +139,17 @@
                 pending--
             })
             .catch((err) => {
-                dispatch('loadError', {message: `could not open resource (${err}).`})
+                error(`could not open resource (${err}).`)
             })
     }
 
     function processVolume(volume_resource) {
+        if (volume !== undefined)
+            throw Error("Multiple volumes are not supported.")
+
         pending++
 
-        let progressBar = {
-            loaded: 0,
-            total: null,
-            percent: null
-        }
-        progressBars = [...progressBars, progressBar]
-
-        const progressCallback = createProgressCallback(progressBar)
+        const progressCallback = createProgressCallback(volume_resource.url)
 
         fetchData(mediaURL + volume_resource.url, progressCallback)
             .then((arrayBuffer) => {
@@ -158,13 +163,15 @@
                 volume_resource.source = vtkImage
                 volume_resource.visible = true
 
-                volumes = [...volumes, volume_resource]
+                volume = volume_resource
                 pending--
             })
             .catch((err) => {
-                dispatch('loadError', {message: `could not open resource (${err}).`})
+                error(`could not open resource (${err}).`)
             })
     }
+
+    loading = true
 
     for (const resource of resources) {
         if (resource.type === "VOLUME") {
@@ -212,7 +219,7 @@
 </script>
 
 <div>Loading data</div>
-{#each progressBars as progressBar}
+{#each Object.values(progressBars) as progressBar}
     {#if progressBar.percent === null}
         <progress></progress>
     {:else}
