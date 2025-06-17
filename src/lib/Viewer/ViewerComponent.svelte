@@ -435,7 +435,7 @@
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
                    on:resetCamera={resetCamera}
                    on:resetWindowLevel={resetWindowLevel} on:screenshot={saveScreenshot}
-                   on:updateShift={updateShift}
+                   on:updateShift={() => updateShift}
                    showWindowLevelButton={volume !== undefined}
                    showScreenshotButton={screenshotCallback !== null}
                    toolbarBackground={volume === undefined}/>
