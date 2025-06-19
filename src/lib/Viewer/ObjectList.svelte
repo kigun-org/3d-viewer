@@ -39,17 +39,7 @@
 </div>
 
 <style>
-    .overlay-menu {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5em;
-    }
-
-    .overlay-menu div, .overlay-menu label {
+    .k-absolute div, .k-absolute label {
         user-select: none;
-    }
-
-    input[type=range] {
-        width: 7rem;
     }
 </style>

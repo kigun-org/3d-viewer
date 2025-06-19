@@ -25,44 +25,65 @@
 
     import {ViewMode} from "./ViewMode";
     import ToolbarLocal from "./ToolbarLocal.svelte";
-    import Slider from "./Slider.svelte";
+    import vtkMath from "@kitware/vtk.js/Common/Core/Math.js";
 
     let {
         viewMode,
         maximized = $bindable(),
         viewAttributes,
         widget,
-        scaleInPixels, // On change: viewAttributes.forEach((obj) => { obj.interactor.render() }),
+
+        // On change: viewAttributes.forEach((obj) => { obj.interactor.render() }),
+        scaleInPixels,
+
         pointerEntered,
-        pointerLeft
+        pointerLeft,
+
+        backgroundColor = [0.1, 0.1, 0.1],
+
+        translationEnabled = true,
+        rotationEnabled = true,
+        keepOrthogonality = true,
+
+        // [SlabMode.MIN, SlabMode.MAX, SlabMode.MEAN, SlabMode.SUM]
+        slabMode = SlabMode.MEAN,
+        slabNumberOfSlices = 1,
+        // const maxSlabNumberOfSlices = vec3.length(image.getDimensions()) // set max number of slices to slider.
+
+        // [InterpolationMode.NEAREST, InterpolationMode.LINEAR, InterpolationMode.CUBIC]
+        interpolationMode = InterpolationMode.LINEAR,
+        windowLevelEnabled = true
     } = $props();
 
-    const backgroundColor = [0.1, 0.1, 0.1]
+    let element
+
+    let componentState
+
+    let sliderState = $state({min: 0, max: 0, value: 0})
+
+    function updateSliderValue(value) {
+        const newDistanceToP1 = value
+
+        const dirProj = widget.getWidgetState().getPlanes()[viewMode.viewType].normal
+        const planeExtremities = widget.getPlaneExtremities(viewMode.viewType)
+        const newCenter = vtkMath.multiplyAccumulate(
+            planeExtremities[0],
+            dirProj,
+            Number(newDistanceToP1),
+            []
+        )
+        widget.setCenter(newCenter)
+        componentState.widgetInstance.invokeInteractionEvent(
+            componentState.widgetInstance.getActiveInteraction()
+        )
+        viewAttributes.forEach((obj) => {
+            obj.interactor.render()
+        })
+    }
 
     export function saveScreenshot() {
         return componentState.renderWindow.captureImages()[0]
     }
-
-    let componentState
-
-    let element
-
-    const translationEnabled = true
-
-    const rotationEnabled = true
-    const keepOrthogonality = true
-
-    // [SlabMode.MIN, SlabMode.MAX, SlabMode.MEAN, SlabMode.SUM]
-    const slabMode = SlabMode.MEAN
-    const slabNumberOfSlices = 1
-    // const maxSlabNumberOfSlices = vec3.length(image.getDimensions()) // set max number of slices to slider.
-
-    // [InterpolationMode.NEAREST, InterpolationMode.LINEAR, InterpolationMode.CUBIC]
-    const interpolationMode = InterpolationMode.LINEAR
-    const windowLevelEnabled = true
-
-    const initialWindow = 4000
-    const initialLevel = 1000
 
     const appCursorStyles = {
         translateCenter: 'move',
@@ -191,6 +212,7 @@
 
         widgetState.getCenterHandle().setVisible(true)
 
+        // set interpolation mode to nearest during reslicing (faster)
         viewAttributes.forEach((obj) => {
             obj.reslice.setInterpolationMode(InterpolationMode.NEAREST)
             obj.interactor.render()
@@ -223,8 +245,9 @@
 
         widgetState.getCenterHandle().setVisible(false)
 
+        // return to default interpolation mode when finished slicing
         viewAttributes.forEach((obj) => {
-            obj.reslice.setInterpolationMode(InterpolationMode.LINEAR)
+            obj.reslice.setInterpolationMode(interpolationMode)
             obj.interactor.render()
         })
     }
@@ -250,10 +273,10 @@
                 actor: createAxes(),
                 interactor: grw.getInteractor(),
             }),
+            slider: sliderState
         };
 
         componentState.renderer.getActiveCamera().setParallelProjection(true)
-        // state.renderer.setBackground(...getColor(index))
         componentState.renderer.setBackground(...backgroundColor)
         componentState.renderWindow.addRenderer(componentState.renderer)
         componentState.renderWindow.addView(componentState.GLWindow)
@@ -289,8 +312,8 @@
         componentState.resliceMapper.setPreferSizeOverAccuracy(true)
 
         componentState.resliceActor.setMapper(componentState.resliceMapper)
-        componentState.resliceActor.getProperty().setColorWindow(initialWindow)
-        componentState.resliceActor.getProperty().setColorLevel(initialLevel)
+        // componentState.resliceActor.getProperty().setColorWindow(...)
+        // componentState.resliceActor.getProperty().setColorLevel(...)
 
         componentState.orientationWidget.setEnabled(true)
         componentState.orientationWidget.setViewportCorner(
@@ -312,7 +335,10 @@
 
     <ToolbarLocal viewMode={viewMode} bind:maximized={maximized} />
 
-    <Slider/>
+    <div class="k-absolute k-bottom-0 k-left-0 k-right-0 k-px-1 k-pt-1 k-bg-base-200/90">
+        <input type="range" class="k-range k-range-xs k-w-full"
+               min={sliderState.min} max={sliderState.max} bind:value={() => sliderState.value, updateSliderValue}/>
+    </div>
 </div>
 
 <style>
