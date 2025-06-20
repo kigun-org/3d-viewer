@@ -28,26 +28,29 @@
 
 <div class="k-absolute k-top-14 k-right-2 k-bg-base-200/90 k-p-2 k-b" class:k-hidden={!visible}>
     {#if volume}
-        <div role="menuitem">
-            <label class="k-label">
-                Volume
+        <div role="menuitem" class="k-max-w-64">
+            <label class="k-label k-justify-start k-gap-3">
                 <input class="k-checkbox" type="checkbox" bind:checked={volume.visible}>
-            </label>
-            <input type="range" min="-2000" max="2000" class="k-range k-range-sm"
-                   bind:value={shift} disabled={!volume.visible} />
-
-            <label class="k-label">
-                Cross-section
-                <input class="k-checkbox" type="checkbox" disabled={!volume.visible}
-                       bind:checked={clipEnabled}>
+                <span>Volume</span>
             </label>
 
-            <input type="range" min="0" max="100" class="k-range k-range-sm"
-                   disabled={!volume.visible || !clipEnabled}
-                   bind:value={clipPosition} />
+            <div class="k-ms-10">
+                <input type="range" min="-2000" max="2000" class="k-range k-range-sm"
+                       bind:value={shift} disabled={!volume.visible} />
 
-            <button class="k-btn k-btn-sm k-w-full" disabled={!volume.visible || !clipEnabled}
-                    onclick={updateClipPlane}>Normal to camera</button>
+                <label class="k-label k-justify-start k-gap-3">
+                    <input class="k-checkbox k-checkbox-sm" type="checkbox" disabled={!volume.visible}
+                           bind:checked={clipEnabled}>
+                    <span>Cross-section</span>
+                </label>
+
+                <input type="range" min="0" max="100" class="k-range k-range-sm"
+                       disabled={!volume.visible || !clipEnabled}
+                       bind:value={clipPosition} />
+
+                <button class="k-btn k-btn-sm k-w-full k-mt-1" disabled={!volume.visible || !clipEnabled}
+                        onclick={updateClipPlane}>Normal to camera</button>
+            </div>
         </div>
     {/if}
 
