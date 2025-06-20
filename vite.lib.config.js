@@ -6,16 +6,7 @@ import {viteStaticCopy} from "vite-plugin-static-copy"
 let entries = [
     resolve(__dirname, 'src/lib/Viewer.svelte'),
 ]
-let cssFileName = "viewers"
-
-const customArgIndex = process.argv.indexOf('--')
-if (customArgIndex > 0 && process.argv.length >= customArgIndex) {
-    const entry = process.argv.splice(customArgIndex + 1)
-    entries = [
-        resolve(__dirname, `src/lib/${process.argv.splice(customArgIndex + 1)}.svelte`)
-    ]
-    cssFileName = entry[0]
-}
+let cssFileName = "Viewer"
 
 export default defineConfig({
     base: '/static/viewer/',
