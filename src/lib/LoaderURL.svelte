@@ -161,7 +161,6 @@
             })
             .then((vtkImage) => {
                 volume_resource.source = vtkImage
-                volume_resource.visible = true
 
                 volume = volume_resource
                 pending--

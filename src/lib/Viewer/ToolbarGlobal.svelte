@@ -9,6 +9,13 @@
      * @property {boolean} [toolbarBackground]
      * @property {any} models
      * @property {any} volume
+     *
+     * @property {any} resetCamera
+     * @property {any} resetWindowLevel
+     * @property {any} updateShift
+     * @property {any} updateClip
+     * @property {any} updateClipPlane
+     * @property {any} screenshot
      */
 
     /** @type {Props} */
@@ -21,8 +28,10 @@
         volume = $bindable(),
         resetCamera,
         resetWindowLevel,
-        screenshot,
-        updateShift
+        updateShift,
+        updateClip,
+        updateClipPlane,
+        screenshot
     } = $props();
 
     let objectCount = $derived(models.length + (volume !== undefined ? 1 : 0))
@@ -58,6 +67,6 @@
     {/if}
 </div>
 
-<ObjectList bind:models={models} bind:volume={volume} {updateShift} visible={objectListVisible} />
+<ObjectList bind:models={models} bind:volume={volume} {updateShift} {updateClip} {updateClipPlane} visible={objectListVisible} />
 
 <style></style>

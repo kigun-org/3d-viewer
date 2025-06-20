@@ -61,15 +61,13 @@
 
     let sliderState = $state({min: 0, max: 0, value: 0})
 
-    function updateSliderValue(value) {
-        const newDistanceToP1 = value
-
+    function updateSliderValue(newValue) {
         const dirProj = widget.getWidgetState().getPlanes()[viewMode.viewType].normal
         const planeExtremities = widget.getPlaneExtremities(viewMode.viewType)
         const newCenter = vtkMath.multiplyAccumulate(
             planeExtremities[0],
             dirProj,
-            Number(newDistanceToP1),
+            newValue,
             []
         )
         widget.setCenter(newCenter)

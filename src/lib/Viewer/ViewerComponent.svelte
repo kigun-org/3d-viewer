@@ -323,6 +323,14 @@
         window3D.updateShift(value)
     }
 
+    function updateClip(enabled, position) {
+        window3D.updateClip(enabled, position)
+    }
+
+    function updateClipPlane() {
+        window3D.updateClipPlane()
+    }
+
     function pointerEntered() {
         clearTimeout(hideAxisTimeout)
 
@@ -340,19 +348,19 @@
     }
 
     onMount(() => {
-        // for DICOM volumes only
         if (volume !== undefined) {
-            const image = volume.source
+            // add visible property (will be toggleable in object list)
+            volume.visible = true
 
             initialWindow = volume.params.window
             initialLevel = volume.params.level
 
             initWidgetState(widget)
-            widget.setImage(image)
+            widget.setImage(volume.source)
             widget.setScaleInPixels(scaleInPixels) // On change: viewAttributes.forEach((obj) => { obj.interactor.render() })
 
             viewAttributes.forEach((obj, i) => {
-                obj.reslice.setInputData(image)
+                obj.reslice.setInputData(volume.source)
                 obj.renderer.addActor(obj.resliceActor)
                 const reslice = obj.reslice
                 const viewType = getViewTypes(i)
@@ -454,7 +462,8 @@
         {/if}
     </div>
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
-                   {resetCamera} {resetWindowLevel} {updateShift} screenshot={saveScreenshot}
+                   {resetCamera} {resetWindowLevel} screenshot={saveScreenshot}
+                   {updateShift} {updateClip} {updateClipPlane}
                    showWindowLevelButton={volume !== undefined}
                    showScreenshotButton={screenshotCallback !== null}
                    toolbarBackground={volume === undefined}/>

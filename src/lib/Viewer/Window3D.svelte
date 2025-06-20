@@ -12,6 +12,7 @@
     import vtkPiecewiseFunction from "@kitware/vtk.js/Common/DataModel/PiecewiseFunction";
     import vtkVolumeMapper from "@kitware/vtk.js/Rendering/Core/VolumeMapper";
     import vtkVolume from "@kitware/vtk.js/Rendering/Core/Volume";
+    import vtkPlane from "@kitware/vtk.js/Common/DataModel/Plane";
 
     import {ViewMode} from "./ViewMode";
     import {createTrackballNoHotkeysStyle} from "./interactorStyles.js";
@@ -25,6 +26,9 @@
     } = $props();
 
     let containerElement = $state()
+
+    let clipPlane = undefined
+    let clipPlaneNormal = undefined
 
     let renderer
     let renderWindow
@@ -128,8 +132,53 @@
             piecewiseFunction.addPoint(e[0] + newValue, e[1])
         })
 
-        volume.actor.getProperty().setScalarOpacity(0, piecewiseFunction);
+        volume.actor.getProperty().setScalarOpacity(0, piecewiseFunction)
 
+        renderWindow.render()
+    }
+
+    export function updateClip(enabled, position) {
+        if (enabled) {
+            if (!clipPlane) {
+                clipPlane = vtkPlane.newInstance()
+                clipPlaneNormal = [0, 0, -1]
+            }
+
+            const data = volume.source
+            const extent = data.getExtent()
+            const spacing = data.getSpacing()
+
+            const sizeZ = extent[5] * spacing[2]
+            let clipPlanePosition = sizeZ * position / 100
+
+            const clipPlaneOrigin = [
+                clipPlanePosition * clipPlaneNormal[0],
+                clipPlanePosition * clipPlaneNormal[1],
+                clipPlanePosition * clipPlaneNormal[2],
+            ]
+
+            clipPlane.setNormal(clipPlaneNormal)
+            clipPlane.setOrigin(clipPlaneOrigin)
+
+            if (volume.actor.getMapper().getNumberOfClippingPlanes() === 0) {
+                volume.actor.getMapper().addClippingPlane(clipPlane)
+            }
+        } else {
+            volume.actor.getMapper().removeAllClippingPlanes()
+        }
+
+        renderWindow.render()
+    }
+
+    export function updateClipPlane() {
+        const cameraNormal = renderer.getActiveCamera().getViewPlaneNormal()
+        clipPlaneNormal = [
+            cameraNormal[0] * -1,
+            cameraNormal[1] * -1,
+            cameraNormal[2] * -1,
+        ]
+
+        clipPlane.setNormal(clipPlaneNormal)
         renderWindow.render()
     }
 
