@@ -2,7 +2,8 @@
     let {
         models = $bindable(),
         volume = $bindable(),
-        updateShift
+        updateShift,
+        visible = true
     } = $props();
 
     let shift = $state(0)
@@ -16,7 +17,7 @@
     })
 </script>
 
-<div class="k-absolute k-top-14 k-right-2 k-bg-base-200/90 k-p-2">
+<div class="k-absolute k-top-14 k-right-2 k-bg-base-200/90 k-p-2 k-b" class:k-hidden={!visible}>
     {#if volume}
         <div role="menuitem">
             <label class="k-label">

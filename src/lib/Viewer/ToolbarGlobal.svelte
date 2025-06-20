@@ -58,8 +58,6 @@
     {/if}
 </div>
 
-{#if objectListVisible}
-    <ObjectList bind:models={models} bind:volume={volume} {updateShift} />
-{/if}
+<ObjectList bind:models={models} bind:volume={volume} {updateShift} visible={objectListVisible} />
 
 <style></style>
