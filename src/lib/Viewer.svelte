@@ -43,43 +43,38 @@
     }
 </script>
 
-{#if errorMessage !== undefined}
-    <div class="viewer_panel error">
-        <ErrorMessage {errorMessage}/>
-    </div>
-{:else if !ready}
-    <div class="viewer_panel loading">
-    {#if clickToLoad && !clicked}
-        <button class="btn btn-lg btn-outline-dark" onclick={() => {clicked = true}}>
-            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-download"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-            <span>Click to load data</span>
-        </button>
-    {:else}
-        <LoaderURL {resources} {mediaURL} complete={resourcesLoaded} error={handleError} />
-    {/if}
-    </div>
-{:else}
-    <div class="viewers" style="aspect-ratio: 4 / 3">
-        <div class="k-relative k-h-full k-bg-base-200">
-            <ViewerComponent bind:models={models} bind:volume={volume} {startMaximized} {screenshotCallback} />
+<div class="viewers" style="aspect-ratio: 4 / 3">
+    {#if errorMessage !== undefined}
+        <div class="k-flex k-h-full k-flex-col k-items-center k-justify-center k-gap-2 k-p-8 k-bg-red-100">
+            <ErrorMessage {errorMessage}/>
         </div>
-    </div>
-{/if}
+    {:else if !ready}
+        <div class="k-flex k-h-full k-flex-col k-items-center k-justify-center k-gap-2 k-bg-base-200">
+            {#if clickToLoad && !clicked}
+                <button class="k-hidden lg:k-flex k-btn k-btn-lg k-btn-outline" onclick={() => {clicked = true}}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/>
+                        <path d="M7 11l5 5l5 -5"/>
+                        <path d="M12 4l0 12"/>
+                    </svg>
+                    <span>Click to load data</span>
+                </button>
+                <div class="lg:k-hidden k-text-xl k-p-8">
+                    Display too small for 3D viewer.<br>
+                    Please view this page on a larger screen.
+                </div>
+            {:else}
+                <LoaderURL {resources} {mediaURL} complete={resourcesLoaded} error={handleError}/>
+            {/if}
+        </div>
+    {:else}
+        <div class="k-relative k-h-full k-bg-base-200">
+            <ViewerComponent bind:models={models} bind:volume={volume} {startMaximized} {screenshotCallback}/>
+        </div>
+    {/if}
+</div>
 
-<style>
-    .viewer_panel {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.25rem;
-        min-height: 400px;
-        aspect-ratio: 4 / 3;
-    }
-    .viewer_panel.loading {
-        background-color: #cde;
-    }
-    .viewer_panel.error {
-        background-color: #edd;
-    }
-</style>
+<style></style>
