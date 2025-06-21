@@ -177,8 +177,35 @@
             cameraNormal[1] * -1,
             cameraNormal[2] * -1,
         ]
-
         clipPlane.setNormal(clipPlaneNormal)
+
+        clipPlane.setOrigin(volume.source.getCenter())
+
+        // const data = volume.source
+        // const extent = data.getExtent()
+        // const spacing = data.getSpacing()
+        //
+        // const bounds = volume.actor.getMapper().getBounds()
+        // console.log(bounds)
+        // console.log("bounds", bounds[1] - bounds[0], bounds[3] - bounds[2], bounds[5] - bounds[4])
+        // console.log("extent", extent[1] * spacing[0], extent[3] * spacing[1], extent[5] * spacing[2])
+
+        // const planeExtremities = widget.getPlaneExtremities(
+        //     interactionContext.viewType
+        // );
+        // const length = Math.sqrt(
+        //     vtkMath.distance2BetweenPoints(planeExtremities[0], planeExtremities[1])
+        // );
+        // const dist = Math.sqrt(
+        //     vtkMath.distance2BetweenPoints(
+        //         planeExtremities[0],
+        //         widget.getWidgetState().getCenter()
+        //     )
+        // );
+        // interactionContext.slider.min = 0;
+        // interactionContext.slider.max = length;
+        // interactionContext.slider.value = dist;
+
         renderWindow.render()
     }
 
