@@ -49,7 +49,7 @@
             <ErrorMessage {errorMessage}/>
         </div>
     {:else if !ready}
-        <div class="k-flex k-h-full k-flex-col k-items-center k-justify-center k-gap-2 k-bg-base-200">
+        <div class="k-flex k-h-full k-flex-col k-items-center k-justify-center k-gap-2 k-bg-blue-100">
             {#if clickToLoad && !clicked}
                 <button class="k-flex k-btn k-btn-lg k-btn-outline" onclick={() => {clicked = true}}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"

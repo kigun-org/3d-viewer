@@ -48,9 +48,11 @@
     {/if}
 
     {#each models as model, index}
-        <label class="d-flex align-items-baseline gap-2">
-            <input type="checkbox" bind:checked={model.visible}>
-            <i class="bi-circle-fill" style="color: {generateRGBColor(model.params)}"></i>
+        <label class="k-label k-justify-start k-gap-3">
+            <input type="checkbox" class="k-checkbox" bind:checked={model.visible}>
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill={generateRGBColor(model.params)}  stroke="none"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+            </svg>
             Model {index+1}
         </label>
     {/each}
