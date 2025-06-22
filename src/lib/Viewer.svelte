@@ -51,7 +51,7 @@
     {:else if !ready}
         <div class="k-flex k-h-full k-flex-col k-items-center k-justify-center k-gap-2 k-bg-base-200">
             {#if clickToLoad && !clicked}
-                <button class="k-hidden lg:k-flex k-btn k-btn-lg k-btn-outline" onclick={() => {clicked = true}}>
+                <button class="k-flex k-btn k-btn-lg k-btn-outline" onclick={() => {clicked = true}}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="icon icon-tabler icons-tabler-outline icon-tabler-download">
@@ -62,10 +62,10 @@
                     </svg>
                     <span>Click to load data</span>
                 </button>
-                <div class="lg:k-hidden k-text-xl k-p-8">
-                    Display too small for 3D viewer.<br>
-                    Please view this page on a larger screen.
-                </div>
+<!--                <div class="lg:k-hidden k-text-xl k-p-8">-->
+<!--                    Display too small for 3D viewer.<br>-->
+<!--                    Please view this page on a larger screen.-->
+<!--                </div>-->
             {:else}
                 <LoaderURL {resources} {mediaURL} complete={resourcesLoaded} error={handleError}/>
             {/if}
