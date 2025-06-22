@@ -323,10 +323,6 @@
         window3D.updateShift(value)
     }
 
-    function updateClip(enabled, position) {
-        window3D.updateClip(enabled, position)
-    }
-
     function updateClipPlane() {
         window3D.updateClipPlane()
     }
@@ -351,6 +347,13 @@
         if (volume !== undefined) {
             // add visible property (will be toggleable in object list)
             volume.visible = true
+            volume.clip = {
+                enabled: false,
+                min: 0,
+                // max: ...,
+                // position: ...,
+                planeNormal: [0, 0, -1] // default to Z-axis
+            }
 
             initialWindow = volume.params.window
             initialLevel = volume.params.level
@@ -463,7 +466,7 @@
     </div>
     <ToolbarGlobal bind:models={models} bind:volume={volume} {objectListVisible}
                    {resetCamera} {resetWindowLevel} screenshot={saveScreenshot}
-                   {updateShift} {updateClip} {updateClipPlane}
+                   {updateShift} {updateClipPlane}
                    showWindowLevelButton={volume !== undefined}
                    showScreenshotButton={screenshotCallback !== null}
                    toolbarBackground={volume === undefined}/>

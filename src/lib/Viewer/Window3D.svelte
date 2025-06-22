@@ -17,6 +17,8 @@
     import {ViewMode} from "./ViewMode";
     import {createTrackballNoHotkeysStyle} from "./interactorStyles.js";
     import ToolbarLocal from "./ToolbarLocal.svelte";
+    import vtkBox from "@kitware/vtk.js/Common/DataModel/Box.js";
+    import vtkMath from "@kitware/vtk.js/Common/Core/Math.js";
 
     let {
         maximized = $bindable(),
@@ -29,6 +31,7 @@
 
     let clipPlane = undefined
     let clipPlaneNormal = undefined
+    let clipPlaneStart = undefined
 
     let renderer
     let renderWindow
@@ -51,6 +54,11 @@
             if (!renderWindow) return
             renderWindow.render()
         })
+    })
+
+    $effect(() => {
+        if (!volume || !volume.clip) return
+        updateClip(volume.clip)
     })
 
     function createModel(model_resource) {
@@ -137,28 +145,19 @@
         renderWindow.render()
     }
 
-    export function updateClip(enabled, position) {
-        if (enabled) {
-            if (!clipPlane) {
-                clipPlane = vtkPlane.newInstance()
-                clipPlaneNormal = [0, 0, -1]
-            }
+    function updateClip(clip) {
+        if (!clipPlaneNormal) {
+            // running for the first time, initialize the update clip plane
+            updateClipPlane()
+        }
 
-            const data = volume.source
-            const extent = data.getExtent()
-            const spacing = data.getSpacing()
+        if (clip.enabled) {
+            const normal = clipPlaneNormal.slice()
+            vtkMath.multiplyScalar(normal, clip.position)
 
-            const sizeZ = extent[5] * spacing[2]
-            let clipPlanePosition = sizeZ * position / 100
-
-            const clipPlaneOrigin = [
-                clipPlanePosition * clipPlaneNormal[0],
-                clipPlanePosition * clipPlaneNormal[1],
-                clipPlanePosition * clipPlaneNormal[2],
-            ]
-
-            clipPlane.setNormal(clipPlaneNormal)
-            clipPlane.setOrigin(clipPlaneOrigin)
+            const newPlaneOrigin = []
+            vtkMath.add(clipPlaneStart, normal, newPlaneOrigin)
+            clipPlane.setOrigin(newPlaneOrigin)
 
             if (volume.actor.getMapper().getNumberOfClippingPlanes() === 0) {
                 volume.actor.getMapper().addClippingPlane(clipPlane)
@@ -171,42 +170,41 @@
     }
 
     export function updateClipPlane() {
-        const cameraNormal = renderer.getActiveCamera().getViewPlaneNormal()
-        clipPlaneNormal = [
-            cameraNormal[0] * -1,
-            cameraNormal[1] * -1,
-            cameraNormal[2] * -1,
-        ]
+        if (!clipPlane) {
+            clipPlane = vtkPlane.newInstance()
+        }
+
+        // Clip plane normal is in the opposite direction of the camera normal (clip volume towards camera)
+        clipPlaneNormal = renderer.getActiveCamera().getViewPlaneNormal()
+        vtkMath.multiplyScalar(clipPlaneNormal, -1)
         clipPlane.setNormal(clipPlaneNormal)
 
-        clipPlane.setOrigin(volume.source.getCenter())
+        // calculate intersection of normal to camera going through center of volume with volume bounding box
+        const bounds = volume.actor.getMapper().getBounds()
+        const box = vtkBox.newInstance()
+        box.addBounds(bounds)
 
-        // const data = volume.source
-        // const extent = data.getExtent()
-        // const spacing = data.getSpacing()
-        //
-        // const bounds = volume.actor.getMapper().getBounds()
-        // console.log(bounds)
-        // console.log("bounds", bounds[1] - bounds[0], bounds[3] - bounds[2], bounds[5] - bounds[4])
-        // console.log("extent", extent[1] * spacing[0], extent[3] * spacing[1], extent[5] * spacing[2])
+        const normalExtended = clipPlaneNormal.slice()
+        vtkMath.multiplyScalar(normalExtended, 1000)
 
-        // const planeExtremities = widget.getPlaneExtremities(
-        //     interactionContext.viewType
-        // );
-        // const length = Math.sqrt(
-        //     vtkMath.distance2BetweenPoints(planeExtremities[0], planeExtremities[1])
-        // );
-        // const dist = Math.sqrt(
-        //     vtkMath.distance2BetweenPoints(
-        //         planeExtremities[0],
-        //         widget.getWidgetState().getCenter()
-        //     )
-        // );
-        // interactionContext.slider.min = 0;
-        // interactionContext.slider.max = length;
-        // interactionContext.slider.value = dist;
+        const volumeCenter = volume.source.getCenter()
 
-        renderWindow.render()
+        const start = []
+        vtkMath.subtract(volumeCenter, normalExtended, start)
+
+        const end = []
+        vtkMath.add(volumeCenter, normalExtended, end)
+
+        const boxIntersection = box.intersectWithLine(start, end)
+
+        clipPlaneStart = boxIntersection.x1
+        const clipPlaneEnd = boxIntersection.x2
+
+        // farthest intersection point from camera: end
+        volume.clip.position = Math.sqrt(vtkMath.distance2BetweenPoints(clipPlaneStart, volumeCenter))
+
+        // closest intersection point to camera: start
+        volume.clip.max = Math.sqrt(vtkMath.distance2BetweenPoints(clipPlaneStart, clipPlaneEnd))
     }
 
     export function saveScreenshot() {

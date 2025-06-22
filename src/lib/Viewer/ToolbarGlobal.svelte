@@ -13,7 +13,6 @@
      * @property {any} resetCamera
      * @property {any} resetWindowLevel
      * @property {any} updateShift
-     * @property {any} updateClip
      * @property {any} updateClipPlane
      * @property {any} screenshot
      */
@@ -29,7 +28,6 @@
         resetCamera,
         resetWindowLevel,
         updateShift,
-        updateClip,
         updateClipPlane,
         screenshot
     } = $props();
@@ -67,6 +65,6 @@
     {/if}
 </div>
 
-<ObjectList bind:models={models} bind:volume={volume} {updateShift} {updateClip} {updateClipPlane} visible={objectListVisible} />
+<ObjectList bind:models={models} bind:volume={volume} {updateShift} {updateClipPlane} visible={objectListVisible} />
 
 <style></style>
